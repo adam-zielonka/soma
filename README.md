@@ -4,8 +4,9 @@ Polska aplikacja edukacyjna o cielesnym wymiarze emocji.
 
 **[Otwórz aplikację](https://adam-zielonka.github.io/soma/)**
 
-- Osiem emocji i interaktywna sylwetka z sześcioma obszarami ciała.
-- Porównanie dwóch map i tekstowe zestawienie odczuć.
+- Dwanaście emocji i interaktywna sylwetka z sześcioma obszarami ciała.
+- Przykłady odczuć dla konkretnych obszarów: np. ciepło twarzy, napięcie dłoni lub ciężkość nóg.
+- Porównanie dwóch map, tekstowe zestawienie zmian oraz przykłady dla tego samego obszaru.
 - Linki zachowujące wybraną emocję i tryb porównania.
 - Obsługa dotyku i klawiatury, responsywny układ, ograniczone animacje.
 - Publikacje naukowe oraz widoczne wyjaśnienie ograniczeń map.
@@ -32,9 +33,10 @@ W CI Chromium jest instalowany z zależnościami systemowymi. Testy obejmują ko
 
 1. Nummenmaa, L., Glerean, E., Hari, R., & Hietanen, J. K. (2014). _Bodily maps of emotions_. PNAS, 111(2), 646–651. [DOI](https://doi.org/10.1073/pnas.1321664111).
 2. Nummenmaa, L., Hari, R., Hietanen, J. K., & Glerean, E. (2018). _Maps of subjective feelings_. PNAS, 115(37), 9198–9203. [DOI](https://doi.org/10.1073/pnas.1807390115).
-3. [Materiały zespołu badawczego](https://emotion.utu.fi/maps-of-subjective-feelings/).
+3. [NHS — złość](https://www.nhs.uk/mental-health/feelings-symptoms-behaviours/feelings-and-symptoms/anger/), [NHS inform — niepokój](https://www.nhsinform.scot/illnesses-and-conditions/mental-health/mental-health-self-help-guides/anxiety-self-help-guide), [NHS — rumieniec](https://www.nhs.uk/symptoms/blushing/).
+4. [Materiały zespołu badawczego](https://emotion.utu.fi/maps-of-subjective-feelings/).
 
-Mapy SVG i przypisania kategorii w `src/emotions.ts` stanowią uproszczoną interpretację jakościową ryciny 2 badania z 2014 r. Kształty poświaty, podział na sześć obszarów oraz pytania do autorefleksji są autorskimi elementami aplikacji. Nie odtworzono oryginalnych map statystycznych. Kolory oznaczają kierunek odczuwanej zmiany, bez skali intensywności. Badania dotyczą samoopisu, nie bezpośrednich pomiarów fizjologicznych. Aplikacja nie jest narzędziem diagnostycznym ani terapeutycznym.
+Mapy SVG i przypisania kategorii w `src/emotions.ts` stanowią uproszczoną interpretację jakościową ryciny 2 badania z 2014 r. Kształty poświaty, podział na sześć obszarów, pytania do autorefleksji i przykładowy słownik odczuć są autorskimi elementami aplikacji. Opisy konkretnych doznań nie są wynikami badania map; wybrane przykłady uzupełniają materiały NHS. Dla niewyróżnionych obszarów wyświetlany jest ogólny słownik, bez przypisywania go do danej emocji. Nie odtworzono oryginalnych map statystycznych. Kolory oznaczają kierunek odczuwanej zmiany, bez skali intensywności. Badania dotyczą samoopisu, nie bezpośrednich pomiarów fizjologicznych. Aplikacja nie jest narzędziem diagnostycznym ani terapeutycznym.
 
 ## Wdrożenie
 

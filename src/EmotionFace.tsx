@@ -31,7 +31,7 @@ export default function EmotionFace({
           <path d="m9 10 4 2m10-2-4 2" />
           <path d="M11 15h1m8 0h1" />
         </>
-      ) : id === "fear" ? (
+      ) : id === "fear" || id === "anxiety" ? (
         <>
           <path d="m9 10 4-2m10 2-4-2" />
           <ellipse cx="11.5" cy="14" rx="1" ry="2" />
@@ -50,6 +50,16 @@ export default function EmotionFace({
       )}
       {id === "joy" || id === "love" || id === "pride" ? (
         <path d="M11 20q5 6 10 0" />
+      ) : id === "shame" ? (
+        <>
+          <path d="M11 23q5-4 10 0M7 18l3 1m12 0 3-1" />
+        </>
+      ) : id === "contempt" ? (
+        <path d="M11 22q6 2 11-3" />
+      ) : id === "envy" ? (
+        <path d="m9 9 4 1m6 0 4-1M12 22h8" />
+      ) : id === "anxiety" ? (
+        <path d="m11 22 3-1 3 1 4-1" />
       ) : id === "sadness" ? (
         <path d="M11 23q5-6 10 0" />
       ) : id === "fear" || id === "surprise" ? (

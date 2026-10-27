@@ -8,7 +8,11 @@ export type EmotionId =
   | "disgust"
   | "surprise"
   | "love"
-  | "pride";
+  | "pride"
+  | "anxiety"
+  | "shame"
+  | "envy"
+  | "contempt";
 export interface Emotion {
   id: EmotionId;
   name: string;
@@ -145,6 +149,69 @@ export const emotions: Emotion[] = [
     regions: { head: "more", chest: "more", arms: "more" },
     prompt:
       "Przypomnij sobie coś, co Ci się udało. Jak układa się teraz Twoje ciało?",
+  },
+  {
+    id: "anxiety",
+    name: "Niepokój",
+    english: "Anxiety",
+    color: "#7c7394",
+    light: "#e9e4ee",
+    word: "Kiedy trudno odpuścić czujność.",
+    description:
+      "W mapie niepokoju wyróżniał się wzrost odczuć w tułowiu oraz ich spadek w kończynach. [1]",
+    regions: {
+      head: "more",
+      chest: "more",
+      belly: "more",
+      arms: "less",
+      legs: "less",
+    },
+    prompt: "Zauważ jeden przedmiot w otoczeniu. Jaki ma kolor i kształt?",
+  },
+  {
+    id: "shame",
+    name: "Wstyd",
+    english: "Shame",
+    color: "#a1676d",
+    light: "#f0dfe1",
+    word: "Gdy chce się zniknąć z widoku.",
+    description:
+      "W mapie wstydu wzrost odczuć obejmował twarz i tułów, a spadek — ręce i nogi. [1]",
+    regions: {
+      head: "more",
+      chest: "more",
+      belly: "more",
+      arms: "less",
+      legs: "less",
+    },
+    prompt:
+      "Czy możesz znaleźć dla siebie odrobinę wygodniejszą pozycję, bez zmuszania się do czegokolwiek?",
+  },
+  {
+    id: "envy",
+    name: "Zawiść",
+    english: "Envy",
+    color: "#71804f",
+    light: "#e6ead8",
+    word: "Ślad tego, na czym Ci zależy.",
+    description:
+      "W mapie zawiści wyróżniały się głowa i klatka piersiowa oraz spadek odczuć w nogach. [1]",
+    regions: { head: "more", chest: "more", legs: "less" },
+    prompt:
+      "Co jest dla Ciebie ważne w tej sytuacji? Możesz zauważyć tę potrzebę bez oceniania siebie.",
+  },
+  {
+    id: "contempt",
+    name: "Pogarda",
+    english: "Contempt",
+    color: "#80705c",
+    light: "#ece4da",
+    word: "Odczuwany dystans.",
+    description:
+      "W mapie pogardy wyróżniał się wzrost odczuć w głowie i spadek w dolnej części ciała. [1]",
+    regions: { head: "more", legs: "less" },
+    prompt:
+      "Zauważ wyraz twarzy i ułożenie szczęki. Co czujesz, kiedy nie próbujesz tego zmienić?",
   },
 ];
 export function findEmotion(id: string | null): Emotion {

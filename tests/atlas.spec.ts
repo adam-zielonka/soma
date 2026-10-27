@@ -88,9 +88,7 @@ test("comparison works, persists in URL and handles the same emotion", async ({
   await expect(page).not.toHaveURL(/z=/);
 });
 
-test("all eight maps render with distinct data and no browser errors", async ({
-  page,
-}) => {
+test("all twelve emotions render without browser errors", async ({ page }) => {
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
   await page.goto("./");
@@ -103,6 +101,10 @@ test("all eight maps render with distinct data and no browser errors", async ({
     "Zaskoczenie",
     "Miłość",
     "Duma",
+    "Niepokój",
+    "Wstyd",
+    "Zawiść",
+    "Pogarda",
   ]) {
     await page.getByRole("button", { name, exact: true }).click();
     await expect(
@@ -113,6 +115,76 @@ test("all eight maps render with distinct data and no browser errors", async ({
     ).toBeVisible();
   }
   expect(errors).toEqual([]);
+});
+
+test("examples follow the selected emotion and body area, including unhighlighted areas", async ({
+  page,
+}) => {
+  await page.goto("./?emocja=anger");
+  await page
+    .locator(".region-chips")
+    .getByRole("button", { name: "Ręce", exact: true })
+    .click();
+  await expect(page.locator(".sensation-examples")).toContainText(
+    "Zaciskam dłonie w pięści",
+  );
+  await page.getByRole("button", { name: "Niepokój", exact: true }).click();
+  await page
+    .locator(".region-chips")
+    .getByRole("button", { name: "Brzuch", exact: true })
+    .click();
+  await expect(page.locator(".sensation-examples")).toContainText(
+    "motyle, ścisk",
+  );
+  await page
+    .locator(".region-chips")
+    .getByRole("button", { name: "Gardło", exact: true })
+    .click();
+  await expect(page.locator(".region-info")).toContainText(
+    "bez przypisania do wybranej emocji",
+  );
+  await expect(page.locator(".examples-note")).toContainText(
+    "nie wyniki pomiaru",
+  );
+  await expect(page.locator("#source-3 a")).toHaveCount(3);
+});
+
+test("new emotions support deep links and comparing concrete sensations", async ({
+  page,
+}) => {
+  await page.goto("./?emocja=shame&z=anxiety");
+  await expect(
+    page.getByRole("img", { name: "Mapa ciała: Wstyd" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("combobox", { name: "Druga emocja" }),
+  ).toHaveValue("anxiety");
+  await page
+    .getByText("Przykłady odczuć w tym samym obszarze", { exact: false })
+    .click();
+  await page
+    .getByRole("combobox", { name: "Obszar ciała" })
+    .selectOption("head");
+  await expect(page.locator(".comparison-examples")).toContainText(
+    "gorąco na policzkach",
+  );
+  await expect(page.locator(".comparison-examples")).toContainText(
+    "napięcie twarzy lub szczęki",
+  );
+  await page
+    .getByRole("combobox", { name: "Druga emocja" })
+    .selectOption("contempt");
+  await expect(
+    page.getByRole("img", { name: "Mapa ciała: Pogarda" }),
+  ).toBeVisible();
+  await expect(page.locator(".comparison-examples")).toContainText(
+    "napięcie kącika ust",
+  );
+  await page.getByRole("button", { name: "Zawiść", exact: true }).click();
+  await page.reload();
+  await expect(
+    page.getByRole("button", { name: "Zawiść", exact: true }),
+  ).toHaveAttribute("aria-pressed", "true");
 });
 
 test("scientific references, limitations and reflection remain accessible", async ({

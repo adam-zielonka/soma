@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import BodyMap from "./BodyMap";
 import EmotionFace from "./EmotionFace";
+import RegionExperience from "./RegionExperience";
 import { emotions, findEmotion, regions } from "./emotions";
 import type { Region } from "./emotions";
 
@@ -33,7 +34,7 @@ export default function App() {
   const [emotion, setEmotion] = useState(initial.emotion);
   const [other, setOther] = useState(initial.comparison);
   const [compare, setCompare] = useState(initial.compare);
-  const [region, setRegion] = useState<Region | null>(null);
+  const [region, setRegion] = useState<Region>("chest");
   const [copied, setCopied] = useState(false);
   const [copyError, setCopyError] = useState(false);
   const [reflection, setReflection] = useState(false);
@@ -50,7 +51,7 @@ export default function App() {
       setEmotion(state.emotion);
       setOther(state.comparison);
       setCompare(state.compare);
-      setRegion(null);
+      setRegion("chest");
     }
     window.addEventListener("popstate", restore);
     return () => window.removeEventListener("popstate", restore);
@@ -69,7 +70,6 @@ export default function App() {
       setCopyError(true);
     }
   }
-  const activeRegion = regions.find((r) => r.id === region);
   return (
     <>
       <a className="skip-link" href="#atlas">
@@ -171,7 +171,6 @@ export default function App() {
                     aria-pressed={emotion.id === e.id}
                     onClick={() => {
                       setEmotion(e);
-                      setRegion(null);
                     }}
                   >
                     <EmotionFace id={e.id} />
@@ -358,6 +357,39 @@ export default function App() {
                       </div>
                     </>
                   )}
+                  <details className="comparison-examples">
+                    <summary>
+                      Przykłady odczuć w tym samym obszarze{" "}
+                      <ChevronDown size={14} />
+                    </summary>
+                    <label className="example-area-select">
+                      Obszar ciała
+                      <select
+                        value={region}
+                        onChange={(e) => setRegion(e.target.value as Region)}
+                      >
+                        {regions.map((r) => (
+                          <option key={r.id} value={r.id}>
+                            {r.name}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                    <div aria-live="polite">
+                      <h3>{emotion.name}</h3>
+                      <RegionExperience emotion={emotion} region={region} />
+                      {emotion.id !== other.id && (
+                        <>
+                          <h3>{other.name}</h3>
+                          <RegionExperience emotion={other} region={region} />
+                        </>
+                      )}
+                    </div>
+                    <p className="examples-note">
+                      To propozycje opisu, nie wyniki pomiaru.{" "}
+                      <a href="#source-3">O przykładach i ich źródłach</a>
+                    </p>
+                  </details>
                 </div>
               ) : (
                 <div className="regions-detail">
@@ -367,29 +399,21 @@ export default function App() {
                       <button
                         key={r.id}
                         aria-pressed={region === r.id}
-                        onClick={() => setRegion(region === r.id ? null : r.id)}
+                        onClick={() => setRegion(r.id)}
                       >
                         <i className={emotion.regions[r.id] ?? "none"} />
                         {r.name}
                       </button>
                     ))}
                   </div>
-                  <div className="region-info" aria-live="polite">
-                    {activeRegion ? (
-                      <>
-                        <strong>{activeRegion.name}</strong>
-                        <p>
-                          {emotion.regions[activeRegion.id] === "more"
-                            ? "W tym schemacie: wzrost odczuwanej aktywności."
-                            : emotion.regions[activeRegion.id] === "less"
-                              ? "W tym schemacie: spadek odczuwanej aktywności."
-                              : "Ten obszar nie został wyróżniony w uproszczonym schemacie. Nie oznacza to braku odczuć."}
-                        </p>
-                      </>
-                    ) : (
-                      <p>Dotknij sylwetki lub wybierz obszar powyżej.</p>
-                    )}
+                  <div aria-live="polite">
+                    <RegionExperience emotion={emotion} region={region} />
                   </div>
+                  <p className="examples-note">
+                    To propozycje opisu, nie wyniki pomiaru. Możesz czuć coś
+                    innego albo nic wyraźnego.{" "}
+                    <a href="#source-3">O przykładach i ich źródłach</a>
+                  </p>
                 </div>
               )}
               <a href="#nauka" className="detail-source">
@@ -403,7 +427,7 @@ export default function App() {
               To zaproszenie do uważności, nie wzorzec do spełnienia. Twoje
               odczucia mogą być inne. <a href="#metoda">Jak powstały mapy?</a>
             </p>
-            <span>01 — 08</span>
+            <span>01 — {String(emotions.length).padStart(2, "0")}</span>
           </div>
         </section>
 
@@ -509,6 +533,49 @@ export default function App() {
               </a>
             </article>
           </div>
+          <section
+            id="source-3"
+            className="examples-sources"
+            aria-labelledby="examples-source-title"
+          >
+            <p className="eyebrow">03 / OD MAPY DO WŁASNEGO DOŚWIADCZENIA</p>
+            <h3 id="examples-source-title">Jak rozumieć przykłady odczuć?</h3>
+            <p>
+              Mapa z badania pokazuje lokalizację odczuwanej zmiany, nie określa
+              jej dokładnej postaci. Przykłady w Somie są autorskimi
+              propozycjami słów do autorefleksji. Nie wywnioskowano ich z koloru
+              sylwetki i nie są listą doznań, które muszą towarzyszyć danej
+              emocji.
+            </p>
+            <p>
+              Dodatkowego kontekstu dla opisów napięcia, bicia serca, odczuć w
+              brzuchu i rumieńca dostarczają materiały NHS:
+            </p>
+            <div className="examples-source-links">
+              <a
+                href="https://www.nhs.uk/mental-health/feelings-symptoms-behaviours/feelings-and-symptoms/anger/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Złość: napięcie, zaciskanie dłoni, ciepło{" "}
+                <ArrowUpRight size={14} />
+              </a>
+              <a
+                href="https://www.nhsinform.scot/illnesses-and-conditions/mental-health/mental-health-self-help-guides/anxiety-self-help-guide"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Niepokój: oddech, serce i brzuch <ArrowUpRight size={14} />
+              </a>
+              <a
+                href="https://www.nhs.uk/symptoms/blushing/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Rumieniec przy zakłopotaniu <ArrowUpRight size={14} />
+              </a>
+            </div>
+          </section>
           <details id="metoda" className="method">
             <summary>
               <span>
@@ -535,7 +602,9 @@ export default function App() {
               </p>
               <p>
                 Soma służy edukacji i autorefleksji. Wskazówki do obserwacji są
-                autorskimi pytaniami, nie procedurą terapeutyczną.{" "}
+                autorskimi pytaniami, a przykłady odczuć — propozycjami języka
+                opisu, nie odtworzeniem wyników badania ani procedurą
+                terapeutyczną.{" "}
                 <a
                   href="https://emotion.utu.fi/maps-of-subjective-feelings/"
                   target="_blank"
