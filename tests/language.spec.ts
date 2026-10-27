@@ -13,16 +13,18 @@ test("English browser preferences and a saved manual choice preserve the selecte
   );
   await expect(page.locator("main")).not.toContainText(/[ąćęłńóśźż]/i);
   await page
-    .getByRole("combobox", { name: "Język / Language" })
-    .selectOption("pl");
+    .locator("footer")
+    .getByRole("button", { name: "Polski", exact: true })
+    .click();
   await expect(page.locator("#detail-title")).toHaveText("Smutek");
   await expect(page).toHaveURL(/emocja=sadness/);
   await expect(page).toHaveURL(/obszar=legs/);
   await page.reload();
   await expect(page.locator("html")).toHaveAttribute("lang", "pl");
   await page
-    .getByRole("combobox", { name: "Język / Language" })
-    .selectOption("en");
+    .locator("footer")
+    .getByRole("button", { name: "English", exact: true })
+    .click();
   await page
     .getByRole("button", { name: "Compare emotions", exact: true })
     .click();

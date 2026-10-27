@@ -1936,5 +1936,9 @@ svg {
   }
 }
 
-.language-picker { font: inherit; font-size: .8rem; padding: .45rem; border: 1px solid #73816a; border-radius: 6px; background: #f7f8f2; color: #293e32; max-width: 7rem; }
-.header { flex-wrap: wrap; gap: 1rem; }
+.language-switch { display: inline-flex; align-items: center; gap: .4em; color: #65705b; font-size: 11px; white-space: nowrap; }
+.language-switch button { padding: .25rem 0; border: 0; background: none; color: inherit; font: inherit; cursor: pointer; text-decoration: underline; text-underline-offset: .2em; }
+.language-switch button[aria-pressed="true"] { font-weight: 600; text-decoration: none; }
+.language-switch button:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
+
+.footer { flex-wrap: wrap; }

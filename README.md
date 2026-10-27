@@ -50,6 +50,7 @@ Kod: MIT. Fonty Instrument Serif i DM Sans: SIL Open Font License, zob. `public/
 
 The browser version supports Polish and English. On the first visit it uses the
 first supported language from the browser’s preferences, falling back to English.
-The PL / EN selector saves an explicit choice in this application’s local storage.
+The discreet English / Polski links in the footer save an explicit choice
+in this application’s local storage.
 Switching language preserves the current map, comparison and body region. If storage is blocked, language switching
 still works for the current visit.

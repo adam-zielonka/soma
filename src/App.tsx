@@ -107,15 +107,6 @@ export default function App() {
           </span>
           <span className="brand-caption">{t("ATLAS EMOCJI")}</span>
         </a>
-        <select
-          className="language-picker"
-          aria-label="Język / Language"
-          value={language}
-          onChange={(event) => setLanguage(event.target.value as "pl" | "en")}
-        >
-          <option value="pl">Polski</option>
-          <option value="en">English</option>
-        </select>
         <nav aria-label={t("Nawigacja główna")}>
           <a className="nav-current" href="#atlas">
             {t("Odkrywaj")}{" "}
@@ -679,6 +670,29 @@ export default function App() {
           soma<span className="brand-dot">.</span>
         </a>
         <p>{t("Trochę nauki. Trochę uważności. Bliżej siebie.")}</p>
+        <div
+          className="language-switch"
+          role="group"
+          aria-label="Language / Język"
+        >
+          <button
+            type="button"
+            lang="en"
+            aria-pressed={language === "en"}
+            onClick={() => setLanguage("en")}
+          >
+            English
+          </button>
+          <span aria-hidden="true">/</span>
+          <button
+            type="button"
+            lang="pl"
+            aria-pressed={language === "pl"}
+            onClick={() => setLanguage("pl")}
+          >
+            Polski
+          </button>
+        </div>
         <a
           href="https://github.com/adam-zielonka/soma"
           target="_blank"
