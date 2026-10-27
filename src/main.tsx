@@ -7,6 +7,7 @@ import "@fontsource/instrument-serif/latin-400-italic.css";
 import "@fontsource/instrument-serif/latin-ext-400.css";
 import "@fontsource/instrument-serif/latin-ext-400-italic.css";
 import "./style.css";
+import "./region-explorer.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>

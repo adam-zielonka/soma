@@ -60,6 +60,11 @@ test("explore and comparison pass automated accessibility checks", async ({
     .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
     .analyze();
   expect(compare.violations).toEqual([]);
+  await page.getByRole("button", { name: "Według części ciała" }).click();
+  const body = await new AxeBuilder({ page })
+    .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
+    .analyze();
+  expect(body.violations).toEqual([]);
 });
 
 test("comparison works, persists in URL and handles the same emotion", async ({
@@ -232,5 +237,89 @@ test("layout stays within narrow and wide viewports in both modes", async ({
         () => document.documentElement.scrollWidth <= window.innerWidth,
       ),
     ).toBe(true);
+    await page.getByRole("button", { name: "Według części ciała" }).click();
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= window.innerWidth,
+      ),
+    ).toBe(true);
   }
+});
+
+test("body-first view shows regional emotion examples and separates increases from decreases", async ({
+  page,
+}) => {
+  await page.goto("./");
+  await page.getByRole("button", { name: "Według części ciała" }).click();
+  await page
+    .locator(".body-area-buttons")
+    .getByRole("button", { name: "Brzuch", exact: true })
+    .click();
+  await expect(page.locator(".body-emotion-card")).toHaveCount(6);
+  await expect(
+    page.getByRole("article", { name: "Niepokój", exact: true }),
+  ).toContainText("motyle, ścisk");
+  await expect(
+    page.getByRole("article", { name: "Złość", exact: true }),
+  ).toHaveCount(0);
+  await page
+    .locator(".body-area-buttons")
+    .getByRole("button", { name: "Ręce", exact: true })
+    .click();
+  await expect(
+    page
+      .locator(".body-emotion-group.more")
+      .getByRole("article", { name: "Złość", exact: true }),
+  ).toContainText("Zaciskam dłonie w pięści");
+  await expect(
+    page
+      .locator(".body-emotion-group.less")
+      .getByRole("article", { name: "Smutek", exact: true }),
+  ).toContainText("Ręce wydają się ciężkie");
+  const map = page.getByRole("group", { name: "Wybierz część ciała" });
+  await map.getByRole("button", { name: "Gardło", exact: true }).focus();
+  await page.keyboard.press("Enter");
+  await expect(page.locator(".body-emotion-card")).toHaveCount(1);
+  await expect(
+    page.getByRole("article", { name: "Wstręt", exact: true }),
+  ).toContainText("zaciskanie w gardle");
+  await page
+    .getByText("Pozostałe emocje w atlasie (11)", { exact: true })
+    .click();
+  await expect(page.locator(".body-unmarked")).toContainText("Nie oznacza to");
+});
+
+test("body region persists in shared links and carries over to the full emotion map", async ({
+  page,
+}) => {
+  await page.goto("./?widok=cialo&obszar=legs");
+  await expect(
+    page.getByRole("heading", { name: "Nogi", exact: true }),
+  ).toBeVisible();
+  await page
+    .locator(".body-area-buttons")
+    .getByRole("button", { name: "Ręce", exact: true })
+    .click();
+  await expect(page).toHaveURL(/obszar=arms/);
+  await page.reload();
+  await expect(
+    page
+      .locator(".body-area-buttons")
+      .getByRole("button", { name: "Ręce", exact: true }),
+  ).toHaveAttribute("aria-pressed", "true");
+  await page
+    .getByRole("article", { name: "Złość", exact: true })
+    .getByRole("button", { name: "Zobacz mapę emocji" })
+    .click();
+  await expect(
+    page.getByRole("heading", { name: "Złość", exact: true }),
+  ).toBeVisible();
+  await expect(page.locator(".sensation-examples")).toContainText(
+    "Zaciskam dłonie w pięści",
+  );
+  await expect(page).not.toHaveURL(/widok=/);
+  await page.goto("./?widok=cialo&obszar=unknown");
+  await expect(
+    page.getByRole("heading", { name: "Klatka piersiowa", exact: true }),
+  ).toBeVisible();
 });

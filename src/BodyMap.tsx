@@ -28,7 +28,7 @@ export default function BodyMap({
   onRegion,
   compact = false,
 }: {
-  emotion: Emotion;
+  emotion?: Emotion;
   selected?: Region | null;
   onRegion?: (r: Region) => void;
   compact?: boolean;
@@ -39,18 +39,25 @@ export default function BodyMap({
       className={`body-map ${compact ? "compact" : ""}`}
       viewBox="0 0 240 515"
       role={onRegion ? "group" : "img"}
-      aria-label={`Mapa ciała: ${emotion.name}`}
+      aria-label={
+        emotion ? `Mapa ciała: ${emotion.name}` : "Wybierz część ciała"
+      }
     >
-      <title>{emotion.name} — schemat odczuwanej aktywności</title>
+      <title>
+        {emotion
+          ? `${emotion.name} — schemat odczuwanej aktywności`
+          : "Wybierz obszar na sylwetce"}
+      </title>
       <desc>
-        {regions
-          .filter((r) => emotion.regions[r.id])
-          .map(
-            (r) =>
-              `${r.name}: ${emotion.regions[r.id] === "more" ? "wzrost" : "spadek"} odczuwanej aktywności`,
-          )
-          .join(". ")}
-        . Schemat poglądowy, bez skali liczbowej.
+        {emotion
+          ? regions
+              .filter((r) => emotion.regions[r.id])
+              .map(
+                (r) =>
+                  `${r.name}: ${emotion.regions[r.id] === "more" ? "wzrost" : "spadek"} odczuwanej aktywności`,
+              )
+              .join(". ") + ". Schemat poglądowy, bez skali liczbowej."
+          : "Sześć wybieranych obszarów ciała. Jasne zaznaczenie wskazuje wybrany obszar, nie aktywność emocji."}
       </desc>
       <defs>
         <clipPath id={`${uid}-clip`}>
@@ -76,25 +83,47 @@ export default function BodyMap({
         </linearGradient>
       </defs>
       <path d={body} fill={`url(#${uid}-base)`} />
-      <g clipPath={`url(#${uid}-clip)`} className="heat-layer" key={emotion.id}>
-        {regions.map(
-          (r) =>
-            emotion.regions[r.id] && (
-              <g key={r.id} filter={`url(#${uid}-blur)`}>
-                {positions[r.id].map((p, i) => (
-                  <ellipse
-                    key={i}
-                    cx={p.x}
-                    cy={p.y}
-                    rx={p.rx * 1.28}
-                    ry={p.ry * 1.15}
-                    fill={`url(#${uid}-${emotion.regions[r.id] === "less" ? "cool" : "warm"})`}
-                  />
-                ))}
-              </g>
-            ),
-        )}
-      </g>
+      {emotion ? (
+        <g
+          clipPath={`url(#${uid}-clip)`}
+          className="heat-layer"
+          key={emotion.id}
+        >
+          {regions.map(
+            (r) =>
+              emotion.regions[r.id] && (
+                <g key={r.id} filter={`url(#${uid}-blur)`}>
+                  {positions[r.id].map((p, i) => (
+                    <ellipse
+                      key={i}
+                      cx={p.x}
+                      cy={p.y}
+                      rx={p.rx * 1.28}
+                      ry={p.ry * 1.15}
+                      fill={`url(#${uid}-${emotion.regions[r.id] === "less" ? "cool" : "warm"})`}
+                    />
+                  ))}
+                </g>
+              ),
+          )}
+        </g>
+      ) : (
+        selected && (
+          <g clipPath={`url(#${uid}-clip)`} aria-hidden="true">
+            {positions[selected].map((p, i) => (
+              <ellipse
+                key={i}
+                cx={p.x}
+                cy={p.y}
+                rx={p.rx}
+                ry={p.ry}
+                fill="#dce7b1"
+                fillOpacity=".55"
+              />
+            ))}
+          </g>
+        )
+      )}
       <path d={body} fill="none" stroke="#243e33" strokeOpacity=".14" />
       <g
         fill="none"

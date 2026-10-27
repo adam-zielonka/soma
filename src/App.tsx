@@ -12,20 +12,29 @@ import {
   Info,
   Layers2,
   MoveUpRight,
+  PersonStanding,
   Sparkles,
 } from "lucide-react";
 import BodyMap from "./BodyMap";
 import EmotionFace from "./EmotionFace";
 import RegionExperience from "./RegionExperience";
+import RegionExplorer from "./RegionExplorer";
 import { emotions, findEmotion, regions } from "./emotions";
-import type { Region } from "./emotions";
+import type { Emotion, Region } from "./emotions";
+
+type AtlasMode = "explore" | "compare" | "body";
 
 function readLocation() {
   const p = new URLSearchParams(window.location.search);
   return {
     emotion: findEmotion(p.get("emocja")),
     comparison: findEmotion(p.get("z") ?? "sadness"),
-    compare: p.has("z"),
+    mode: (p.get("widok") === "cialo"
+      ? "body"
+      : p.has("z")
+        ? "compare"
+        : "explore") as AtlasMode,
+    region: regions.find((r) => r.id === p.get("obszar"))?.id ?? "chest",
   };
 }
 
@@ -33,8 +42,9 @@ export default function App() {
   const [initial] = useState(readLocation);
   const [emotion, setEmotion] = useState(initial.emotion);
   const [other, setOther] = useState(initial.comparison);
-  const [compare, setCompare] = useState(initial.compare);
-  const [region, setRegion] = useState<Region>("chest");
+  const [mode, setMode] = useState<AtlasMode>(initial.mode);
+  const compare = mode === "compare";
+  const [region, setRegion] = useState<Region>(initial.region);
   const [copied, setCopied] = useState(false);
   const [copyError, setCopyError] = useState(false);
   const [reflection, setReflection] = useState(false);
@@ -43,15 +53,18 @@ export default function App() {
     url.searchParams.set("emocja", emotion.id);
     if (compare) url.searchParams.set("z", other.id);
     else url.searchParams.delete("z");
+    if (mode === "body") url.searchParams.set("widok", "cialo");
+    else url.searchParams.delete("widok");
+    url.searchParams.set("obszar", region);
     window.history.replaceState(null, "", url);
-  }, [emotion, compare, other]);
+  }, [emotion, compare, other, mode, region]);
   useEffect(() => {
     function restore() {
       const state = readLocation();
       setEmotion(state.emotion);
       setOther(state.comparison);
-      setCompare(state.compare);
-      setRegion("chest");
+      setMode(state.mode);
+      setRegion(state.region);
     }
     window.addEventListener("popstate", restore);
     return () => window.removeEventListener("popstate", restore);
@@ -69,6 +82,11 @@ export default function App() {
     } catch {
       setCopyError(true);
     }
+  }
+  function showEmotion(selected: Emotion) {
+    setEmotion(selected);
+    setMode("explore");
+    document.getElementById("atlas")?.scrollIntoView({ block: "start" });
   }
   return (
     <>
@@ -137,290 +155,315 @@ export default function App() {
         >
           <div className="atlas-top">
             <div className="mode-switch" aria-label="Tryb mapy">
-              <button aria-pressed={!compare} onClick={() => setCompare(false)}>
+              <button
+                aria-pressed={mode === "explore"}
+                onClick={() => setMode("explore")}
+              >
                 <Sparkles size={15} /> Odkrywaj
               </button>
-              <button aria-pressed={compare} onClick={() => setCompare(true)}>
+              <button aria-pressed={compare} onClick={() => setMode("compare")}>
                 <Layers2 size={15} /> Porównaj emocje
+              </button>
+              <button
+                aria-pressed={mode === "body"}
+                onClick={() => setMode("body")}
+              >
+                <PersonStanding size={16} /> Według części ciała
               </button>
             </div>
             <span className="atlas-note">
               <span /> Schematy oparte na badaniach
             </span>
           </div>
-          <div className={`explorer ${compare ? "is-comparing" : ""}`}>
-            <aside className="emotion-picker" aria-labelledby="picker-title">
-              <p className="step-label">01 / WYBIERZ EMOCJĘ</p>
-              <h2 id="picker-title">Co chcesz poznać?</h2>
-              <p className="muted picker-intro">
-                Każda emocja opowiada
-                <br />
-                inną historię w ciele.
-              </p>
-              <div className="emotion-grid">
-                {emotions.map((e) => (
-                  <button
-                    key={e.id}
-                    className={`emotion-button ${emotion.id === e.id ? "active" : ""}`}
-                    style={
-                      {
-                        "--emotion-color": e.color,
-                        "--emotion-light": e.light,
-                      } as React.CSSProperties
-                    }
-                    aria-pressed={emotion.id === e.id}
-                    onClick={() => {
-                      setEmotion(e);
-                    }}
-                  >
-                    <EmotionFace id={e.id} />
-                    <span>{e.name}</span>
-                    {emotion.id === e.id && <span className="selection-dot" />}
-                  </button>
-                ))}
-              </div>
-              <div className="picker-foot">
-                <Info size={15} />
-                <p>
-                  Nie ma dobrych ani złych emocji.
+          {mode === "body" ? (
+            <RegionExplorer
+              region={region}
+              onRegion={setRegion}
+              onEmotion={showEmotion}
+              onCopy={copyLink}
+              copied={copied}
+              copyError={copyError}
+            />
+          ) : (
+            <div className={`explorer ${compare ? "is-comparing" : ""}`}>
+              <aside className="emotion-picker" aria-labelledby="picker-title">
+                <p className="step-label">01 / WYBIERZ EMOCJĘ</p>
+                <h2 id="picker-title">Co chcesz poznać?</h2>
+                <p className="muted picker-intro">
+                  Każda emocja opowiada
                   <br />
-                  Każda jest częścią doświadczenia.
+                  inną historię w ciele.
                 </p>
-              </div>
-            </aside>
-
-            <div className="map-panel">
-              <div className="map-heading">
-                <span className="step-label">02 / ZOBACZ W CIELE</span>
-                <span className="map-view">WIDOK Z PRZODU</span>
-              </div>
-              {compare ? (
-                <div className="comparison-maps">
-                  <div className="comparison-item">
-                    <span className="map-name">{emotion.name}</span>
-                    <BodyMap emotion={emotion} compact />
-                  </div>
-                  <span className="versus">&</span>
-                  <div className="comparison-item">
-                    <label className="select-label">
-                      <span className="sr-only">Druga emocja</span>
-                      <select
-                        aria-label="Druga emocja"
-                        value={other.id}
-                        onChange={(e) => setOther(findEmotion(e.target.value))}
-                      >
-                        {emotions.map((e) => (
-                          <option key={e.id} value={e.id}>
-                            {e.name}
-                          </option>
-                        ))}
-                      </select>
-                      <ChevronDown size={14} />
-                    </label>
-                    <BodyMap emotion={other} compact />
-                  </div>
-                </div>
-              ) : (
-                <div className="single-map">
-                  <div className="map-side-label">
-                    <span>
-                      Twoje ciało,
-                      <br />
-                      wiele odczuć.
-                    </span>
-                    <span className="fine-line" />
-                  </div>
-                  <BodyMap
-                    emotion={emotion}
-                    selected={region}
-                    onRegion={setRegion}
-                  />
-                  <div className="map-side-label right">
-                    <span className="fine-line" />
-                    <span>
-                      Kliknij obszar,
-                      <br />
-                      aby go odkryć.
-                    </span>
-                    <MoveUpRight size={17} />
-                  </div>
-                </div>
-              )}
-              <div className="legend" aria-label="Legenda mapy">
-                <span>
-                  <i className="warm" /> Wzrost odczuć
-                </span>
-                <span>
-                  <i className="cool" /> Spadek odczuć
-                </span>
-                <span>
-                  <i className="neutral" /> Bez wyróżnienia
-                </span>
-              </div>
-              <p className="map-caption">
-                Odczuwana aktywność · schemat poglądowy, bez skali liczbowej
-              </p>
-            </div>
-
-            <aside className="emotion-detail" aria-labelledby="detail-title">
-              <div className="detail-top">
-                <span className="step-label">
-                  {compare
-                    ? "03 / ZAUWAŻ RÓŻNICE"
-                    : "03 / PRZYJRZYJ SIĘ BLIŻEJ"}
-                </span>
-                <button
-                  className="icon-button"
-                  onClick={copyLink}
-                  aria-label="Kopiuj link do tej mapy"
-                  title="Kopiuj link"
-                >
-                  {copied ? <Check size={17} /> : <Copy size={17} />}
-                </button>
-              </div>
-              <div className="copy-status" role="status">
-                {copied
-                  ? "Link skopiowany"
-                  : copyError
-                    ? "Skopiuj adres z paska przeglądarki."
-                    : ""}
-              </div>
-              <div
-                className="detail-face"
-                style={{ background: emotion.light, color: emotion.color }}
-              >
-                <EmotionFace id={emotion.id} size={34} />
-              </div>
-              <div aria-live="polite" aria-atomic="true">
-                <p className="english-label">{emotion.english}</p>
-                <h2 id="detail-title">
-                  {emotion.name}
-                  {compare && (
-                    <span className="comparison-title">
-                      {" "}
-                      i {other.name.toLocaleLowerCase("pl")}
-                    </span>
-                  )}
-                </h2>
-                <p className="detail-word">{emotion.word}</p>
-                <p className="detail-description">
-                  {emotion.description.replace(" [1]", "")}{" "}
-                  <a
-                    className="citation"
-                    href="#source-1"
-                    aria-label="Źródło: Bodily maps of emotions"
-                  >
-                    [1]
-                  </a>
-                </p>
-              </div>
-              {compare ? (
-                <div className="comparison-details">
-                  <p className="small-label">JAK CZYTAĆ PORÓWNANIE</p>
-                  {emotion.id === other.id ? (
-                    <p className="muted">
-                      To ta sama emocja. Wybierz inną nad prawą sylwetką, aby
-                      zestawić dwa schematy.
-                    </p>
-                  ) : (
-                    <>
-                      <p className="comparison-description">
-                        {other.description.replace(" [1]", "")}{" "}
-                        <a className="citation" href="#source-1">
-                          [1]
-                        </a>
-                      </p>
-                      <div className="region-comparison">
-                        <div className="comparison-row table-head">
-                          <span>Obszar</span>
-                          <span>{emotion.name}</span>
-                          <span>{other.name}</span>
-                        </div>
-                        {regions.map((r) => (
-                          <div className="comparison-row" key={r.id}>
-                            <span>{r.name}</span>
-                            {[emotion, other].map((e, i) => (
-                              <span
-                                key={i}
-                                className={`sensation ${e.regions[r.id] ?? "none"}`}
-                                aria-label={`${r.name}, ${e.name}: ${e.regions[r.id] === "more" ? "wzrost odczuć" : e.regions[r.id] === "less" ? "spadek odczuć" : "bez wyróżnienia"}`}
-                              >
-                                {e.regions[r.id] === "more"
-                                  ? "↑"
-                                  : e.regions[r.id] === "less"
-                                    ? "↓"
-                                    : "—"}
-                              </span>
-                            ))}
-                          </div>
-                        ))}
-                      </div>
-                    </>
-                  )}
-                  <details className="comparison-examples">
-                    <summary>
-                      Przykłady odczuć w tym samym obszarze{" "}
-                      <ChevronDown size={14} />
-                    </summary>
-                    <label className="example-area-select">
-                      Obszar ciała
-                      <select
-                        value={region}
-                        onChange={(e) => setRegion(e.target.value as Region)}
-                      >
-                        {regions.map((r) => (
-                          <option key={r.id} value={r.id}>
-                            {r.name}
-                          </option>
-                        ))}
-                      </select>
-                    </label>
-                    <div aria-live="polite">
-                      <h3>{emotion.name}</h3>
-                      <RegionExperience emotion={emotion} region={region} />
-                      {emotion.id !== other.id && (
-                        <>
-                          <h3>{other.name}</h3>
-                          <RegionExperience emotion={other} region={region} />
-                        </>
+                <div className="emotion-grid">
+                  {emotions.map((e) => (
+                    <button
+                      key={e.id}
+                      className={`emotion-button ${emotion.id === e.id ? "active" : ""}`}
+                      style={
+                        {
+                          "--emotion-color": e.color,
+                          "--emotion-light": e.light,
+                        } as React.CSSProperties
+                      }
+                      aria-pressed={emotion.id === e.id}
+                      onClick={() => {
+                        setEmotion(e);
+                      }}
+                    >
+                      <EmotionFace id={e.id} />
+                      <span>{e.name}</span>
+                      {emotion.id === e.id && (
+                        <span className="selection-dot" />
                       )}
-                    </div>
-                    <p className="examples-note">
-                      To propozycje opisu, nie wyniki pomiaru.{" "}
-                      <a href="#source-3">O przykładach i ich źródłach</a>
-                    </p>
-                  </details>
+                    </button>
+                  ))}
                 </div>
-              ) : (
-                <div className="regions-detail">
-                  <p className="small-label">ODKRYWAJ OBSZARY CIAŁA</p>
-                  <div className="region-chips">
-                    {regions.map((r) => (
-                      <button
-                        key={r.id}
-                        aria-pressed={region === r.id}
-                        onClick={() => setRegion(r.id)}
-                      >
-                        <i className={emotion.regions[r.id] ?? "none"} />
-                        {r.name}
-                      </button>
-                    ))}
-                  </div>
-                  <div aria-live="polite">
-                    <RegionExperience emotion={emotion} region={region} />
-                  </div>
-                  <p className="examples-note">
-                    To propozycje opisu, nie wyniki pomiaru. Możesz czuć coś
-                    innego albo nic wyraźnego.{" "}
-                    <a href="#source-3">O przykładach i ich źródłach</a>
+                <div className="picker-foot">
+                  <Info size={15} />
+                  <p>
+                    Nie ma dobrych ani złych emocji.
+                    <br />
+                    Każda jest częścią doświadczenia.
                   </p>
                 </div>
-              )}
-              <a href="#nauka" className="detail-source">
-                <BookOpen size={15} /> Skąd to wiemy? <ArrowUpRight size={15} />
-              </a>
-            </aside>
-          </div>
+              </aside>
+
+              <div className="map-panel">
+                <div className="map-heading">
+                  <span className="step-label">02 / ZOBACZ W CIELE</span>
+                  <span className="map-view">WIDOK Z PRZODU</span>
+                </div>
+                {compare ? (
+                  <div className="comparison-maps">
+                    <div className="comparison-item">
+                      <span className="map-name">{emotion.name}</span>
+                      <BodyMap emotion={emotion} compact />
+                    </div>
+                    <span className="versus">&</span>
+                    <div className="comparison-item">
+                      <label className="select-label">
+                        <span className="sr-only">Druga emocja</span>
+                        <select
+                          aria-label="Druga emocja"
+                          value={other.id}
+                          onChange={(e) =>
+                            setOther(findEmotion(e.target.value))
+                          }
+                        >
+                          {emotions.map((e) => (
+                            <option key={e.id} value={e.id}>
+                              {e.name}
+                            </option>
+                          ))}
+                        </select>
+                        <ChevronDown size={14} />
+                      </label>
+                      <BodyMap emotion={other} compact />
+                    </div>
+                  </div>
+                ) : (
+                  <div className="single-map">
+                    <div className="map-side-label">
+                      <span>
+                        Twoje ciało,
+                        <br />
+                        wiele odczuć.
+                      </span>
+                      <span className="fine-line" />
+                    </div>
+                    <BodyMap
+                      emotion={emotion}
+                      selected={region}
+                      onRegion={setRegion}
+                    />
+                    <div className="map-side-label right">
+                      <span className="fine-line" />
+                      <span>
+                        Kliknij obszar,
+                        <br />
+                        aby go odkryć.
+                      </span>
+                      <MoveUpRight size={17} />
+                    </div>
+                  </div>
+                )}
+                <div className="legend" aria-label="Legenda mapy">
+                  <span>
+                    <i className="warm" /> Wzrost odczuć
+                  </span>
+                  <span>
+                    <i className="cool" /> Spadek odczuć
+                  </span>
+                  <span>
+                    <i className="neutral" /> Bez wyróżnienia
+                  </span>
+                </div>
+                <p className="map-caption">
+                  Odczuwana aktywność · schemat poglądowy, bez skali liczbowej
+                </p>
+              </div>
+
+              <aside className="emotion-detail" aria-labelledby="detail-title">
+                <div className="detail-top">
+                  <span className="step-label">
+                    {compare
+                      ? "03 / ZAUWAŻ RÓŻNICE"
+                      : "03 / PRZYJRZYJ SIĘ BLIŻEJ"}
+                  </span>
+                  <button
+                    className="icon-button"
+                    onClick={copyLink}
+                    aria-label="Kopiuj link do tej mapy"
+                    title="Kopiuj link"
+                  >
+                    {copied ? <Check size={17} /> : <Copy size={17} />}
+                  </button>
+                </div>
+                <div className="copy-status" role="status">
+                  {copied
+                    ? "Link skopiowany"
+                    : copyError
+                      ? "Skopiuj adres z paska przeglądarki."
+                      : ""}
+                </div>
+                <div
+                  className="detail-face"
+                  style={{ background: emotion.light, color: emotion.color }}
+                >
+                  <EmotionFace id={emotion.id} size={34} />
+                </div>
+                <div aria-live="polite" aria-atomic="true">
+                  <p className="english-label">{emotion.english}</p>
+                  <h2 id="detail-title">
+                    {emotion.name}
+                    {compare && (
+                      <span className="comparison-title">
+                        {" "}
+                        i {other.name.toLocaleLowerCase("pl")}
+                      </span>
+                    )}
+                  </h2>
+                  <p className="detail-word">{emotion.word}</p>
+                  <p className="detail-description">
+                    {emotion.description.replace(" [1]", "")}{" "}
+                    <a
+                      className="citation"
+                      href="#source-1"
+                      aria-label="Źródło: Bodily maps of emotions"
+                    >
+                      [1]
+                    </a>
+                  </p>
+                </div>
+                {compare ? (
+                  <div className="comparison-details">
+                    <p className="small-label">JAK CZYTAĆ PORÓWNANIE</p>
+                    {emotion.id === other.id ? (
+                      <p className="muted">
+                        To ta sama emocja. Wybierz inną nad prawą sylwetką, aby
+                        zestawić dwa schematy.
+                      </p>
+                    ) : (
+                      <>
+                        <p className="comparison-description">
+                          {other.description.replace(" [1]", "")}{" "}
+                          <a className="citation" href="#source-1">
+                            [1]
+                          </a>
+                        </p>
+                        <div className="region-comparison">
+                          <div className="comparison-row table-head">
+                            <span>Obszar</span>
+                            <span>{emotion.name}</span>
+                            <span>{other.name}</span>
+                          </div>
+                          {regions.map((r) => (
+                            <div className="comparison-row" key={r.id}>
+                              <span>{r.name}</span>
+                              {[emotion, other].map((e, i) => (
+                                <span
+                                  key={i}
+                                  className={`sensation ${e.regions[r.id] ?? "none"}`}
+                                  aria-label={`${r.name}, ${e.name}: ${e.regions[r.id] === "more" ? "wzrost odczuć" : e.regions[r.id] === "less" ? "spadek odczuć" : "bez wyróżnienia"}`}
+                                >
+                                  {e.regions[r.id] === "more"
+                                    ? "↑"
+                                    : e.regions[r.id] === "less"
+                                      ? "↓"
+                                      : "—"}
+                                </span>
+                              ))}
+                            </div>
+                          ))}
+                        </div>
+                      </>
+                    )}
+                    <details className="comparison-examples">
+                      <summary>
+                        Przykłady odczuć w tym samym obszarze{" "}
+                        <ChevronDown size={14} />
+                      </summary>
+                      <label className="example-area-select">
+                        Obszar ciała
+                        <select
+                          value={region}
+                          onChange={(e) => setRegion(e.target.value as Region)}
+                        >
+                          {regions.map((r) => (
+                            <option key={r.id} value={r.id}>
+                              {r.name}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                      <div aria-live="polite">
+                        <h3>{emotion.name}</h3>
+                        <RegionExperience emotion={emotion} region={region} />
+                        {emotion.id !== other.id && (
+                          <>
+                            <h3>{other.name}</h3>
+                            <RegionExperience emotion={other} region={region} />
+                          </>
+                        )}
+                      </div>
+                      <p className="examples-note">
+                        To propozycje opisu, nie wyniki pomiaru.{" "}
+                        <a href="#source-3">O przykładach i ich źródłach</a>
+                      </p>
+                    </details>
+                  </div>
+                ) : (
+                  <div className="regions-detail">
+                    <p className="small-label">ODKRYWAJ OBSZARY CIAŁA</p>
+                    <div className="region-chips">
+                      {regions.map((r) => (
+                        <button
+                          key={r.id}
+                          aria-pressed={region === r.id}
+                          onClick={() => setRegion(r.id)}
+                        >
+                          <i className={emotion.regions[r.id] ?? "none"} />
+                          {r.name}
+                        </button>
+                      ))}
+                    </div>
+                    <div aria-live="polite">
+                      <RegionExperience emotion={emotion} region={region} />
+                    </div>
+                    <p className="examples-note">
+                      To propozycje opisu, nie wyniki pomiaru. Możesz czuć coś
+                      innego albo nic wyraźnego.{" "}
+                      <a href="#source-3">O przykładach i ich źródłach</a>
+                    </p>
+                  </div>
+                )}
+                <a href="#nauka" className="detail-source">
+                  <BookOpen size={15} /> Skąd to wiemy?{" "}
+                  <ArrowUpRight size={15} />
+                </a>
+              </aside>
+            </div>
+          )}
           <div className="atlas-bottom">
             <Info size={16} />
             <p>

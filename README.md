@@ -5,6 +5,7 @@ Polska aplikacja edukacyjna o cielesnym wymiarze emocji.
 **[Otwórz aplikację](https://adam-zielonka.github.io/soma/)**
 
 - Dwanaście emocji i interaktywna sylwetka z sześcioma obszarami ciała.
+- Widok „Według części ciała”: wybór obszaru, lista powiązanych emocji z podziałem na wzrost i spadek odczuć oraz przykładowe opisy. Link zachowuje widok i obszar.
 - Przykłady odczuć dla konkretnych obszarów: np. ciepło twarzy, napięcie dłoni lub ciężkość nóg.
 - Porównanie dwóch map, tekstowe zestawienie zmian oraz przykłady dla tego samego obszaru.
 - Linki zachowujące wybraną emocję i tryb porównania.
