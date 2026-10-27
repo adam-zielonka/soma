@@ -5,7 +5,7 @@ Workspace: `/root/projekty/soma`. Public repository: `adam-zielonka/soma`.
 ## Development
 
 - React, TypeScript, Vite, pnpm. `pnpm dev`, `pnpm check`.
-- Polish interface. Preserve keyboard support, textual map equivalents, reduced motion and mobile layouts.
+- Polish and English interfaces. Saved manual language choice takes priority over the browser’s first supported language; unsupported preferences fall back to English. Keep translations complete, including body-region examples, map descriptions and accessible labels. Preserve keyboard support, textual map equivalents, reduced motion and mobile layouts.
 - Body silhouettes and heatmaps are original SVG illustrations. No image-generation step is needed.
 - Font files are bundled locally; avoid external runtime services and collecting personal health information.
 

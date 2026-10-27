@@ -5,9 +5,13 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
-  workers: process.env.CI ? 2 : 4,
+  workers: 2,
   reporter: "list",
-  use: { baseURL: "http://127.0.0.1:4173/soma/", trace: "retain-on-failure" },
+  use: {
+    locale: "pl-PL",
+    baseURL: "http://127.0.0.1:4173/soma/",
+    trace: "retain-on-failure",
+  },
   projects: [
     {
       name: "desktop",

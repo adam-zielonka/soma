@@ -1935,3 +1935,6 @@ svg {
     transform: none;
   }
 }
+
+.language-picker { font: inherit; font-size: .8rem; padding: .45rem; border: 1px solid #73816a; border-radius: 6px; background: #f7f8f2; color: #293e32; max-width: 7rem; }
+.header { flex-wrap: wrap; gap: 1rem; }

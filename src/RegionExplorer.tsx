@@ -1,3 +1,4 @@
+import { t } from "./i18n";
 import { ArrowRight, ArrowUpRight, Check, Copy, Info } from "lucide-react";
 import BodyMap from "./BodyMap";
 import EmotionFace from "./EmotionFace";
@@ -26,39 +27,40 @@ export default function RegionExplorer({
   const groups: { id: Sensation; title: string; description: string }[] = [
     {
       id: "more",
-      title: "Wzrost odczuwanej aktywności",
-      description: "W schemacie wyróżniono więcej odczuć w tym obszarze.",
+      title: t("Wzrost odczuwanej aktywności"),
+      description: t("W schemacie wyróżniono więcej odczuć w tym obszarze."),
     },
     {
       id: "less",
-      title: "Spadek odczuwanej aktywności",
-      description: "W schemacie wyróżniono mniej odczuć w tym obszarze.",
+      title: t("Spadek odczuwanej aktywności"),
+      description: t("W schemacie wyróżniono mniej odczuć w tym obszarze."),
     },
   ];
   return (
     <div className="region-explorer">
       <aside className="body-area-picker" aria-labelledby="body-picker-title">
-        <p className="step-label">01 / WYBIERZ CZĘŚĆ CIAŁA</p>
-        <h2 id="body-picker-title">Zacznij od ciała.</h2>
+        <p className="step-label">{t("01 / WYBIERZ CZĘŚĆ CIAŁA")}</p>
+        <h2 id="body-picker-title">{t("Zacznij od ciała.")}</h2>
         <p className="body-picker-intro">
-          Dotknij sylwetki lub wybierz obszar. Zobacz, przy których emocjach
-          pojawia się na mapach.
+          {t(
+            "Dotknij sylwetki lub wybierz obszar. Zobacz, przy których emocjach pojawia się na mapach.",
+          )}{" "}
         </p>
-        <div className="body-area-buttons" aria-label="Części ciała">
+        <div className="body-area-buttons" aria-label={t("Części ciała")}>
           {regions.map((r) => (
             <button
               key={r.id}
               aria-pressed={region === r.id}
               onClick={() => onRegion(r.id)}
             >
-              {r.name}
+              {t(r.name)}
               <ArrowRight size={13} />
             </button>
           ))}
         </div>
         <BodyMap selected={region} onRegion={onRegion} compact />
         <p className="body-picker-caption">
-          Jasny obszar oznacza wybór części ciała.
+          {t("Jasny obszar oznacza wybór części ciała.")}{" "}
         </p>
       </aside>
       <section
@@ -67,35 +69,37 @@ export default function RegionExplorer({
       >
         <div className="body-results-heading">
           <div>
-            <p className="step-label">02 / ODKRYWAJ EMOCJE I ODCZUCIA</p>
-            <h2 id="body-results-title">{selectedRegion.name}</h2>
+            <p className="step-label">{t("02 / ODKRYWAJ EMOCJE I ODCZUCIA")}</p>
+            <h2 id="body-results-title">{t(selectedRegion.name)}</h2>
           </div>
           <button
             className="icon-button"
             onClick={onCopy}
-            aria-label="Kopiuj link do tej części ciała"
-            title="Kopiuj link"
+            aria-label={t("Kopiuj link do tej części ciała")}
+            title={t("Kopiuj link")}
           >
             {copied ? <Check size={17} /> : <Copy size={17} />}
           </button>
         </div>
         <p className="body-result-count" aria-live="polite">
-          {matching.length} z {emotions.length} emocji w atlasie wyróżnia ten
-          obszar.
+          {t("{count} z {total} emocji w atlasie wyróżnia ten obszar.", {
+            count: matching.length,
+            total: emotions.length,
+          })}
         </p>
         <p className="body-results-intro">
-          Jedno miejsce może wiązać się z różnymi emocjami. Poniżej znajdziesz
-          wzorce z uproszczonych map i przykłady słów do opisania własnych
-          odczuć.{" "}
+          {t(
+            "Jedno miejsce może wiązać się z różnymi emocjami. Poniżej znajdziesz wzorce z uproszczonych map i przykłady słów do opisania własnych odczuć.",
+          )}{" "}
           <a className="citation" href="#source-1">
             [1]
           </a>
         </p>
         <div className="body-copy-status" role="status">
           {copied
-            ? "Link skopiowany"
+            ? t("Link skopiowany")
             : copyError
-              ? "Skopiuj adres z paska przeglądarki."
+              ? t("Skopiuj adres z paska przeglądarki.")
               : ""}
         </div>
         <div className="body-emotion-groups" aria-live="polite">
@@ -131,16 +135,18 @@ export default function RegionExplorer({
                         >
                           <EmotionFace id={e.id} size={27} />
                         </span>
-                        <h4 id={`body-emotion-${e.id}`}>{e.name}</h4>
+                        <h4 id={`body-emotion-${e.id}`}>{t(e.name)}</h4>
                       </div>
-                      <p className="body-example-label">Przykładowe odczucia</p>
+                      <p className="body-example-label">
+                        {t("Przykładowe odczucia")}
+                      </p>
                       <ul>
                         {getSensationExamples(e.id, region).map((example) => (
-                          <li key={example}>{example}</li>
+                          <li key={t(example)}>{t(example)}</li>
                         ))}
                       </ul>
                       <button onClick={() => onEmotion(e)}>
-                        Zobacz mapę emocji <ArrowUpRight size={14} />
+                        {t("Zobacz mapę emocji")} <ArrowUpRight size={14} />
                       </button>
                     </article>
                   ))}
@@ -152,19 +158,24 @@ export default function RegionExplorer({
         <div className="body-results-note">
           <Info size={16} />
           <p>
-            Miejsce odczucia nie pozwala rozpoznać emocji. Przykłady są
-            propozycjami opisu, nie wynikami pomiaru ani listą doznań, które
-            musisz odczuwać.{" "}
-            <a href="#source-3">O przykładach i ich źródłach</a>
+            {t(
+              "Miejsce odczucia nie pozwala rozpoznać emocji. Przykłady są propozycjami opisu, nie wynikami pomiaru ani listą doznań, które musisz odczuwać.",
+            )}{" "}
+            <a href="#source-3">{t("O przykładach i ich źródłach")}</a>
           </p>
         </div>
         {remaining.length > 0 && (
           <details className="body-unmarked">
-            <summary>Pozostałe emocje w atlasie ({remaining.length})</summary>
+            <summary>
+              {t("Pozostałe emocje w atlasie ({count})", {
+                count: remaining.length,
+              })}
+            </summary>
             <p>
-              {remaining.map((e) => e.name).join(", ")}. W ich uproszczonych
-              schematach nie wyróżniono tego obszaru. Nie oznacza to, że nie
-              można w nim niczego odczuwać.
+              {remaining.map((e) => t(e.name)).join(", ")}
+              {t(
+                ". W ich uproszczonych schematach nie wyróżniono tego obszaru. Nie oznacza to, że nie można w nim niczego odczuwać.",
+              )}{" "}
             </p>
           </details>
         )}

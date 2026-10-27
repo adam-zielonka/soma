@@ -1,3 +1,4 @@
+import { t } from "./i18n";
 import { useId } from "react";
 import { regions } from "./emotions";
 import type { Emotion, Region } from "./emotions";
@@ -40,24 +41,36 @@ export default function BodyMap({
       viewBox="0 0 240 515"
       role={onRegion ? "group" : "img"}
       aria-label={
-        emotion ? `Mapa ciała: ${emotion.name}` : "Wybierz część ciała"
+        emotion
+          ? t("Mapa ciała: {emotion}", { emotion: t(emotion.name) })
+          : t("Wybierz część ciała")
       }
     >
       <title>
         {emotion
-          ? `${emotion.name} — schemat odczuwanej aktywności`
-          : "Wybierz obszar na sylwetce"}
+          ? t("{emotion} — schemat odczuwanej aktywności", {
+              emotion: t(emotion.name),
+            })
+          : t("Wybierz obszar na sylwetce")}
       </title>
       <desc>
         {emotion
           ? regions
               .filter((r) => emotion.regions[r.id])
-              .map(
-                (r) =>
-                  `${r.name}: ${emotion.regions[r.id] === "more" ? "wzrost" : "spadek"} odczuwanej aktywności`,
+              .map((r) =>
+                t("{region}: {sensation} odczuwanej aktywności", {
+                  region: t(r.name),
+                  sensation: t(
+                    emotion.regions[r.id] === "more"
+                      ? t("wzrost")
+                      : t("spadek"),
+                  ),
+                }),
               )
-              .join(". ") + ". Schemat poglądowy, bez skali liczbowej."
-          : "Sześć wybieranych obszarów ciała. Jasne zaznaczenie wskazuje wybrany obszar, nie aktywność emocji."}
+              .join(". ") + t(". Schemat poglądowy, bez skali liczbowej.")
+          : t(
+              "Sześć wybieranych obszarów ciała. Jasne zaznaczenie wskazuje wybrany obszar, nie aktywność emocji.",
+            )}
       </desc>
       <defs>
         <clipPath id={`${uid}-clip`}>
@@ -140,7 +153,7 @@ export default function BodyMap({
             key={r.id}
             role="button"
             tabIndex={0}
-            aria-label={r.name}
+            aria-label={t(r.name)}
             aria-pressed={selected === r.id}
             className={`body-region ${selected === r.id ? "selected" : ""}`}
             onClick={() => onRegion(r.id)}
@@ -151,7 +164,9 @@ export default function BodyMap({
               }
             }}
           >
-            <title>{r.name} — kliknij, aby poznać szczegóły</title>
+            <title>
+              {t(r.name)} {t("— kliknij, aby poznać szczegóły")}
+            </title>
             {positions[r.id].map((p, i) => (
               <ellipse
                 key={i}

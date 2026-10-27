@@ -83,13 +83,13 @@ test("comparison works, persists in URL and handles the same emotion", async ({
   ).toBeVisible();
   await expect(page).toHaveURL(/z=anger/);
   await page.reload();
-  await expect(page.getByRole("combobox")).toHaveValue("anger");
-  await page.getByRole("combobox").selectOption("joy");
+  await expect(page.getByRole("combobox", { name: "Druga emocja" })).toHaveValue("anger");
+  await page.getByRole("combobox", { name: "Druga emocja" }).selectOption("joy");
   await expect(
     page.getByText("To ta sama emocja.", { exact: false }),
   ).toBeVisible();
   await page.getByRole("button", { name: "Odkrywaj", exact: true }).click();
-  await expect(page.getByRole("combobox")).toHaveCount(0);
+  await expect(page.getByRole("combobox", { name: "Druga emocja" })).toHaveCount(0);
   await expect(page).not.toHaveURL(/z=/);
 });
 

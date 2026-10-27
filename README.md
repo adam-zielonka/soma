@@ -1,6 +1,6 @@
 # Soma — atlas emocji w ciele
 
-Polska aplikacja edukacyjna o cielesnym wymiarze emocji.
+Aplikacja edukacyjna o cielesnym wymiarze emocji, dostępna po polsku i angielsku.
 
 **[Otwórz aplikację](https://adam-zielonka.github.io/soma/)**
 
@@ -44,3 +44,12 @@ Mapy SVG i przypisania kategorii w `src/emotions.ts` stanowią uproszczoną inte
 Push do `main` uruchamia `.github/workflows/deploy.yml`: instalację, kompilację i testy, a następnie GitHub Pages. Źródło Pages w ustawieniach repozytorium: **GitHub Actions**. Ścieżka bazowa Vite: `/soma/`.
 
 Kod: MIT. Fonty Instrument Serif i DM Sans: SIL Open Font License, zob. `public/licenses/`.
+
+
+## Language / Język
+
+The browser version supports Polish and English. On the first visit it uses the
+first supported language from the browser’s preferences, falling back to English.
+The PL / EN selector saves an explicit choice in this application’s local storage.
+Switching language preserves the current map, comparison and body region. If storage is blocked, language switching
+still works for the current visit.

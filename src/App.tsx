@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { t, language, setLanguage, subscribe } from "./i18n";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import {
   ArrowDown,
   ArrowDownRight,
@@ -39,6 +40,7 @@ function readLocation() {
 }
 
 export default function App() {
+  useSyncExternalStore(subscribe, () => language);
   const [initial] = useState(readLocation);
   const [emotion, setEmotion] = useState(initial.emotion);
   const [other, setOther] = useState(initial.comparison);
@@ -91,30 +93,39 @@ export default function App() {
   return (
     <>
       <a className="skip-link" href="#atlas">
-        Przejdź do mapy emocji
+        {t("Przejdź do mapy emocji")}{" "}
       </a>
       <header className="header wrap">
         <a
           href={import.meta.env.BASE_URL}
           className="brand"
-          aria-label="Soma — strona główna"
+          aria-label={t("Soma — strona główna")}
         >
           <span className="brand-mark">s</span>
           <span>
             soma<span className="brand-dot">.</span>
           </span>
-          <span className="brand-caption">ATLAS EMOCJI</span>
+          <span className="brand-caption">{t("ATLAS EMOCJI")}</span>
         </a>
-        <nav aria-label="Nawigacja główna">
+        <select
+          className="language-picker"
+          aria-label="Język / Language"
+          value={language}
+          onChange={(event) => setLanguage(event.target.value as "pl" | "en")}
+        >
+          <option value="pl">Polski</option>
+          <option value="en">English</option>
+        </select>
+        <nav aria-label={t("Nawigacja główna")}>
           <a className="nav-current" href="#atlas">
-            Odkrywaj
+            {t("Odkrywaj")}{" "}
           </a>
           <a href="#nauka">
-            Podstawy naukowe <ArrowUpRight size={14} />
+            {t("Podstawy naukowe")} <ArrowUpRight size={14} />
           </a>
         </nav>
         <span className="header-note">
-          <span /> Bliżej siebie
+          <span /> {t("Bliżej siebie")}{" "}
         </span>
       </header>
 
@@ -122,23 +133,22 @@ export default function App() {
         <section className="hero wrap" aria-labelledby="title">
           <div>
             <p className="eyebrow">
-              <span className="tiny-star">✳</span> MAŁY ATLAS WEWNĘTRZNEGO
-              ŚWIATA
+              <span className="tiny-star">✳</span>{" "}
+              {t("MAŁY ATLAS WEWNĘTRZNEGO ŚWIATA")}{" "}
             </p>
             <h1 id="title">
-              Emocje mają
-              <br />
-              swój <em>adres.</em>
+              {t("Emocje mają")} <br />
+              {t("swój")} <em>{t("adres.")}</em>
             </h1>
           </div>
           <div className="hero-aside">
             <p>
-              Motyle w brzuchu. Ciepło w klatce piersiowej.
-              <br className="desktop-break" /> Poznaj cielesny wymiar tego, co
-              czujesz.
+              {t("Motyle w brzuchu. Ciepło w klatce piersiowej.")}{" "}
+              <br className="desktop-break" />{" "}
+              {t("Poznaj cielesny wymiar tego, co czujesz.")}{" "}
             </p>
             <a href="#atlas">
-              Zacznij od jednej emocji <ArrowDown size={16} />
+              {t("Zacznij od jednej emocji")} <ArrowDown size={16} />
             </a>
           </div>
           <div className="hero-orbit" aria-hidden="true">
@@ -151,28 +161,28 @@ export default function App() {
         <section
           id="atlas"
           className="atlas wrap"
-          aria-label="Interaktywny atlas emocji"
+          aria-label={t("Interaktywny atlas emocji")}
         >
           <div className="atlas-top">
-            <div className="mode-switch" aria-label="Tryb mapy">
+            <div className="mode-switch" aria-label={t("Tryb mapy")}>
               <button
                 aria-pressed={mode === "explore"}
                 onClick={() => setMode("explore")}
               >
-                <Sparkles size={15} /> Odkrywaj
+                <Sparkles size={15} /> {t("Odkrywaj")}{" "}
               </button>
               <button aria-pressed={compare} onClick={() => setMode("compare")}>
-                <Layers2 size={15} /> Porównaj emocje
+                <Layers2 size={15} /> {t("Porównaj emocje")}{" "}
               </button>
               <button
                 aria-pressed={mode === "body"}
                 onClick={() => setMode("body")}
               >
-                <PersonStanding size={16} /> Według części ciała
+                <PersonStanding size={16} /> {t("Według części ciała")}{" "}
               </button>
             </div>
             <span className="atlas-note">
-              <span /> Schematy oparte na badaniach
+              <span /> {t("Schematy oparte na badaniach")}{" "}
             </span>
           </div>
           {mode === "body" ? (
@@ -187,12 +197,11 @@ export default function App() {
           ) : (
             <div className={`explorer ${compare ? "is-comparing" : ""}`}>
               <aside className="emotion-picker" aria-labelledby="picker-title">
-                <p className="step-label">01 / WYBIERZ EMOCJĘ</p>
-                <h2 id="picker-title">Co chcesz poznać?</h2>
+                <p className="step-label">{t("01 / WYBIERZ EMOCJĘ")}</p>
+                <h2 id="picker-title">{t("Co chcesz poznać?")}</h2>
                 <p className="muted picker-intro">
-                  Każda emocja opowiada
-                  <br />
-                  inną historię w ciele.
+                  {t("Każda emocja opowiada")} <br />
+                  {t("inną historię w ciele.")}{" "}
                 </p>
                 <div className="emotion-grid">
                   {emotions.map((e) => (
@@ -211,7 +220,7 @@ export default function App() {
                       }}
                     >
                       <EmotionFace id={e.id} />
-                      <span>{e.name}</span>
+                      <span>{t(e.name)}</span>
                       {emotion.id === e.id && (
                         <span className="selection-dot" />
                       )}
@@ -221,30 +230,29 @@ export default function App() {
                 <div className="picker-foot">
                   <Info size={15} />
                   <p>
-                    Nie ma dobrych ani złych emocji.
-                    <br />
-                    Każda jest częścią doświadczenia.
+                    {t("Nie ma dobrych ani złych emocji.")} <br />
+                    {t("Każda jest częścią doświadczenia.")}{" "}
                   </p>
                 </div>
               </aside>
 
               <div className="map-panel">
                 <div className="map-heading">
-                  <span className="step-label">02 / ZOBACZ W CIELE</span>
-                  <span className="map-view">WIDOK Z PRZODU</span>
+                  <span className="step-label">{t("02 / ZOBACZ W CIELE")}</span>
+                  <span className="map-view">{t("WIDOK Z PRZODU")}</span>
                 </div>
                 {compare ? (
                   <div className="comparison-maps">
                     <div className="comparison-item">
-                      <span className="map-name">{emotion.name}</span>
+                      <span className="map-name">{t(emotion.name)}</span>
                       <BodyMap emotion={emotion} compact />
                     </div>
                     <span className="versus">&</span>
                     <div className="comparison-item">
                       <label className="select-label">
-                        <span className="sr-only">Druga emocja</span>
+                        <span className="sr-only">{t("Druga emocja")}</span>
                         <select
-                          aria-label="Druga emocja"
+                          aria-label={t("Druga emocja")}
                           value={other.id}
                           onChange={(e) =>
                             setOther(findEmotion(e.target.value))
@@ -252,7 +260,7 @@ export default function App() {
                         >
                           {emotions.map((e) => (
                             <option key={e.id} value={e.id}>
-                              {e.name}
+                              {t(e.name)}
                             </option>
                           ))}
                         </select>
@@ -265,9 +273,8 @@ export default function App() {
                   <div className="single-map">
                     <div className="map-side-label">
                       <span>
-                        Twoje ciało,
-                        <br />
-                        wiele odczuć.
+                        {t("Twoje ciało,")} <br />
+                        {t("wiele odczuć.")}{" "}
                       </span>
                       <span className="fine-line" />
                     </div>
@@ -279,27 +286,28 @@ export default function App() {
                     <div className="map-side-label right">
                       <span className="fine-line" />
                       <span>
-                        Kliknij obszar,
-                        <br />
-                        aby go odkryć.
+                        {t("Kliknij obszar,")} <br />
+                        {t("aby go odkryć.")}{" "}
                       </span>
                       <MoveUpRight size={17} />
                     </div>
                   </div>
                 )}
-                <div className="legend" aria-label="Legenda mapy">
+                <div className="legend" aria-label={t("Legenda mapy")}>
                   <span>
-                    <i className="warm" /> Wzrost odczuć
+                    <i className="warm" /> {t("Wzrost odczuć")}{" "}
                   </span>
                   <span>
-                    <i className="cool" /> Spadek odczuć
+                    <i className="cool" /> {t("Spadek odczuć")}{" "}
                   </span>
                   <span>
-                    <i className="neutral" /> Bez wyróżnienia
+                    <i className="neutral" /> {t("Bez wyróżnienia")}{" "}
                   </span>
                 </div>
                 <p className="map-caption">
-                  Odczuwana aktywność · schemat poglądowy, bez skali liczbowej
+                  {t(
+                    "Odczuwana aktywność · schemat poglądowy, bez skali liczbowej",
+                  )}{" "}
                 </p>
               </div>
 
@@ -307,23 +315,23 @@ export default function App() {
                 <div className="detail-top">
                   <span className="step-label">
                     {compare
-                      ? "03 / ZAUWAŻ RÓŻNICE"
-                      : "03 / PRZYJRZYJ SIĘ BLIŻEJ"}
+                      ? t("03 / ZAUWAŻ RÓŻNICE")
+                      : t("03 / PRZYJRZYJ SIĘ BLIŻEJ")}
                   </span>
                   <button
                     className="icon-button"
                     onClick={copyLink}
-                    aria-label="Kopiuj link do tej mapy"
-                    title="Kopiuj link"
+                    aria-label={t("Kopiuj link do tej mapy")}
+                    title={t("Kopiuj link")}
                   >
                     {copied ? <Check size={17} /> : <Copy size={17} />}
                   </button>
                 </div>
                 <div className="copy-status" role="status">
                   {copied
-                    ? "Link skopiowany"
+                    ? t("Link skopiowany")
                     : copyError
-                      ? "Skopiuj adres z paska przeglądarki."
+                      ? t("Skopiuj adres z paska przeglądarki.")
                       : ""}
                 </div>
                 <div
@@ -335,21 +343,21 @@ export default function App() {
                 <div aria-live="polite" aria-atomic="true">
                   <p className="english-label">{emotion.english}</p>
                   <h2 id="detail-title">
-                    {emotion.name}
+                    {t(emotion.name)}
                     {compare && (
                       <span className="comparison-title">
                         {" "}
-                        i {other.name.toLocaleLowerCase("pl")}
+                        {t("i")} {t(other.name).toLocaleLowerCase(language)}
                       </span>
                     )}
                   </h2>
-                  <p className="detail-word">{emotion.word}</p>
+                  <p className="detail-word">{t(emotion.word)}</p>
                   <p className="detail-description">
-                    {emotion.description.replace(" [1]", "")}{" "}
+                    {t(emotion.description).replace(" [1]", "")}{" "}
                     <a
                       className="citation"
                       href="#source-1"
-                      aria-label="Źródło: Bodily maps of emotions"
+                      aria-label={t("Źródło: Bodily maps of emotions")}
                     >
                       [1]
                     </a>
@@ -357,34 +365,35 @@ export default function App() {
                 </div>
                 {compare ? (
                   <div className="comparison-details">
-                    <p className="small-label">JAK CZYTAĆ PORÓWNANIE</p>
+                    <p className="small-label">{t("JAK CZYTAĆ PORÓWNANIE")}</p>
                     {emotion.id === other.id ? (
                       <p className="muted">
-                        To ta sama emocja. Wybierz inną nad prawą sylwetką, aby
-                        zestawić dwa schematy.
+                        {t(
+                          "To ta sama emocja. Wybierz inną nad prawą sylwetką, aby zestawić dwa schematy.",
+                        )}{" "}
                       </p>
                     ) : (
                       <>
                         <p className="comparison-description">
-                          {other.description.replace(" [1]", "")}{" "}
+                          {t(other.description).replace(" [1]", "")}{" "}
                           <a className="citation" href="#source-1">
                             [1]
                           </a>
                         </p>
                         <div className="region-comparison">
                           <div className="comparison-row table-head">
-                            <span>Obszar</span>
-                            <span>{emotion.name}</span>
-                            <span>{other.name}</span>
+                            <span>{t("Obszar")}</span>
+                            <span>{t(emotion.name)}</span>
+                            <span>{t(other.name)}</span>
                           </div>
                           {regions.map((r) => (
                             <div className="comparison-row" key={r.id}>
-                              <span>{r.name}</span>
+                              <span>{t(r.name)}</span>
                               {[emotion, other].map((e, i) => (
                                 <span
                                   key={i}
                                   className={`sensation ${e.regions[r.id] ?? "none"}`}
-                                  aria-label={`${r.name}, ${e.name}: ${e.regions[r.id] === "more" ? "wzrost odczuć" : e.regions[r.id] === "less" ? "spadek odczuć" : "bez wyróżnienia"}`}
+                                  aria-label={`${t(r.name)}, ${t(e.name)}: ${e.regions[r.id] === "more" ? t("wzrost odczuć") : e.regions[r.id] === "less" ? t("spadek odczuć") : t("bez wyróżnienia")}`}
                                 >
                                   {e.regions[r.id] === "more"
                                     ? "↑"
@@ -400,41 +409,43 @@ export default function App() {
                     )}
                     <details className="comparison-examples">
                       <summary>
-                        Przykłady odczuć w tym samym obszarze{" "}
+                        {t("Przykłady odczuć w tym samym obszarze")}{" "}
                         <ChevronDown size={14} />
                       </summary>
                       <label className="example-area-select">
-                        Obszar ciała
+                        {t("Obszar ciała")}{" "}
                         <select
                           value={region}
                           onChange={(e) => setRegion(e.target.value as Region)}
                         >
                           {regions.map((r) => (
                             <option key={r.id} value={r.id}>
-                              {r.name}
+                              {t(r.name)}
                             </option>
                           ))}
                         </select>
                       </label>
                       <div aria-live="polite">
-                        <h3>{emotion.name}</h3>
+                        <h3>{t(emotion.name)}</h3>
                         <RegionExperience emotion={emotion} region={region} />
                         {emotion.id !== other.id && (
                           <>
-                            <h3>{other.name}</h3>
+                            <h3>{t(other.name)}</h3>
                             <RegionExperience emotion={other} region={region} />
                           </>
                         )}
                       </div>
                       <p className="examples-note">
-                        To propozycje opisu, nie wyniki pomiaru.{" "}
-                        <a href="#source-3">O przykładach i ich źródłach</a>
+                        {t("To propozycje opisu, nie wyniki pomiaru.")}{" "}
+                        <a href="#source-3">
+                          {t("O przykładach i ich źródłach")}
+                        </a>
                       </p>
                     </details>
                   </div>
                 ) : (
                   <div className="regions-detail">
-                    <p className="small-label">ODKRYWAJ OBSZARY CIAŁA</p>
+                    <p className="small-label">{t("ODKRYWAJ OBSZARY CIAŁA")}</p>
                     <div className="region-chips">
                       {regions.map((r) => (
                         <button
@@ -443,7 +454,7 @@ export default function App() {
                           onClick={() => setRegion(r.id)}
                         >
                           <i className={emotion.regions[r.id] ?? "none"} />
-                          {r.name}
+                          {t(r.name)}
                         </button>
                       ))}
                     </div>
@@ -451,14 +462,17 @@ export default function App() {
                       <RegionExperience emotion={emotion} region={region} />
                     </div>
                     <p className="examples-note">
-                      To propozycje opisu, nie wyniki pomiaru. Możesz czuć coś
-                      innego albo nic wyraźnego.{" "}
-                      <a href="#source-3">O przykładach i ich źródłach</a>
+                      {t(
+                        "To propozycje opisu, nie wyniki pomiaru. Możesz czuć coś innego albo nic wyraźnego.",
+                      )}{" "}
+                      <a href="#source-3">
+                        {t("O przykładach i ich źródłach")}
+                      </a>
                     </p>
                   </div>
                 )}
                 <a href="#nauka" className="detail-source">
-                  <BookOpen size={15} /> Skąd to wiemy?{" "}
+                  <BookOpen size={15} /> {t("Skąd to wiemy?")}{" "}
                   <ArrowUpRight size={15} />
                 </a>
               </aside>
@@ -467,8 +481,10 @@ export default function App() {
           <div className="atlas-bottom">
             <Info size={16} />
             <p>
-              To zaproszenie do uważności, nie wzorzec do spełnienia. Twoje
-              odczucia mogą być inne. <a href="#metoda">Jak powstały mapy?</a>
+              {t(
+                "To zaproszenie do uważności, nie wzorzec do spełnienia. Twoje odczucia mogą być inne.",
+              )}{" "}
+              <a href="#metoda">{t("Jak powstały mapy?")}</a>
             </p>
             <span>01 — {String(emotions.length).padStart(2, "0")}</span>
           </div>
@@ -479,11 +495,12 @@ export default function App() {
             <Heart size={25} strokeWidth={1.2} />
           </div>
           <div>
-            <p className="eyebrow">CHWILA DLA CIEBIE</p>
-            <h2 id="reflection-title">A jak jest u Ciebie?</h2>
+            <p className="eyebrow">{t("CHWILA DLA CIEBIE")}</p>
+            <h2 id="reflection-title">{t("A jak jest u Ciebie?")}</h2>
             <p>
-              Mapa jest punktem wyjścia. Najciekawsze jest Twoje własne
-              doświadczenie.
+              {t(
+                "Mapa jest punktem wyjścia. Najciekawsze jest Twoje własne doświadczenie.",
+              )}{" "}
             </p>
           </div>
           <button
@@ -492,18 +509,18 @@ export default function App() {
             aria-controls="reflection-content"
             onClick={() => setReflection(!reflection)}
           >
-            {reflection ? "Zwiń wskazówkę" : "Zatrzymaj się na chwilę"}
+            {reflection ? t("Zwiń wskazówkę") : t("Zatrzymaj się na chwilę")}
             <ArrowDownRight size={18} />
           </button>
           {reflection && (
             <div id="reflection-content" className="reflection-content">
-              <span className="reflection-number">30 sek.</span>
+              <span className="reflection-number">{t("30 sek.")}</span>
               <div>
-                <h3>{emotion.prompt}</h3>
+                <h3>{t(emotion.prompt)}</h3>
                 <p>
-                  Możesz zostać z otwartymi oczami. Zauważ jedno odczucie — lub
-                  jego brak. Nie musisz niczego zmieniać ani dopasowywać do
-                  mapy. Jeśli to nieprzyjemne, przerwij i rozejrzyj się wokół.
+                  {t(
+                    "Możesz zostać z otwartymi oczami. Zauważ jedno odczucie — lub jego brak. Nie musisz niczego zmieniać ani dopasowywać do mapy. Jeśli to nieprzyjemne, przerwij i rozejrzyj się wokół.",
+                  )}{" "}
                 </p>
               </div>
             </div>
@@ -517,23 +534,21 @@ export default function App() {
         >
           <div className="science-heading">
             <div>
-              <p className="eyebrow">CIEKAWOŚĆ POPARTA BADANIAMI</p>
+              <p className="eyebrow">{t("CIEKAWOŚĆ POPARTA BADANIAMI")}</p>
               <h2 id="science-title">
-                Mniej domysłów.
-                <br />
-                <em>Więcej nauki.</em>
+                {t("Mniej domysłów.")} <br />
+                <em>{t("Więcej nauki.")}</em>
               </h2>
             </div>
             <p>
-              Jak badać coś tak osobistego jak odczuwanie?
-              <br />
-              Zacząć od zapytania ludzi o ich doświadczenia.
+              {t("Jak badać coś tak osobistego jak odczuwanie?")} <br />
+              {t("Zacząć od zapytania ludzi o ich doświadczenia.")}{" "}
             </p>
           </div>
           <div className="source-grid">
             <article id="source-1" className="source-card">
               <div className="source-meta">
-                <span>01 / BADANIE ŹRÓDŁOWE</span>
+                <span>{t("01 / BADANIE ŹRÓDŁOWE")}</span>
                 <span>PNAS · 2014</span>
               </div>
               <h3>Bodily maps of emotions</h3>
@@ -541,21 +556,21 @@ export default function App() {
                 L. Nummenmaa, E. Glerean, R. Hari, J. K. Hietanen
               </p>
               <p>
-                W pięciu eksperymentach 701 uczestników zaznaczało na sylwetkach
-                wzrost i spadek odczuwanej aktywności. Powstały różniące się
-                mapy emocji.
+                {t(
+                  "W pięciu eksperymentach 701 uczestników zaznaczało na sylwetkach wzrost i spadek odczuwanej aktywności. Powstały różniące się mapy emocji.",
+                )}{" "}
               </p>
               <a
                 href="https://doi.org/10.1073/pnas.1321664111"
                 target="_blank"
                 rel="noreferrer"
               >
-                Przeczytaj publikację <ArrowUpRight size={17} />
+                {t("Przeczytaj publikację")} <ArrowUpRight size={17} />
               </a>
             </article>
             <article className="source-card">
               <div className="source-meta">
-                <span>02 / SZERSZA PERSPEKTYWA</span>
+                <span>{t("02 / SZERSZA PERSPEKTYWA")}</span>
                 <span>PNAS · 2018</span>
               </div>
               <h3>Maps of subjective feelings</h3>
@@ -563,16 +578,16 @@ export default function App() {
                 L. Nummenmaa, R. Hari, J. K. Hietanen, E. Glerean
               </p>
               <p>
-                1026 osób wzięło udział w badaniu 100 subiektywnych stanów.
-                Wyniki wskazują na związek doświadczeń psychicznych z odczuciami
-                w ciele — także poza samymi emocjami.
+                {t(
+                  "1026 osób wzięło udział w badaniu 100 subiektywnych stanów. Wyniki wskazują na związek doświadczeń psychicznych z odczuciami w ciele — także poza samymi emocjami.",
+                )}{" "}
               </p>
               <a
                 href="https://doi.org/10.1073/pnas.1807390115"
                 target="_blank"
                 rel="noreferrer"
               >
-                Przeczytaj publikację <ArrowUpRight size={17} />
+                {t("Przeczytaj publikację")} <ArrowUpRight size={17} />
               </a>
             </article>
           </div>
@@ -581,18 +596,21 @@ export default function App() {
             className="examples-sources"
             aria-labelledby="examples-source-title"
           >
-            <p className="eyebrow">03 / OD MAPY DO WŁASNEGO DOŚWIADCZENIA</p>
-            <h3 id="examples-source-title">Jak rozumieć przykłady odczuć?</h3>
+            <p className="eyebrow">
+              {t("03 / OD MAPY DO WŁASNEGO DOŚWIADCZENIA")}
+            </p>
+            <h3 id="examples-source-title">
+              {t("Jak rozumieć przykłady odczuć?")}
+            </h3>
             <p>
-              Mapa z badania pokazuje lokalizację odczuwanej zmiany, nie określa
-              jej dokładnej postaci. Przykłady w Somie są autorskimi
-              propozycjami słów do autorefleksji. Nie wywnioskowano ich z koloru
-              sylwetki i nie są listą doznań, które muszą towarzyszyć danej
-              emocji.
+              {t(
+                "Mapa z badania pokazuje lokalizację odczuwanej zmiany, nie określa jej dokładnej postaci. Przykłady w Somie są autorskimi propozycjami słów do autorefleksji. Nie wywnioskowano ich z koloru sylwetki i nie są listą doznań, które muszą towarzyszyć danej emocji.",
+              )}{" "}
             </p>
             <p>
-              Dodatkowego kontekstu dla opisów napięcia, bicia serca, odczuć w
-              brzuchu i rumieńca dostarczają materiały NHS:
+              {t(
+                "Dodatkowego kontekstu dla opisów napięcia, bicia serca, odczuć w brzuchu i rumieńca dostarczają materiały NHS:",
+              )}{" "}
             </p>
             <div className="examples-source-links">
               <a
@@ -600,7 +618,7 @@ export default function App() {
                 target="_blank"
                 rel="noreferrer"
               >
-                Złość: napięcie, zaciskanie dłoni, ciepło{" "}
+                {t("Złość: napięcie, zaciskanie dłoni, ciepło")}{" "}
                 <ArrowUpRight size={14} />
               </a>
               <a
@@ -608,52 +626,48 @@ export default function App() {
                 target="_blank"
                 rel="noreferrer"
               >
-                Niepokój: oddech, serce i brzuch <ArrowUpRight size={14} />
+                {t("Niepokój: oddech, serce i brzuch")}{" "}
+                <ArrowUpRight size={14} />
               </a>
               <a
                 href="https://www.nhs.uk/symptoms/blushing/"
                 target="_blank"
                 rel="noreferrer"
               >
-                Rumieniec przy zakłopotaniu <ArrowUpRight size={14} />
+                {t("Rumieniec przy zakłopotaniu")} <ArrowUpRight size={14} />
               </a>
             </div>
           </section>
           <details id="metoda" className="method">
             <summary>
               <span>
-                <Info size={17} /> Jak powstały te mapy i jakie mają
-                ograniczenia?
+                <Info size={17} />{" "}
+                {t("Jak powstały te mapy i jakie mają ograniczenia?")}{" "}
               </span>
               <ChevronDown size={18} />
             </summary>
             <div className="method-content">
               <p>
-                Sylwetki w Somie to autorskie, jakościowe schematy inspirowane
-                ryciną 2 pracy z 2014 roku. Rozmieszczenie poświaty i podział na
-                sześć obszarów są uproszczeniem redakcyjnym. Nie odtworzono
-                danych liczbowych, granic istotności ani oryginalnej skali
-                statystycznej. Kolory wskazują jedynie kierunek odczuwanej
-                zmiany.
+                {t(
+                  "Sylwetki w Somie to autorskie, jakościowe schematy inspirowane ryciną 2 pracy z 2014 roku. Rozmieszczenie poświaty i podział na sześć obszarów są uproszczeniem redakcyjnym. Nie odtworzono danych liczbowych, granic istotności ani oryginalnej skali statystycznej. Kolory wskazują jedynie kierunek odczuwanej zmiany.",
+                )}{" "}
               </p>
               <p>
-                Badania opierają się na samoopisie. Mapy nie są pomiarami
-                temperatury, pracy narządów ani aktywności mózgu. Uśrednione
-                wzorce nie opisują każdej osoby; kontekst i indywidualne
-                doświadczenia mają znaczenie. Na podstawie miejsca odczucia nie
-                można ustalić emocji ani postawić diagnozy.
+                {t(
+                  "Badania opierają się na samoopisie. Mapy nie są pomiarami temperatury, pracy narządów ani aktywności mózgu. Uśrednione wzorce nie opisują każdej osoby; kontekst i indywidualne doświadczenia mają znaczenie. Na podstawie miejsca odczucia nie można ustalić emocji ani postawić diagnozy.",
+                )}{" "}
               </p>
               <p>
-                Soma służy edukacji i autorefleksji. Wskazówki do obserwacji są
-                autorskimi pytaniami, a przykłady odczuć — propozycjami języka
-                opisu, nie odtworzeniem wyników badania ani procedurą
-                terapeutyczną.{" "}
+                {t(
+                  "Soma służy edukacji i autorefleksji. Wskazówki do obserwacji są autorskimi pytaniami, a przykłady odczuć — propozycjami języka opisu, nie odtworzeniem wyników badania ani procedurą terapeutyczną.",
+                )}{" "}
                 <a
                   href="https://emotion.utu.fi/maps-of-subjective-feelings/"
                   target="_blank"
                   rel="noreferrer"
                 >
-                  Poznaj materiały zespołu badawczego <ArrowUpRight size={13} />
+                  {t("Poznaj materiały zespołu badawczego")}{" "}
+                  <ArrowUpRight size={13} />
                 </a>
               </p>
             </div>
@@ -664,13 +678,13 @@ export default function App() {
         <a href={import.meta.env.BASE_URL} className="brand footer-brand">
           soma<span className="brand-dot">.</span>
         </a>
-        <p>Trochę nauki. Trochę uważności. Bliżej siebie.</p>
+        <p>{t("Trochę nauki. Trochę uważności. Bliżej siebie.")}</p>
         <a
           href="https://github.com/adam-zielonka/soma"
           target="_blank"
           rel="noreferrer"
         >
-          Otwarty kod <ArrowRight size={15} />
+          {t("Otwarty kod")} <ArrowRight size={15} />
         </a>
       </footer>
     </>
