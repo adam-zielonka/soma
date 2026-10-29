@@ -2,6 +2,7 @@ import { t } from "./i18n";
 import { useId } from "react";
 import { regions } from "./emotions";
 import type { Emotion, Region } from "./emotions";
+import { activityStates } from "./Activity";
 
 const body =
   "M120 15 C102 15 94 29 95 46 C95 61 101 72 109 76 L108 87 C101 94 83 94 76 99 C65 105 61 117 57 136 L43 194 L26 250 C23 259 22 269 27 274 C30 277 33 271 35 264 C33 278 38 281 42 271 L49 252 L65 208 L79 158 C80 181 82 195 78 218 C74 240 74 257 79 279 L84 355 L88 446 L84 479 C82 490 86 494 98 493 C108 493 113 489 111 480 L110 449 L117 357 L120 294 L123 357 L130 449 L129 480 C127 489 132 493 142 493 C154 494 158 490 156 479 L152 446 L156 355 L161 279 C166 257 166 240 162 218 C158 195 160 181 161 158 L175 208 L191 252 L198 271 C202 281 207 278 205 264 C207 271 210 277 213 274 C218 269 217 259 214 250 L197 194 L183 136 C179 117 175 105 164 99 C157 94 139 94 132 87 L131 76 C139 72 145 61 145 46 C146 29 138 15 120 15 Z";
@@ -56,16 +57,9 @@ export default function BodyMap({
       <desc>
         {emotion
           ? regions
-              .filter((r) => emotion.regions[r.id])
-              .map((r) =>
-                t("{region}: {sensation} odczuwanej aktywności", {
-                  region: t(r.name),
-                  sensation: t(
-                    emotion.regions[r.id] === "more"
-                      ? t("wzrost")
-                      : t("spadek"),
-                  ),
-                }),
+              .map(
+                (r) =>
+                  `${t(r.name)}: ${t(activityStates[emotion.regions[r.id] ?? "none"].label)}`,
               )
               .join(". ") + t(". Schemat poglądowy, bez skali liczbowej.")
           : t(
@@ -147,6 +141,25 @@ export default function BodyMap({
       >
         <path d="M120 102v164M86 148q34 17 68 0M86 208q34 14 68 0M120 295v48" />
       </g>
+      {emotion && (
+        <g className="activity-markers" aria-hidden="true" pointerEvents="none">
+          {regions.map((region) =>
+            positions[region.id].map((position, i) => (
+              <g
+                className="activity-marker"
+                data-region={region.id}
+                key={`${region.id}-${i}`}
+                transform={`translate(${position.x} ${position.y})`}
+              >
+                <circle r="17" />
+                <text textAnchor="middle" dominantBaseline="central">
+                  {activityStates[emotion.regions[region.id] ?? "none"].symbol}
+                </text>
+              </g>
+            )),
+          )}
+        </g>
+      )}
       {onRegion &&
         regions.map((r) => (
           <g

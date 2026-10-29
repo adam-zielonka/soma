@@ -67,6 +67,74 @@ test("explore and comparison pass automated accessibility checks", async ({
   expect(body.violations).toEqual([]);
 });
 
+test("map symbols and the six-region table communicate direction without colour", async ({
+  page,
+}) => {
+  await page.goto("./?emocja=sadness&obszar=legs");
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.locator("html").evaluate((element) => {
+    element.style.filter = "grayscale(1)";
+  });
+  const map = page.getByRole("group", { name: "Mapa ciała: Smutek" });
+  const table = page.getByRole("table", {
+    name: "Kierunek odczuwanej aktywności",
+  });
+  await expect(table.getByRole("row")).toHaveCount(7);
+  for (const [region, name, symbol, label] of [
+    ["head", "Głowa", "↑", "Wzrost odczuć"],
+    ["throat", "Gardło", "—", "Bez wyróżnienia"],
+    ["chest", "Klatka piersiowa", "↑", "Wzrost odczuć"],
+    ["belly", "Brzuch", "—", "Bez wyróżnienia"],
+    ["arms", "Ręce", "↓", "Spadek odczuć"],
+    ["legs", "Nogi", "↓", "Spadek odczuć"],
+  ]) {
+    const marker = map.locator(`[data-region="${region}"] text`).first();
+    await expect(marker).toBeVisible();
+    await expect(marker).toHaveText(symbol);
+    const row = table.getByRole("row").filter({
+      has: page.getByRole("rowheader", { name, exact: true }),
+    });
+    await expect(row.getByRole("cell")).toHaveText(`${symbol}${label}`);
+  }
+  await map.getByRole("button", { name: "Gardło", exact: true }).focus();
+  await page.keyboard.press("Space");
+  await expect(page).toHaveURL(/obszar=throat/);
+  await expect(page.locator(".region-info")).toContainText(
+    "Nie oznacza to braku odczuć",
+  );
+  await page
+    .getByRole("button", { name: "Porównaj emocje", exact: true })
+    .click();
+  await page
+    .getByRole("combobox", { name: "Druga emocja" })
+    .selectOption("joy");
+  const legs = table.getByRole("row").filter({
+    has: page.getByRole("rowheader", { name: "Nogi", exact: true }),
+  });
+  await expect(legs.getByRole("cell")).toHaveText([
+    "↓Spadek odczuć",
+    "↑Wzrost odczuć",
+  ]);
+  await expect(page.locator(".comparison-maps .activity-marker")).toHaveCount(
+    16,
+  );
+  await page
+    .getByRole("combobox", { name: "Druga emocja" })
+    .selectOption("sadness");
+  await expect(page.locator(".comparison-details > .muted")).toContainText(
+    "To ta sama emocja",
+  );
+  await expect(table.getByRole("row")).toHaveCount(7);
+  await expect(legs.getByRole("cell")).toHaveText([
+    "↓Spadek odczuć",
+    "↓Spadek odczuć",
+  ]);
+  await page
+    .getByRole("button", { name: "Według części ciała", exact: true })
+    .click();
+  await expect(page.locator(".body-map .activity-marker")).toHaveCount(0);
+});
+
 test("comparison works, persists in URL and handles the same emotion", async ({
   page,
 }) => {
@@ -83,13 +151,19 @@ test("comparison works, persists in URL and handles the same emotion", async ({
   ).toBeVisible();
   await expect(page).toHaveURL(/z=anger/);
   await page.reload();
-  await expect(page.getByRole("combobox", { name: "Druga emocja" })).toHaveValue("anger");
-  await page.getByRole("combobox", { name: "Druga emocja" }).selectOption("joy");
+  await expect(
+    page.getByRole("combobox", { name: "Druga emocja" }),
+  ).toHaveValue("anger");
+  await page
+    .getByRole("combobox", { name: "Druga emocja" })
+    .selectOption("joy");
   await expect(
     page.getByText("To ta sama emocja.", { exact: false }),
   ).toBeVisible();
   await page.getByRole("button", { name: "Odkrywaj", exact: true }).click();
-  await expect(page.getByRole("combobox", { name: "Druga emocja" })).toHaveCount(0);
+  await expect(
+    page.getByRole("combobox", { name: "Druga emocja" }),
+  ).toHaveCount(0);
   await expect(page).not.toHaveURL(/z=/);
 });
 

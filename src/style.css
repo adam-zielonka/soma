@@ -446,6 +446,16 @@ svg {
   overflow: visible;
   filter: drop-shadow(0 7px 10px #263c2b0b);
 }
+.activity-marker circle {
+  fill: #fffdf2;
+  stroke: #243e33;
+  stroke-width: 1.5px;
+}
+.activity-marker text {
+  fill: #243e33;
+  font-size: 28px;
+  font-weight: 700;
+}
 .heat-layer {
   animation: appear 0.55s ease-out;
 }
@@ -502,15 +512,14 @@ svg {
   gap: 15px;
   margin-top: 6px;
 }
-.legend span {
+.legend > span {
   display: flex;
   align-items: center;
   gap: 5px;
-  font-size: 8px;
+  font-size: 11px;
   white-space: nowrap;
   color: #65705b;
 }
-.legend i,
 .region-chips i {
   display: block;
   width: 6px;
@@ -518,15 +527,12 @@ svg {
   border-radius: 50%;
   flex-shrink: 0;
 }
-.legend .warm,
 .region-chips .more {
   background: #e9a147;
 }
-.legend .cool,
 .region-chips .less {
   background: #72a2c0;
 }
-.legend .neutral,
 .region-chips .none {
   background: #365044;
 }
@@ -910,36 +916,64 @@ svg {
 .is-comparing .detail-description {
   margin-bottom: 15px;
 }
-.comparison-row {
-  display: grid;
-  grid-template-columns: 1.35fr 1fr 1fr;
-  gap: 3px;
-  border-bottom: 1px solid #e9ecdf;
-  padding: 7px 0;
-  align-items: center;
-  font-size: 9px;
+.activity-symbol,
+.legend .activity-symbol {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 1.45em;
+  height: 1.45em;
+  border: 1px solid #243e33;
+  border-radius: 50%;
+  background: #fffdf2;
+  color: #243e33;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1;
 }
-.comparison-row span:not(:first-child) {
-  text-align: center;
+.activity-table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  color: #2c4035;
+  font-size: 12px;
+  line-height: 1.45;
 }
-.comparison-row.table-head {
-  font-size: 8px;
+.activity-table caption {
+  padding: 0 0 10px;
+  text-align: left;
+  font-size: 12px;
   font-weight: 600;
-  color: #65705b;
+}
+.activity-table th,
+.activity-table td {
+  border-bottom: 1px solid #dfe3d7;
+  padding: 9px 4px;
+  text-align: left;
+  vertical-align: top;
   overflow-wrap: anywhere;
 }
-.sensation {
-  font-size: 13px;
-  font-weight: 600;
+.activity-table th {
+  font-weight: 500;
 }
-.sensation.more {
-  color: #96611a;
+.activity-table thead th {
+  font-weight: 700;
 }
-.sensation.less {
-  color: #4c7694;
+.activity-table th:first-child {
+  width: 28%;
+  padding-left: 0;
 }
-.sensation.none {
-  color: #65705b;
+.activity-state {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+}
+.activity-note {
+  margin: 10px 0 20px;
+  color: #4c5d4c;
+  font-size: 11px;
+  line-height: 1.6;
 }
 .is-comparing .detail-source {
   padding-top: 15px;
@@ -1262,8 +1296,8 @@ svg {
   .legend {
     gap: 10px;
   }
-  .legend span {
-    font-size: 7px;
+  .legend > span {
+    font-size: 11px;
   }
   .detail-top .step-label {
     font-size: 7px;
@@ -1414,9 +1448,6 @@ svg {
   }
   .comparison-details .small-label {
     margin-top: 4px;
-  }
-  .comparison-row {
-    padding: 5px 0;
   }
   .comparison-description {
     font-size: 10px;
@@ -1653,12 +1684,8 @@ svg {
     gap: 11px;
     margin-top: 8px;
   }
-  .legend span {
-    font-size: 7px;
-  }
-  .legend i {
-    width: 5px;
-    height: 5px;
+  .legend > span {
+    font-size: 11px;
   }
   .map-caption {
     font-size: 7px;
@@ -1763,13 +1790,6 @@ svg {
   }
   .comparison-description {
     font-size: 11px;
-  }
-  .comparison-row {
-    font-size: 10px;
-    padding: 7px 0;
-  }
-  .comparison-row.table-head {
-    font-size: 9px;
   }
   .is-comparing .detail-source {
     padding-top: 20px;
@@ -1936,9 +1956,33 @@ svg {
   }
 }
 
-.language-switch { display: inline-flex; align-items: center; gap: .4em; color: #65705b; font-size: 11px; white-space: nowrap; }
-.language-switch button { padding: .25rem 0; border: 0; background: none; color: inherit; font: inherit; cursor: pointer; text-decoration: underline; text-underline-offset: .2em; }
-.language-switch button[aria-pressed="true"] { font-weight: 600; text-decoration: none; }
-.language-switch button:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
+.language-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  color: #65705b;
+  font-size: 11px;
+  white-space: nowrap;
+}
+.language-switch button {
+  padding: 0.25rem 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+.language-switch button[aria-pressed="true"] {
+  font-weight: 600;
+  text-decoration: none;
+}
+.language-switch button:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 4px;
+}
 
-.footer { flex-wrap: wrap; }
+.footer {
+  flex-wrap: wrap;
+}

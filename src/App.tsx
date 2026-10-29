@@ -17,6 +17,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import BodyMap from "./BodyMap";
+import { ActivitySymbol, ActivityTable } from "./Activity";
 import EmotionFace from "./EmotionFace";
 import RegionExperience from "./RegionExperience";
 import RegionExplorer from "./RegionExplorer";
@@ -286,13 +287,13 @@ export default function App() {
                 )}
                 <div className="legend" aria-label={t("Legenda mapy")}>
                   <span>
-                    <i className="warm" /> {t("Wzrost odczuć")}{" "}
+                    <ActivitySymbol state="more" /> {t("Wzrost odczuć")}{" "}
                   </span>
                   <span>
-                    <i className="cool" /> {t("Spadek odczuć")}{" "}
+                    <ActivitySymbol state="less" /> {t("Spadek odczuć")}{" "}
                   </span>
                   <span>
-                    <i className="neutral" /> {t("Bez wyróżnienia")}{" "}
+                    <ActivitySymbol state="none" /> {t("Bez wyróżnienia")}{" "}
                   </span>
                 </div>
                 <p className="map-caption">
@@ -371,33 +372,9 @@ export default function App() {
                             [1]
                           </a>
                         </p>
-                        <div className="region-comparison">
-                          <div className="comparison-row table-head">
-                            <span>{t("Obszar")}</span>
-                            <span>{t(emotion.name)}</span>
-                            <span>{t(other.name)}</span>
-                          </div>
-                          {regions.map((r) => (
-                            <div className="comparison-row" key={r.id}>
-                              <span>{t(r.name)}</span>
-                              {[emotion, other].map((e, i) => (
-                                <span
-                                  key={i}
-                                  className={`sensation ${e.regions[r.id] ?? "none"}`}
-                                  aria-label={`${t(r.name)}, ${t(e.name)}: ${e.regions[r.id] === "more" ? t("wzrost odczuć") : e.regions[r.id] === "less" ? t("spadek odczuć") : t("bez wyróżnienia")}`}
-                                >
-                                  {e.regions[r.id] === "more"
-                                    ? "↑"
-                                    : e.regions[r.id] === "less"
-                                      ? "↓"
-                                      : "—"}
-                                </span>
-                              ))}
-                            </div>
-                          ))}
-                        </div>
                       </>
                     )}
+                    <ActivityTable emotions={[emotion, other]} />
                     <details className="comparison-examples">
                       <summary>
                         {t("Przykłady odczuć w tym samym obszarze")}{" "}
@@ -436,6 +413,7 @@ export default function App() {
                   </div>
                 ) : (
                   <div className="regions-detail">
+                    <ActivityTable emotions={[emotion]} />
                     <p className="small-label">{t("ODKRYWAJ OBSZARY CIAŁA")}</p>
                     <div className="region-chips">
                       {regions.map((r) => (

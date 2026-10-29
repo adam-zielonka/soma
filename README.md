@@ -8,6 +8,7 @@ Aplikacja edukacyjna o cielesnym wymiarze emocji, dostępna po polsku i angielsk
 - Widok „Według części ciała”: wybór obszaru, lista powiązanych emocji z podziałem na wzrost i spadek odczuć oraz przykładowe opisy. Link zachowuje widok i obszar.
 - Przykłady odczuć dla konkretnych obszarów: np. ciepło twarzy, napięcie dłoni lub ciężkość nóg.
 - Porównanie dwóch map, tekstowe zestawienie zmian oraz przykłady dla tego samego obszaru.
+- Kierunek odczuć oznaczony również symbolami ↑/↓/— i tekstową tabelą sześciu regionów, w eksploracji i porównaniu (także tej samej emocji).
 - Linki zachowujące wybraną emocję i tryb porównania.
 - Obsługa dotyku i klawiatury, responsywny układ, ograniczone animacje.
 - Publikacje naukowe oraz widoczne wyjaśnienie ograniczeń map.

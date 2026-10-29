@@ -35,6 +35,9 @@ const translations: Record<string, string> = {
   "Wzrost odczuć": "Increased sensation",
   "Spadek odczuć": "Decreased sensation",
   "Bez wyróżnienia": "Not highlighted",
+  "Kierunek odczuwanej aktywności": "Direction of felt activity",
+  "Bez wyróżnienia w schemacie nie oznacza braku odczuć.":
+    "Not highlighted in the map does not mean there are no sensations.",
   "Odczuwana aktywność · schemat poglądowy, bez skali liczbowej":
     "Felt activity · illustrative map, no numerical scale",
   "03 / ZAUWAŻ RÓŻNICE": "03 / NOTICE THE DIFFERENCES",
