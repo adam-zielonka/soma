@@ -1,6 +1,7 @@
 import { t, language } from "./i18n";
 import { ArrowRight, ArrowUpRight, Check, Copy } from "lucide-react";
 import { useChoiceStrip } from "./useChoiceStrip";
+import { EmotionBubbles } from "./MapBubbles";
 import BodyMap from "./BodyMap";
 import EmotionFace from "./EmotionFace";
 import { emotions, regions } from "./emotions";
@@ -59,8 +60,9 @@ export default function RegionExplorer({
       </aside>
       <div className="map-panel">
         <h2 id="body-results-title">{t(selectedRegion.name)}</h2>
-        <div className="single-map">
+        <div className="single-map annotated-map">
           <BodyMap selected={region} onRegion={onRegion} />
+          <EmotionBubbles matches={matching} onEmotion={onEmotion} />
         </div>
         <a className="region-jump" href="#related-emotions">
           {t("Powiązane emocje")} ({matching.length}) <ArrowRight size={14} />

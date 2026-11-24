@@ -16,6 +16,7 @@ import {
 import { useChoiceStrip } from "./useChoiceStrip";
 import somaMark from "./assets/soma.svg";
 import BodyMap from "./BodyMap";
+import { SensationBubbles } from "./MapBubbles";
 import { ActivityTable } from "./Activity";
 import EmotionFace from "./EmotionFace";
 import RegionExperience from "./RegionExperience";
@@ -24,6 +25,22 @@ import { emotions, findEmotion, regions } from "./emotions";
 import type { Emotion, Region } from "./emotions";
 
 type AtlasMode = "explore" | "compare" | "body";
+
+function Brand({ compact = false }: { compact?: boolean }) {
+  const size = compact ? 28 : 44;
+  return (
+    <a
+      href={import.meta.env.BASE_URL}
+      className={compact ? "brand footer-brand" : "brand"}
+      aria-label={t("Soma — strona główna")}
+    >
+      <img src={somaMark} alt="" width={size} height={size} />
+      <span className="brand-name">
+        soma<span className="brand-caption">{t("Atlas Emocji")}</span>
+      </span>
+    </a>
+  );
+}
 
 function readLocation() {
   const p = new URLSearchParams(window.location.search);
@@ -93,6 +110,10 @@ export default function App() {
       setCopyError(true);
     }
   }
+  function showRegion(r: Region) {
+    setRegion(r);
+    setRegionOpen(true);
+  }
   function showEmotion(selected: Emotion) {
     setRegionOpen(true);
     setEmotion(selected);
@@ -105,15 +126,7 @@ export default function App() {
         {t("Przejdź do mapy emocji")}{" "}
       </a>
       <header className="header wrap">
-        <a
-          href={import.meta.env.BASE_URL}
-          className="brand"
-          aria-label={t("Soma — strona główna")}
-        >
-          <img src={somaMark} alt="" width="44" height="44" />
-          <span>soma</span>
-          <span className="brand-caption">{t("ATLAS EMOCJI")}</span>
-        </a>
+        <Brand />
         <div className="atlas-top">
           <div className="mode-switch" role="group" aria-label={t("Tryb mapy")}>
             <button
@@ -228,16 +241,23 @@ export default function App() {
                     ))}
                   </div>
                 ) : (
-                  <div className="single-map">
-                    <BodyMap
-                      emotion={emotion}
-                      selected={regionOpen ? region : null}
-                      onRegion={(r) => {
-                        setRegion(r);
-                        setRegionOpen(true);
-                      }}
-                    />
-                  </div>
+                  <>
+                    <p className="bubble-caption">
+                      {t("Przykładowe odczucia")}
+                    </p>
+                    <div className="single-map annotated-map">
+                      <BodyMap
+                        emotion={emotion}
+                        selected={regionOpen ? region : null}
+                        onRegion={showRegion}
+                      />
+                      <SensationBubbles
+                        emotion={emotion}
+                        selected={regionOpen ? region : null}
+                        onRegion={showRegion}
+                      />
+                    </div>
+                  </>
                 )}
                 {!compare && regionOpen && (
                   <a className="region-jump" href="#region-sensations">
@@ -567,9 +587,7 @@ export default function App() {
         </section>
       </main>
       <footer className="footer wrap">
-        <a href={import.meta.env.BASE_URL} className="brand footer-brand">
-          <img src={somaMark} alt="" width="28" height="28" /> soma
-        </a>
+        <Brand compact />
 
         <div
           className="language-switch"

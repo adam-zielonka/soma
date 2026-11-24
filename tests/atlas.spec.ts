@@ -403,3 +403,36 @@ test("body region persists in shared links and carries over to the full emotion 
     page.getByRole("heading", { name: "Klatka piersiowa", exact: true }),
   ).toBeVisible();
 });
+
+test("map bubbles follow highlighted regions and navigate between the figure and emotions", async ({
+  page,
+}) => {
+  await page.goto("./?emocja=anger");
+  const samples = page.locator(".sensation-bubble");
+  await expect(samples).toHaveCount(2);
+  const hands = samples.filter({ hasText: "Zaciskam dłonie w pięści." });
+  await hands.click();
+  await expect(page).toHaveURL(/obszar=arms/);
+  await expect(page.locator(".region-info")).toBeVisible();
+  const figure = page.getByRole("group", { name: "Mapa ciała: Złość" });
+  await figure.getByRole("button", { name: "Klatka piersiowa" }).press("Enter");
+  await expect(samples.filter({ hasText: "Klatka piersiowa" })).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
+  await page.getByRole("button", { name: "Według części ciała" }).click();
+  const picker = page.locator(".body-area-buttons");
+  await picker.getByRole("button", { name: "Głowa" }).click();
+  await expect(page.locator(".emotion-bubble")).toHaveCount(12);
+  await picker.getByRole("button", { name: "Gardło" }).click();
+  await expect(page.locator(".emotion-bubble")).toHaveCount(1);
+  await page
+    .getByRole("button", { name: "Zobacz mapę: Wstręt" })
+    .press("Enter");
+  await expect(page).toHaveURL(/emocja=disgust/);
+  await expect(page).toHaveURL(/obszar=throat/);
+  await expect(samples.filter({ hasText: "Gardło" })).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
+});
