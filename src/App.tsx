@@ -617,7 +617,7 @@ export default function App() {
           target="_blank"
           rel="noreferrer"
         >
-          {t("Otwarty kod")} <ArrowRight size={15} />
+          {t("Kod źródłowy")} <ArrowRight size={15} />
         </a>
       </footer>
     </>

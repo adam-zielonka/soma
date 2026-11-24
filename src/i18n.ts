@@ -127,7 +127,7 @@ const translations: Record<string, string> = {
     "Explore the research team’s materials",
   "Trochę nauki. Trochę uważności. Bliżej siebie.":
     "A little science. A little awareness. Closer to yourself.",
-  "Otwarty kod": "Source code",
+  "Kod źródłowy": "Source code",
   Odkrywaj: "Explore",
   "adres.": "address.",
   Obszar: "Region",
