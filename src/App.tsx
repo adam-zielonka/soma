@@ -1,5 +1,5 @@
 import { t, language, setLanguage, subscribe } from "./i18n";
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import {
   ArrowDownRight,
   ArrowRight,
@@ -10,8 +10,11 @@ import {
   Info,
   Layers2,
   PersonStanding,
-  Sparkles,
+  ScanFace,
+  Hand,
 } from "lucide-react";
+import { useChoiceStrip } from "./useChoiceStrip";
+import somaMark from "./assets/soma.svg";
 import BodyMap from "./BodyMap";
 import { ActivityTable } from "./Activity";
 import EmotionFace from "./EmotionFace";
@@ -45,10 +48,12 @@ export default function App() {
   const [other, setOther] = useState(initial.comparison);
   const [mode, setMode] = useState<AtlasMode>(initial.mode);
   const compare = mode === "compare";
+  const pickerRef = useChoiceStrip(mode === "body" ? "" : emotion.id, language);
   const [region, setRegion] = useState<Region>(initial.region);
   const [copied, setCopied] = useState(false);
   const [copyError, setCopyError] = useState(false);
   const [regionOpen, setRegionOpen] = useState(initial.regionOpen);
+  const sourcesRef = useRef<HTMLDetailsElement>(null);
   const [reflection, setReflection] = useState(false);
   useEffect(() => {
     const url = new URL(window.location.href);
@@ -105,15 +110,37 @@ export default function App() {
           className="brand"
           aria-label={t("Soma — strona główna")}
         >
-          <span className="brand-mark">s</span>
-          <span>
-            soma<span className="brand-dot">.</span>
-          </span>
+          <img src={somaMark} alt="" width="44" height="44" />
+          <span>soma</span>
           <span className="brand-caption">{t("ATLAS EMOCJI")}</span>
         </a>
+        <div className="atlas-top">
+          <div className="mode-switch" role="group" aria-label={t("Tryb mapy")}>
+            <button
+              aria-pressed={mode === "explore"}
+              onClick={() => setMode("explore")}
+            >
+              <ScanFace size={16} /> {t("Odkrywaj")}{" "}
+            </button>
+            <button aria-pressed={compare} onClick={() => setMode("compare")}>
+              <Layers2 size={15} /> {t("Porównaj emocje")}{" "}
+            </button>
+            <button
+              aria-pressed={mode === "body"}
+              onClick={() => setMode("body")}
+            >
+              <PersonStanding size={16} /> {t("Według części ciała")}{" "}
+            </button>
+          </div>
+        </div>
         <nav aria-label={t("Nawigacja główna")}>
-          <a href="#nauka">
-            {t("Podstawy naukowe")} <ArrowUpRight size={14} />
+          <a
+            href="#nauka"
+            onClick={() => {
+              if (sourcesRef.current) sourcesRef.current.open = true;
+            }}
+          >
+            {t("Podstawy naukowe")} <ArrowDownRight size={14} />
           </a>
         </nav>
       </header>
@@ -125,25 +152,6 @@ export default function App() {
           className="atlas wrap"
           aria-label={t("Interaktywny atlas emocji")}
         >
-          <div className="atlas-top">
-            <div className="mode-switch" aria-label={t("Tryb mapy")}>
-              <button
-                aria-pressed={mode === "explore"}
-                onClick={() => setMode("explore")}
-              >
-                <Sparkles size={15} /> {t("Odkrywaj")}{" "}
-              </button>
-              <button aria-pressed={compare} onClick={() => setMode("compare")}>
-                <Layers2 size={15} /> {t("Porównaj emocje")}{" "}
-              </button>
-              <button
-                aria-pressed={mode === "body"}
-                onClick={() => setMode("body")}
-              >
-                <PersonStanding size={16} /> {t("Według części ciała")}{" "}
-              </button>
-            </div>
-          </div>
           {mode === "body" ? (
             <RegionExplorer
               region={region}
@@ -156,8 +164,10 @@ export default function App() {
           ) : (
             <div className="explorer">
               <aside className="emotion-picker" aria-labelledby="picker-title">
-                <h2 id="picker-title">{t("Wybierz emocję")}</h2>
-                <div className="emotion-grid">
+                <h2 id="picker-title">
+                  {compare ? t("Pierwsza emocja") : t("Wybierz emocję")}
+                </h2>
+                <div className="emotion-grid" ref={pickerRef}>
                   {emotions.map((e) => (
                     <button
                       key={e.id}
@@ -191,31 +201,31 @@ export default function App() {
                 )}
                 {compare ? (
                   <div className="comparison-maps">
-                    <div className="comparison-item">
-                      <span className="map-name">{t(emotion.name)}</span>
-                      <BodyMap emotion={emotion} />
-                    </div>
-                    <span className="versus">&</span>
-                    <div className="comparison-item">
-                      <label className="select-label">
-                        <span className="sr-only">{t("Druga emocja")}</span>
-                        <select
-                          aria-label={t("Druga emocja")}
-                          value={other.id}
-                          onChange={(e) =>
-                            setOther(findEmotion(e.target.value))
-                          }
-                        >
-                          {emotions.map((e) => (
-                            <option key={e.id} value={e.id}>
-                              {t(e.name)}
-                            </option>
-                          ))}
-                        </select>
-                        <ChevronDown size={14} />
-                      </label>
-                      <BodyMap emotion={other} />
-                    </div>
+                    {[emotion, other].map((entry, i) => (
+                      <div className="comparison-item" key={i}>
+                        <label className="select-label">
+                          <span>
+                            {i === 0 ? t("Pierwsza emocja") : t("Druga emocja")}
+                          </span>
+                          <select
+                            value={entry.id}
+                            onChange={(e) => {
+                              const next = findEmotion(e.target.value);
+                              if (i === 0) setEmotion(next);
+                              else setOther(next);
+                            }}
+                          >
+                            {emotions.map((option) => (
+                              <option key={option.id} value={option.id}>
+                                {t(option.name)}
+                              </option>
+                            ))}
+                          </select>
+                          <ChevronDown size={16} />
+                        </label>
+                        <BodyMap emotion={entry} />
+                      </div>
+                    ))}
                   </div>
                 ) : (
                   <div className="single-map">
@@ -228,6 +238,17 @@ export default function App() {
                       }}
                     />
                   </div>
+                )}
+                {!compare && regionOpen && (
+                  <a className="region-jump" href="#region-sensations">
+                    {t(regions.find((r) => r.id === region)!.name)} ·{" "}
+                    {t("Zobacz odczucia")} <ArrowRight size={14} />
+                  </a>
+                )}
+                {!compare && !regionOpen && (
+                  <p className="map-hint">
+                    <Hand size={15} /> {t("Wybierz obszar na sylwetce")}
+                  </p>
                 )}
                 <div className="legend" aria-label={t("Legenda mapy")}>
                   <span>
@@ -311,7 +332,6 @@ export default function App() {
                     <details className="comparison-examples">
                       <summary>
                         {t("Przykłady odczuć w tym samym obszarze")}{" "}
-                        <ChevronDown size={14} />
                       </summary>
                       <label className="example-area-select">
                         {t("Obszar ciała")}{" "}
@@ -350,7 +370,9 @@ export default function App() {
                     open={regionOpen}
                     onToggle={(e) => setRegionOpen(e.currentTarget.open)}
                   >
-                    <summary>{t("Odczucia w obszarze ciała")}</summary>
+                    <summary id="region-sensations">
+                      {t("Odczucia w obszarze ciała")}
+                    </summary>
                     <div className="region-chips">
                       {regions.map((r) => (
                         <button
@@ -413,7 +435,7 @@ export default function App() {
           className="science wrap"
           aria-label={t("Podstawy naukowe")}
         >
-          <details className="sources fold">
+          <details ref={sourcesRef} className="sources fold">
             <summary>{t("Badania i źródła")}</summary>
             <div className="source-grid">
               <article id="source-1" className="source-card">
@@ -515,7 +537,6 @@ export default function App() {
                 <Info size={17} />{" "}
                 {t("Jak powstały te mapy i jakie mają ograniczenia?")}{" "}
               </span>
-              <ChevronDown size={18} />
             </summary>
             <div className="method-content">
               <p>
@@ -547,7 +568,7 @@ export default function App() {
       </main>
       <footer className="footer wrap">
         <a href={import.meta.env.BASE_URL} className="brand footer-brand">
-          soma<span className="brand-dot">.</span>
+          <img src={somaMark} alt="" width="28" height="28" /> soma
         </a>
 
         <div

@@ -1,5 +1,6 @@
-import { t } from "./i18n";
+import { t, language } from "./i18n";
 import { ArrowRight, ArrowUpRight, Check, Copy } from "lucide-react";
+import { useChoiceStrip } from "./useChoiceStrip";
 import BodyMap from "./BodyMap";
 import EmotionFace from "./EmotionFace";
 import { emotions, regions } from "./emotions";
@@ -21,6 +22,7 @@ export default function RegionExplorer({
   copied: boolean;
   copyError: boolean;
 }) {
+  const pickerRef = useChoiceStrip(region, language);
   const selectedRegion = regions.find((r) => r.id === region)!;
   const matching = emotions.filter((e) => e.regions[region]);
   const remaining = emotions.filter((e) => !e.regions[region]);
@@ -38,7 +40,11 @@ export default function RegionExplorer({
     <div className="region-explorer">
       <aside className="body-area-picker" aria-labelledby="body-picker-title">
         <h2 id="body-picker-title">{t("Wybierz obszar")}</h2>
-        <div className="body-area-buttons" aria-label={t("Części ciała")}>
+        <div
+          className="body-area-buttons"
+          ref={pickerRef}
+          aria-label={t("Części ciała")}
+        >
           {regions.map((r) => (
             <button
               key={r.id}
@@ -56,11 +62,11 @@ export default function RegionExplorer({
         <div className="single-map">
           <BodyMap selected={region} onRegion={onRegion} />
         </div>
+        <a className="region-jump" href="#related-emotions">
+          {t("Powiązane emocje")} ({matching.length}) <ArrowRight size={14} />
+        </a>
         <p className="body-picker-caption">
-          {t("Jasny obszar oznacza wybór części ciała.")} <br />
-          {t(
-            "Autorski schemat na podstawie samoopisów uczestników badania.",
-          )}{" "}
+          {t("Autorski schemat na podstawie samoopisów uczestników badania.")}{" "}
           <a className="citation" href="#source-1">
             [1]
           </a>
@@ -71,7 +77,9 @@ export default function RegionExplorer({
         aria-labelledby="body-results-title"
       >
         <div className="body-results-heading">
-          <h2>{t("Szczegóły mapy")}</h2>
+          <h2 id="related-emotions" tabIndex={-1}>
+            {t("Powiązane emocje")}
+          </h2>
           <button
             className="icon-button"
             onClick={onCopy}

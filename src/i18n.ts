@@ -1,4 +1,7 @@
 const translations: Record<string, string> = {
+  "Powiązane emocje": "Related emotions",
+  "Pierwsza emocja": "First emotion",
+  "Zobacz odczucia": "View sensations",
   "Wybierz emocję": "Choose an emotion",
   "Szczegóły mapy": "Map details",
   "Opis mapy": "Map description",

@@ -2,10 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
 import "@fontsource-variable/dm-sans/wght.css";
-import "@fontsource/instrument-serif/latin-400.css";
-import "@fontsource/instrument-serif/latin-400-italic.css";
-import "@fontsource/instrument-serif/latin-ext-400.css";
-import "@fontsource/instrument-serif/latin-ext-400-italic.css";
+import "@fontsource-variable/bricolage-grotesque/wght.css";
 import "./style.css";
 import "./region-explorer.css";
 

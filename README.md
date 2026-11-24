@@ -44,7 +44,7 @@ Mapy SVG i przypisania kategorii w `src/emotions.ts` stanowią uproszczoną inte
 
 Push do `main` uruchamia `.github/workflows/deploy.yml`: instalację, kompilację i testy, a następnie GitHub Pages. Źródło Pages w ustawieniach repozytorium: **GitHub Actions**. Ścieżka bazowa Vite: `/soma/`.
 
-Kod: MIT. Fonty Instrument Serif i DM Sans: SIL Open Font License, zob. `public/licenses/`.
+Kod: MIT. Fonty Bricolage Grotesque i DM Sans: SIL Open Font License, zob. `public/licenses/`.
 
 
 ## Language / Język

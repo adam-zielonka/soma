@@ -110,6 +110,23 @@ test("the silhouette is centered and the textual map opens on demand", async ({
   ]);
 });
 
+test("shared mobile choices are visible and the map leads to the selected region", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 360, height: 780 });
+  await page.goto("./?emocja=contempt&obszar=arms");
+  const selected = page.getByRole("button", { name: "Pogarda", exact: true });
+  await expect(selected).toBeInViewport({ ratio: 0.98 });
+  await page.getByRole("link", { name: /Ręce · Zobacz odczucia/ }).click();
+  await expect(page.locator("#region-sensations")).toBeInViewport();
+  await page.goto("./?widok=cialo&obszar=legs");
+  await expect(
+    page.locator(".body-area-buttons").getByRole("button", { name: "Nogi" }),
+  ).toBeInViewport({ ratio: 0.98 });
+  await page.getByRole("link", { name: /Powiązane emocje/ }).click();
+  await expect(page.locator("#related-emotions")).toBeInViewport();
+});
+
 test("comparison works, persists in URL and handles the same emotion", async ({
   page,
 }) => {
@@ -124,6 +141,15 @@ test("comparison works, persists in URL and handles the same emotion", async ({
   await expect(
     page.getByRole("img", { name: "Mapa ciała: Złość" }),
   ).toBeVisible();
+  const first = page.getByRole("combobox", { name: "Pierwsza emocja" });
+  await first.selectOption("fear");
+  await expect(
+    page.getByRole("img", { name: "Mapa ciała: Strach" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Strach", exact: true }),
+  ).toHaveAttribute("aria-pressed", "true");
+  await first.selectOption("joy");
   await expect(page).toHaveURL(/z=anger/);
   await page.reload();
   await expect(

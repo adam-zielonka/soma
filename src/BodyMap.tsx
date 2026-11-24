@@ -72,19 +72,19 @@ export default function BodyMap({
           <feGaussianBlur stdDeviation="10" />
         </filter>
         <radialGradient id={`${uid}-warm`}>
-          <stop offset="0" stopColor="#fff0ac" />
-          <stop offset=".45" stopColor="#f6b951" />
-          <stop offset=".75" stopColor="#e27b40" stopOpacity=".8" />
-          <stop offset="1" stopColor="#de713b" stopOpacity="0" />
+          <stop offset="0" stopColor="#ffeab8" />
+          <stop offset=".45" stopColor="#ffb777" />
+          <stop offset=".75" stopColor="#fa7958" stopOpacity=".8" />
+          <stop offset="1" stopColor="#dd6551" stopOpacity="0" />
         </radialGradient>
         <radialGradient id={`${uid}-cool`}>
-          <stop offset="0" stopColor="#9dc8e7" />
-          <stop offset=".5" stopColor="#639bc1" />
-          <stop offset="1" stopColor="#3f739f" stopOpacity="0" />
+          <stop offset="0" stopColor="#c6f6fa" />
+          <stop offset=".5" stopColor="#63c6e1" />
+          <stop offset="1" stopColor="#4a98bd" stopOpacity="0" />
         </radialGradient>
         <linearGradient id={`${uid}-base`} x2="1" y2="1">
-          <stop stopColor="#3d574b" />
-          <stop offset="1" stopColor="#243e33" />
+          <stop stopColor="#837988" />
+          <stop offset="1" stopColor="#695f73" />
         </linearGradient>
       </defs>
       <path d={body} fill={`url(#${uid}-base)`} />
@@ -122,14 +122,14 @@ export default function BodyMap({
                 cy={p.y}
                 rx={p.rx}
                 ry={p.ry}
-                fill="#dce7b1"
+                fill="#eee1f7"
                 fillOpacity=".55"
               />
             ))}
           </g>
         )
       )}
-      <path d={body} fill="none" stroke="#243e33" strokeOpacity=".14" />
+      <path d={body} fill="none" stroke="#bfb0c2" strokeOpacity=".75" />
       <g
         fill="none"
         stroke="#f5f3de"
