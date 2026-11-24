@@ -1,5 +1,11 @@
 import { defineConfig, devices } from "@playwright/test";
 
+const port = Number(process.env.PLAYWRIGHT_PORT || 4173);
+if (!Number.isInteger(port) || port < 1 || port > 65535) {
+  throw new Error("PLAYWRIGHT_PORT must be an integer between 1 and 65535");
+}
+const baseURL = `http://127.0.0.1:${port}/soma/`;
+
 export default defineConfig({
   testDir: "./tests",
   fullyParallel: true,
@@ -9,7 +15,7 @@ export default defineConfig({
   reporter: "list",
   use: {
     locale: "pl-PL",
-    baseURL: "http://127.0.0.1:4173/soma/",
+    baseURL,
     trace: "retain-on-failure",
   },
   projects: [
@@ -23,8 +29,8 @@ export default defineConfig({
     { name: "mobile", use: { ...devices["Pixel 7"] } },
   ],
   webServer: {
-    command: "pnpm preview --host 127.0.0.1",
-    url: "http://127.0.0.1:4173/soma/",
+    command: `pnpm preview --host 127.0.0.1 --port ${port} --strictPort`,
+    url: baseURL,
     reuseExistingServer: !process.env.CI,
   },
 });
