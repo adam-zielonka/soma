@@ -1,4 +1,13 @@
 const translations: Record<string, string> = {
+  "Wybierz emocję": "Choose an emotion",
+  "Szczegóły mapy": "Map details",
+  "Opis mapy": "Map description",
+  "Odczucia w obszarze ciała": "Sensations by body region",
+  "Tabela obszarów ciała": "Table of body regions",
+  "Badania i źródła": "Research and sources",
+  "Autorski schemat na podstawie samoopisów uczestników badania.":
+    "Illustration based on study participants’ self-reports.",
+  "Wybierz obszar": "Choose a region",
   "Przejdź do mapy emocji": "Skip to the emotion map",
   "Soma — strona główna": "Soma home",
   "ATLAS EMOCJI": "EMOTION ATLAS",

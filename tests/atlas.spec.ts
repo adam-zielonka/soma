@@ -30,6 +30,12 @@ test("body regions support mouse, keyboard and a textual alternative", async ({
   await expect(page.locator(".region-info")).toContainText(
     "spadek odczuwanej aktywności",
   );
+  await page.reload();
+  await expect(map.getByRole("button", { name: "Nogi" })).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
+  await expect(page.locator(".region-info")).toBeVisible();
   const leg = await map.getByRole("button", { name: "Nogi" }).boundingBox();
   const head = await map.getByRole("button", { name: "Głowa" }).boundingBox();
   expect(leg!.y).toBeGreaterThan(head!.y + 100);
@@ -67,72 +73,41 @@ test("explore and comparison pass automated accessibility checks", async ({
   expect(body.violations).toEqual([]);
 });
 
-test("map symbols and the six-region table communicate direction without colour", async ({
+test("the silhouette is centered and the textual map opens on demand", async ({
   page,
 }) => {
   await page.goto("./?emocja=sadness&obszar=legs");
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.locator("html").evaluate((element) => {
-    element.style.filter = "grayscale(1)";
-  });
   const map = page.getByRole("group", { name: "Mapa ciała: Smutek" });
+  const box = (await map.boundingBox())!;
+  const viewport = page.viewportSize()!;
+  expect(Math.abs(box.x + box.width / 2 - viewport.width / 2)).toBeLessThan(3);
+  expect(box.y + box.height).toBeLessThan(viewport.height);
+  await expect(map.locator("text")).toHaveCount(0);
   const table = page.getByRole("table", {
     name: "Kierunek odczuwanej aktywności",
   });
+  await expect(table).toBeHidden();
+  await page.getByText("Tabela obszarów ciała", { exact: true }).click();
   await expect(table.getByRole("row")).toHaveCount(7);
-  for (const [region, name, symbol, label] of [
-    ["head", "Głowa", "↑", "Wzrost odczuć"],
-    ["throat", "Gardło", "—", "Bez wyróżnienia"],
-    ["chest", "Klatka piersiowa", "↑", "Wzrost odczuć"],
-    ["belly", "Brzuch", "—", "Bez wyróżnienia"],
-    ["arms", "Ręce", "↓", "Spadek odczuć"],
-    ["legs", "Nogi", "↓", "Spadek odczuć"],
-  ]) {
-    const marker = map.locator(`[data-region="${region}"] text`).first();
-    await expect(marker).toBeVisible();
-    await expect(marker).toHaveText(symbol);
-    const row = table.getByRole("row").filter({
-      has: page.getByRole("rowheader", { name, exact: true }),
-    });
-    await expect(row.getByRole("cell")).toHaveText(`${symbol}${label}`);
-  }
-  await map.getByRole("button", { name: "Gardło", exact: true }).focus();
-  await page.keyboard.press("Space");
-  await expect(page).toHaveURL(/obszar=throat/);
-  await expect(page.locator(".region-info")).toContainText(
-    "Nie oznacza to braku odczuć",
-  );
-  await page
-    .getByRole("button", { name: "Porównaj emocje", exact: true })
-    .click();
-  await page
-    .getByRole("combobox", { name: "Druga emocja" })
-    .selectOption("joy");
   const legs = table.getByRole("row").filter({
     has: page.getByRole("rowheader", { name: "Nogi", exact: true }),
   });
+  await expect(legs.getByRole("cell")).toHaveText("Spadek odczuć");
+  await page.getByRole("button", { name: "Porównaj emocje" }).click();
+  await page
+    .getByRole("combobox", { name: "Druga emocja" })
+    .selectOption("joy");
   await expect(legs.getByRole("cell")).toHaveText([
-    "↓Spadek odczuć",
-    "↑Wzrost odczuć",
+    "Spadek odczuć",
+    "Wzrost odczuć",
   ]);
-  await expect(page.locator(".comparison-maps .activity-marker")).toHaveCount(
-    16,
-  );
   await page
     .getByRole("combobox", { name: "Druga emocja" })
     .selectOption("sadness");
-  await expect(page.locator(".comparison-details > .muted")).toContainText(
-    "To ta sama emocja",
-  );
-  await expect(table.getByRole("row")).toHaveCount(7);
   await expect(legs.getByRole("cell")).toHaveText([
-    "↓Spadek odczuć",
-    "↓Spadek odczuć",
+    "Spadek odczuć",
+    "Spadek odczuć",
   ]);
-  await page
-    .getByRole("button", { name: "Według części ciała", exact: true })
-    .click();
-  await expect(page.locator(".body-map .activity-marker")).toHaveCount(0);
 });
 
 test("comparison works, persists in URL and handles the same emotion", async ({
@@ -200,6 +175,7 @@ test("examples follow the selected emotion and body area, including unhighlighte
   page,
 }) => {
   await page.goto("./?emocja=anger");
+  await page.getByText("Odczucia w obszarze ciała", { exact: true }).click();
   await page
     .locator(".region-chips")
     .getByRole("button", { name: "Ręce", exact: true })
@@ -285,6 +261,7 @@ test("scientific references, limitations and reflection remain accessible", asyn
   await expect(
     page.getByText("Sylwetki w Somie to autorskie", { exact: false }),
   ).toBeVisible();
+  await page.getByText("Badania i źródła", { exact: true }).click();
   await expect(
     page.getByRole("link", { name: "Przeczytaj publikację" }),
   ).toHaveCount(2);
@@ -330,9 +307,10 @@ test("body-first view shows regional emotion examples and separates increases fr
     .getByRole("button", { name: "Brzuch", exact: true })
     .click();
   await expect(page.locator(".body-emotion-card")).toHaveCount(6);
-  await expect(
-    page.getByRole("article", { name: "Niepokój", exact: true }),
-  ).toContainText("motyle, ścisk");
+  await page.locator(".body-emotion-group.more > summary").click();
+  const anxiety = page.getByRole("article", { name: "Niepokój", exact: true });
+  await anxiety.getByText("Przykładowe odczucia").click();
+  await expect(anxiety.getByText(/motyle, ścisk/)).toBeVisible();
   await expect(
     page.getByRole("article", { name: "Złość", exact: true }),
   ).toHaveCount(0);
@@ -345,6 +323,7 @@ test("body-first view shows regional emotion examples and separates increases fr
       .locator(".body-emotion-group.more")
       .getByRole("article", { name: "Złość", exact: true }),
   ).toContainText("Zaciskam dłonie w pięści");
+  await page.locator(".body-emotion-group.less > summary").click();
   await expect(
     page
       .locator(".body-emotion-group.less")
@@ -381,6 +360,7 @@ test("body region persists in shared links and carries over to the full emotion 
       .locator(".body-area-buttons")
       .getByRole("button", { name: "Ręce", exact: true }),
   ).toHaveAttribute("aria-pressed", "true");
+  await page.locator(".body-emotion-group.more > summary").click();
   await page
     .getByRole("article", { name: "Złość", exact: true })
     .getByRole("button", { name: "Zobacz mapę emocji" })

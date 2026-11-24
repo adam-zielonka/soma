@@ -2,27 +2,16 @@ import { regions } from "./emotions";
 import type { Emotion } from "./emotions";
 import { t } from "./i18n";
 
-export const activityStates = {
-  more: { symbol: "↑", label: "Wzrost odczuć" },
-  less: { symbol: "↓", label: "Spadek odczuć" },
-  none: { symbol: "—", label: "Bez wyróżnienia" },
+export const activityLabels = {
+  more: "Wzrost odczuć",
+  less: "Spadek odczuć",
+  none: "Bez wyróżnienia",
 };
-
-export function ActivitySymbol({
-  state,
-}: {
-  state: keyof typeof activityStates;
-}) {
-  return (
-    <span className={`activity-symbol ${state}`} aria-hidden="true">
-      {activityStates[state].symbol}
-    </span>
-  );
-}
 
 export function ActivityTable({ emotions }: { emotions: Emotion[] }) {
   return (
-    <div className="region-comparison">
+    <details className="region-comparison fold">
+      <summary>{t("Tabela obszarów ciała")}</summary>
       <table className="activity-table">
         <caption>{t("Kierunek odczuwanej aktywności")}</caption>
         <thead>
@@ -41,14 +30,7 @@ export function ActivityTable({ emotions }: { emotions: Emotion[] }) {
               <th scope="row">{t(region.name)}</th>
               {emotions.map((emotion, i) => {
                 const state = emotion.regions[region.id] ?? "none";
-                return (
-                  <td key={i}>
-                    <span className="activity-state">
-                      <ActivitySymbol state={state} />
-                      <span>{t(activityStates[state].label)}</span>
-                    </span>
-                  </td>
-                );
+                return <td key={i}>{t(activityLabels[state])}</td>;
               })}
             </tr>
           ))}
@@ -57,6 +39,6 @@ export function ActivityTable({ emotions }: { emotions: Emotion[] }) {
       <p className="activity-note">
         {t("Bez wyróżnienia w schemacie nie oznacza braku odczuć.")}
       </p>
-    </div>
+    </details>
   );
 }
