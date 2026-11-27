@@ -4,7 +4,6 @@ import App from "./App";
 import "@fontsource-variable/dm-sans/wght.css";
 import "@fontsource-variable/bricolage-grotesque/wght.css";
 import "./style.css";
-import "./region-explorer.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>

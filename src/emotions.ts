@@ -1,29 +1,32 @@
 export type Region = "head" | "throat" | "chest" | "belly" | "arms" | "legs";
 export type Sensation = "more" | "less";
+export type Activity = Sensation | "none";
+export type EmotionGroup = "basic" | "complex";
 export type EmotionId =
-  | "joy"
-  | "sadness"
   | "anger"
   | "fear"
   | "disgust"
+  | "joy"
+  | "sadness"
   | "surprise"
-  | "love"
-  | "pride"
   | "anxiety"
+  | "love"
+  | "contempt"
+  | "pride"
   | "shame"
-  | "envy"
-  | "contempt";
+  | "envy";
+
 export interface Emotion {
   id: EmotionId;
   name: string;
-  english: string;
-  color: string;
-  light: string;
-  word: string;
+  group: EmotionGroup;
+  /** One sentence summarising the map; must stay consistent with `regions`. */
   description: string;
   regions: Partial<Record<Region, Sensation>>;
+  /** Authored self-observation prompt, not derived from the study. */
   prompt: string;
 }
+
 export const regions: { id: Region; name: string }[] = [
   { id: "head", name: "Głowa" },
   { id: "throat", name: "Gardło" },
@@ -32,20 +35,69 @@ export const regions: { id: Region; name: string }[] = [
   { id: "arms", name: "Ręce" },
   { id: "legs", name: "Nogi" },
 ];
-// Qualitative editorial interpretation of Fig. 2, Nummenmaa et al. (2014).
-// Categories and glow geometry are illustrative, not digitized measurements.
+
+export const groups: { id: EmotionGroup; name: string }[] = [
+  { id: "basic", name: "Emocje podstawowe" },
+  { id: "complex", name: "Emocje złożone" },
+];
+
+export function activityOf(emotion: Emotion, region: Region): Activity {
+  return emotion.regions[region] ?? "none";
+}
+
+export function findRegion(id: string | null): Region | null {
+  return regions.find((r) => r.id === id)?.id ?? null;
+}
+
+export function regionName(id: Region): string {
+  return regions.find((r) => r.id === id)!.name;
+}
+
+// Qualitative editorial reading of Figure 2 in Nummenmaa et al. (2014),
+// in the order used by the figure (basic emotions, then nonbasic ones).
+// Rule: "more"/"less" only where warm or cool colours clearly dominate the
+// area; mostly black (no significant change), faint or partial tints stay
+// unmarked. Checked on 2026-11-27 by two independent readers of the figure.
+// Glow geometry is illustrative, not digitized.
 export const emotions: Emotion[] = [
+  {
+    id: "anger",
+    name: "Złość",
+    group: "basic",
+    description:
+      "Wzrost odczuwanej aktywności w górnej połowie ciała: w głowie, szyi, klatce piersiowej i rękach, najwyraźniej w dłoniach.",
+    regions: { head: "more", throat: "more", chest: "more", arms: "more" },
+    prompt:
+      "Zauważ ułożenie dłoni i ramion. Co odczuwasz, nie próbując tego zmieniać?",
+  },
+  {
+    id: "fear",
+    name: "Strach",
+    group: "basic",
+    description:
+      "Wzrost odczuwanej aktywności najwyraźniejszy w szyi i klatce piersiowej, mniej wyraźny w głowie i górnej części brzucha.",
+    regions: { head: "more", throat: "more", chest: "more", belly: "more" },
+    prompt: "Gdzie teraz czujesz podparcie? Zauważ kontakt stóp z podłożem.",
+  },
+  {
+    id: "disgust",
+    name: "Wstręt",
+    group: "basic",
+    description:
+      "Wzrost odczuwanej aktywności najwyraźniejszy wokół ust i gardła, widoczny też w okolicy żołądka.",
+    regions: { head: "more", throat: "more", chest: "more", belly: "more" },
+    prompt:
+      "Czy chcesz się od czegoś odsunąć? Zauważ tę reakcję bez oceniania.",
+  },
   {
     id: "joy",
     name: "Radość",
-    english: "Happiness",
-    color: "#9b651d",
-    light: "#f4e7bb",
-    word: "Ciepło, które się rozchodzi.",
+    group: "basic",
     description:
-      "Radość wyróżniała się wzrostem odczuwanej aktywności w niemal całym ciele. [1]",
+      "Wzrost odczuwanej aktywności w całym ciele, najwyraźniejszy w twarzy i klatce piersiowej.",
     regions: {
       head: "more",
+      throat: "more",
       chest: "more",
       belly: "more",
       arms: "more",
@@ -57,50 +109,35 @@ export const emotions: Emotion[] = [
   {
     id: "sadness",
     name: "Smutek",
-    english: "Sadness",
-    color: "#57748d",
-    light: "#e3eaf0",
-    word: "Gdy ciało zwalnia.",
+    group: "basic",
     description:
-      "Smutkowi towarzyszył spadek odczuwanej aktywności kończyn; górna część ciała pozostawała aktywna. [1]",
-    regions: { head: "more", chest: "more", arms: "less", legs: "less" },
+      "Wyraźny spadek odczuwanej aktywności rąk i nóg; mniej wyraźny wzrost w środku klatki piersiowej, szyi i twarzy.",
+    regions: {
+      head: "more",
+      throat: "more",
+      chest: "more",
+      arms: "less",
+      legs: "less",
+    },
     prompt:
       "Czy ciało wydaje się dziś cięższe, lżejsze, a może nie zauważasz różnicy?",
   },
   {
-    id: "anger",
-    name: "Złość",
-    english: "Anger",
-    color: "#b65b45",
-    light: "#f5dfd5",
-    word: "Energia gotowa do ruchu.",
+    id: "surprise",
+    name: "Zaskoczenie",
+    group: "basic",
     description:
-      "W mapach złości wyróżniały się głowa, klatka piersiowa i ręce. [1]",
-    regions: { head: "more", chest: "more", arms: "more" },
+      "Wzrost odczuwanej aktywności w głowie, szyi i klatce piersiowej, spadek w nogach.",
+    regions: { head: "more", throat: "more", chest: "more", legs: "less" },
     prompt:
-      "Zauważ ułożenie dłoni i ramion. Co odczuwasz, nie próbując tego zmieniać?",
+      "Przypomnij sobie ostatnie zaskoczenie. Co jako pierwsze zwróciło Twoją uwagę?",
   },
   {
-    id: "fear",
-    name: "Strach",
-    english: "Fear",
-    color: "#8270a4",
-    light: "#ebe5f2",
-    word: "Ciało w gotowości.",
+    id: "anxiety",
+    name: "Lęk",
+    group: "complex",
     description:
-      "Strach wiązał się ze wzrostem odczuwanej aktywności, zwłaszcza w górnej części tułowia. [1]",
-    regions: { head: "more", chest: "more", belly: "more" },
-    prompt: "Gdzie teraz czujesz podparcie? Zauważ kontakt stóp z podłożem.",
-  },
-  {
-    id: "disgust",
-    name: "Wstręt",
-    english: "Disgust",
-    color: "#6c7b4e",
-    light: "#e5e9d6",
-    word: "Wyraźny sygnał odsunięcia.",
-    description:
-      "Przy wstręcie wyróżniały się okolice gardła i układu pokarmowego. [1]",
+      "Wzrost odczuwanej aktywności najwyraźniejszy w szyi, klatce piersiowej i górnej części brzucha, spadek w nogach.",
     regions: {
       head: "more",
       throat: "more",
@@ -108,79 +145,54 @@ export const emotions: Emotion[] = [
       belly: "more",
       legs: "less",
     },
-    prompt:
-      "Czy chcesz się od czegoś odsunąć? Zauważ tę reakcję bez oceniania.",
-  },
-  {
-    id: "surprise",
-    name: "Zaskoczenie",
-    english: "Surprise",
-    color: "#b27745",
-    light: "#f4e4d2",
-    word: "Chwila, która zatrzymuje.",
-    description:
-      "Przy zaskoczeniu wyróżniały się odczucia w głowie i klatce piersiowej oraz spadek aktywności nóg. [1]",
-    regions: { head: "more", chest: "more", legs: "less" },
-    prompt:
-      "Przypomnij sobie ostatnie zaskoczenie. Co jako pierwsze zwróciło Twoją uwagę?",
+    prompt: "Zauważ jeden przedmiot w otoczeniu. Jaki ma kolor i kształt?",
   },
   {
     id: "love",
     name: "Miłość",
-    english: "Love",
-    color: "#b36d79",
-    light: "#f3dfe3",
-    word: "Bliskość odczuwana w ciele.",
+    group: "complex",
     description:
-      "Miłość wiązała się z rozległymi odczuciami wzrostu aktywności, szczególnie w górnej części ciała. [1]",
-    regions: { head: "more", chest: "more", belly: "more", arms: "more" },
+      "Rozległy wzrost odczuwanej aktywności od głowy po biodra, także w rękach.",
+    regions: {
+      head: "more",
+      throat: "more",
+      chest: "more",
+      belly: "more",
+      arms: "more",
+    },
     prompt:
       "Pomyśl o kimś bliskim lub o miejscu, w którym czujesz się dobrze. Co zauważasz?",
   },
   {
+    id: "contempt",
+    name: "Pogarda",
+    group: "complex",
+    description:
+      "Wzrost odczuwanej aktywności niemal wyłącznie w głowie i szyi; reszta ciała w większości bez wyróżnienia.",
+    regions: { head: "more", throat: "more" },
+    prompt:
+      "Zauważ wyraz twarzy i ułożenie szczęki. Co czujesz, kiedy nie próbujesz tego zmienić?",
+  },
+  {
     id: "pride",
     name: "Duma",
-    english: "Pride",
-    color: "#8b7851",
-    light: "#ede6d3",
-    word: "Miejsce na własne osiągnięcia.",
+    group: "complex",
     description:
-      "W mapie dumy wzrost odczuwanej aktywności koncentrował się w głowie i klatce piersiowej. [1]",
-    regions: { head: "more", chest: "more", arms: "more" },
+      "Wzrost odczuwanej aktywności najwyraźniejszy w głowie i klatce piersiowej, mniej wyraźny w rękach.",
+    regions: { head: "more", throat: "more", chest: "more", arms: "more" },
     prompt:
       "Przypomnij sobie coś, co Ci się udało. Jak układa się teraz Twoje ciało?",
   },
   {
-    id: "anxiety",
-    name: "Niepokój",
-    english: "Anxiety",
-    color: "#7c7394",
-    light: "#e9e4ee",
-    word: "Kiedy trudno odpuścić czujność.",
-    description:
-      "W mapie niepokoju wyróżniał się wzrost odczuć w tułowiu oraz ich spadek w kończynach. [1]",
-    regions: {
-      head: "more",
-      chest: "more",
-      belly: "more",
-      arms: "less",
-      legs: "less",
-    },
-    prompt: "Zauważ jeden przedmiot w otoczeniu. Jaki ma kolor i kształt?",
-  },
-  {
     id: "shame",
     name: "Wstyd",
-    english: "Shame",
-    color: "#a1676d",
-    light: "#f0dfe1",
-    word: "Gdy chce się zniknąć z widoku.",
+    group: "complex",
     description:
-      "W mapie wstydu wzrost odczuć obejmował twarz i tułów, a spadek — ręce i nogi. [1]",
+      "Wzrost odczuwanej aktywności w twarzy, szyi i środku klatki piersiowej, spadek w rękach i nogach.",
     regions: {
       head: "more",
+      throat: "more",
       chest: "more",
-      belly: "more",
       arms: "less",
       legs: "less",
     },
@@ -189,31 +201,18 @@ export const emotions: Emotion[] = [
   },
   {
     id: "envy",
-    name: "Zawiść",
-    english: "Envy",
-    color: "#71804f",
-    light: "#e6ead8",
-    word: "Ślad tego, na czym Ci zależy.",
+    name: "Zazdrość",
+    group: "complex",
     description:
-      "W mapie zawiści wyróżniały się głowa i klatka piersiowa oraz spadek odczuć w nogach. [1]",
-    regions: { head: "more", chest: "more", legs: "less" },
+      "Wzrost odczuwanej aktywności w głowie i szyi oraz w jednym miejscu w środku klatki piersiowej.",
+    regions: { head: "more", throat: "more", chest: "more" },
     prompt:
       "Co jest dla Ciebie ważne w tej sytuacji? Możesz zauważyć tę potrzebę bez oceniania siebie.",
   },
-  {
-    id: "contempt",
-    name: "Pogarda",
-    english: "Contempt",
-    color: "#80705c",
-    light: "#ece4da",
-    word: "Odczuwany dystans.",
-    description:
-      "W mapie pogardy wyróżniał się wzrost odczuć w głowie i spadek w dolnej części ciała. [1]",
-    regions: { head: "more", legs: "less" },
-    prompt:
-      "Zauważ wyraz twarzy i ułożenie szczęki. Co czujesz, kiedy nie próbujesz tego zmienić?",
-  },
 ];
-export function findEmotion(id: string | null): Emotion {
-  return emotions.find((e) => e.id === id) ?? emotions[0];
+
+export const defaultEmotion = emotions.find((e) => e.id === "joy")!;
+
+export function findEmotion(id: string | null, fallback = defaultEmotion) {
+  return emotions.find((e) => e.id === id) ?? fallback;
 }

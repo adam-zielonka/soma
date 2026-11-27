@@ -1,238 +1,384 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
-test("emotion selection changes the description, body map and shareable URL", async ({
-  page,
-}) => {
-  await page.goto("./");
-  await page.getByRole("button", { name: "Smutek", exact: true }).click();
-  await expect(
-    page.getByRole("heading", { name: "Smutek", exact: true }),
-  ).toBeVisible();
-  await expect(
-    page.getByRole("group", { name: "Mapa ciała: Smutek" }),
-  ).toBeVisible();
-  await expect(page).toHaveURL(/emocja=sadness/);
-  await page.reload();
-  await expect(
-    page.getByRole("button", { name: "Smutek", exact: true }),
-  ).toHaveAttribute("aria-pressed", "true");
-});
-
-test("body regions support mouse, keyboard and a textual alternative", async ({
-  page,
-}) => {
-  await page.goto("./?emocja=sadness");
-  const map = page.getByRole("group", { name: "Mapa ciała: Smutek" });
-  await map
-    .getByRole("button", { name: "Nogi" })
-    .click({ position: { x: 15, y: 50 } });
-  await expect(page.locator(".region-info")).toContainText(
-    "spadek odczuwanej aktywności",
-  );
-  await page.reload();
-  await expect(map.getByRole("button", { name: "Nogi" })).toHaveAttribute(
-    "aria-pressed",
-    "true",
-  );
-  await expect(page.locator(".region-info")).toBeVisible();
-  const leg = await map.getByRole("button", { name: "Nogi" }).boundingBox();
-  const head = await map.getByRole("button", { name: "Głowa" }).boundingBox();
-  expect(leg!.y).toBeGreaterThan(head!.y + 100);
-  await map.getByRole("button", { name: "Głowa" }).focus();
-  await page.keyboard.press("Enter");
-  await expect(page.locator(".region-info")).toContainText(
-    "wzrost odczuwanej aktywności",
-  );
-  await page
-    .locator(".region-chips")
-    .getByRole("button", { name: "Gardło" })
-    .click();
-  await expect(page.locator(".region-info")).toContainText(
-    "nie został wyróżniony",
-  );
-});
-
-test("explore and comparison pass automated accessibility checks", async ({
-  page,
-}) => {
-  await page.goto("./");
-  const explore = await new AxeBuilder({ page })
-    .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
-    .analyze();
-  expect(explore.violations).toEqual([]);
-  await page.getByRole("button", { name: "Porównaj emocje" }).click();
-  const compare = await new AxeBuilder({ page })
-    .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
-    .analyze();
-  expect(compare.violations).toEqual([]);
-  await page.getByRole("button", { name: "Według części ciała" }).click();
-  const body = await new AxeBuilder({ page })
-    .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
-    .analyze();
-  expect(body.violations).toEqual([]);
-});
-
-test("the silhouette is centered and the textual map opens on demand", async ({
-  page,
-}) => {
-  await page.goto("./?emocja=sadness&obszar=legs");
-  const map = page.getByRole("group", { name: "Mapa ciała: Smutek" });
-  const box = (await map.boundingBox())!;
-  const viewport = page.viewportSize()!;
-  expect(Math.abs(box.x + box.width / 2 - viewport.width / 2)).toBeLessThan(3);
-  expect(box.y + box.height).toBeLessThan(viewport.height);
-  await expect(map.locator("text")).toHaveCount(0);
-  const table = page.getByRole("table", {
-    name: "Kierunek odczuwanej aktywności",
+const picker = (page: Page) => page.locator(".picker-groups");
+const option = (page: Page, name: string) =>
+  page.locator(".emotion-option").filter({ hasText: new RegExp(`^${name}$`) });
+// On phones the emotion grid is folded behind a toggle.
+async function openPicker(page: Page) {
+  const toggle = page.locator(".picker-toggle");
+  if (
+    (await toggle.isVisible()) &&
+    (await toggle.getAttribute("aria-expanded")) !== "true"
+  )
+    await toggle.click();
+}
+async function pickEmotion(page: Page, name: string) {
+  await openPicker(page);
+  await option(page, name).click();
+}
+const regionItem = (page: Page, name: string) =>
+  page.locator(".region-item").filter({
+    has: page.getByRole("button", { name: new RegExp(`^${name}`) }),
   });
-  await expect(table).toBeHidden();
-  await page.getByText("Tabela obszarów ciała", { exact: true }).click();
-  await expect(table.getByRole("row")).toHaveCount(7);
-  const legs = table.getByRole("row").filter({
-    has: page.getByRole("rowheader", { name: "Nogi", exact: true }),
-  });
-  await expect(legs.getByRole("cell")).toHaveText("Spadek odczuć");
-  await page.getByRole("button", { name: "Porównaj emocje" }).click();
-  await page
-    .getByRole("combobox", { name: "Druga emocja" })
-    .selectOption("joy");
-  await expect(legs.getByRole("cell")).toHaveText([
-    "Spadek odczuć",
-    "Wzrost odczuć",
-  ]);
-  await page
-    .getByRole("combobox", { name: "Druga emocja" })
-    .selectOption("sadness");
-  await expect(legs.getByRole("cell")).toHaveText([
-    "Spadek odczuć",
-    "Spadek odczuć",
-  ]);
-});
+// Points inside each area of the 240×515 outline (left arm and left leg).
+const centres: Record<string, [number, number]> = {
+  head: [120, 46],
+  throat: [120, 88],
+  chest: [120, 138],
+  belly: [120, 232],
+  arms: [52, 200],
+  legs: [101, 386],
+};
 
-test("shared mobile choices are visible and the map leads to the selected region", async ({
-  page,
-}) => {
-  await page.setViewportSize({ width: 360, height: 780 });
-  await page.goto("./?emocja=contempt&obszar=arms");
-  const selected = page.getByRole("button", { name: "Pogarda", exact: true });
-  await expect(selected).toBeInViewport({ ratio: 0.98 });
-  await page.getByRole("link", { name: /Ręce · Zobacz odczucia/ }).click();
-  await expect(page.locator("#region-sensations")).toBeInViewport();
-  await page.goto("./?widok=cialo&obszar=legs");
-  await expect(
-    page.locator(".body-area-buttons").getByRole("button", { name: "Nogi" }),
-  ).toBeInViewport({ ratio: 0.98 });
-  await page.getByRole("link", { name: /Powiązane emocje/ }).click();
-  await expect(page.locator("#related-emotions")).toBeInViewport();
-});
+// Click a body area on the first figure, at a point that is inside the outline.
+async function clickFigure(page: Page, region: string) {
+  const svg = page.locator(".figure svg.body-map").first();
+  await svg.scrollIntoViewIfNeeded();
+  const point = await svg.evaluate((element, [x, y]) => {
+    const map = element as unknown as SVGSVGElement;
+    const toScreen = () =>
+      new DOMPoint(x, y).matrixTransform(map.getScreenCTM()!);
+    const first = toScreen();
+    window.scrollBy(0, first.y - window.innerHeight / 2);
+    const { x: left, y: top } = toScreen();
+    return { left, top };
+  }, centres[region]);
+  await page.mouse.click(point.left, point.top);
+}
 
-test("comparison works, persists in URL and handles the same emotion", async ({
+test("choosing an emotion updates the heading, map and shareable URL", async ({
   page,
 }) => {
   await page.goto("./");
-  await page.getByRole("button", { name: "Porównaj emocje" }).click();
+  await expect(
+    page.getByRole("heading", {
+      level: 1,
+      name: "Gdzie w ciele czujemy emocje?",
+    }),
+  ).toBeVisible();
+  await expect(option(page, "Radość")).toHaveAttribute("aria-pressed", "true");
+  await pickEmotion(page, "Smutek");
+  await expect(
+    page.getByRole("heading", { level: 2, name: "Smutek", exact: true }),
+  ).toBeVisible();
   await expect(
     page.getByRole("img", { name: "Mapa ciała: Smutek" }),
   ).toBeVisible();
-  await page
-    .getByRole("combobox", { name: "Druga emocja" })
-    .selectOption("anger");
-  await expect(
-    page.getByRole("img", { name: "Mapa ciała: Złość" }),
-  ).toBeVisible();
-  const first = page.getByRole("combobox", { name: "Pierwsza emocja" });
-  await first.selectOption("fear");
-  await expect(
-    page.getByRole("img", { name: "Mapa ciała: Strach" }),
-  ).toBeVisible();
-  await expect(
-    page.getByRole("button", { name: "Strach", exact: true }),
-  ).toHaveAttribute("aria-pressed", "true");
-  await first.selectOption("joy");
-  await expect(page).toHaveURL(/z=anger/);
+  await expect(page.locator(".stage-description")).toContainText(
+    "spadek odczuwanej aktywności rąk i nóg",
+  );
+  await expect(page).toHaveURL(/emocja=sadness/);
   await page.reload();
-  await expect(
-    page.getByRole("combobox", { name: "Druga emocja" }),
-  ).toHaveValue("anger");
-  await page
-    .getByRole("combobox", { name: "Druga emocja" })
-    .selectOption("joy");
-  await expect(
-    page.getByText("To ta sama emocja.", { exact: false }),
-  ).toBeVisible();
-  await page.getByRole("button", { name: "Odkrywaj", exact: true }).click();
-  await expect(
-    page.getByRole("combobox", { name: "Druga emocja" }),
-  ).toHaveCount(0);
-  await expect(page).not.toHaveURL(/z=/);
+  await expect(option(page, "Smutek")).toHaveAttribute("aria-pressed", "true");
 });
 
-test("all twelve emotions render without browser errors", async ({ page }) => {
-  const errors: string[] = [];
-  page.on("pageerror", (e) => errors.push(e.message));
+test("emotions are grouped as basic and complex, in the order of the source figure", async ({
+  page,
+}) => {
   await page.goto("./");
-  for (const name of [
-    "Radość",
-    "Smutek",
+  await openPicker(page);
+  const groups = picker(page).locator("section");
+  await expect(groups.nth(0).getByRole("heading")).toHaveText(
+    "Emocje podstawowe",
+  );
+  await expect(groups.nth(0).getByRole("button")).toHaveText([
     "Złość",
     "Strach",
     "Wstręt",
+    "Radość",
+    "Smutek",
     "Zaskoczenie",
+  ]);
+  await expect(groups.nth(1).getByRole("heading")).toHaveText("Emocje złożone");
+  await expect(groups.nth(1).getByRole("button")).toHaveText([
+    "Lęk",
     "Miłość",
-    "Duma",
-    "Niepokój",
-    "Wstyd",
-    "Zawiść",
     "Pogarda",
-  ]) {
-    await page.getByRole("button", { name, exact: true }).click();
+    "Duma",
+    "Wstyd",
+    "Zazdrość",
+  ]);
+});
+
+test("the region list is a visible text version of the map", async ({
+  page,
+}) => {
+  await page.goto("./?emocja=sadness");
+  const expected: [string, string][] = [
+    ["Głowa", "Wzrost"],
+    ["Gardło", "Wzrost"],
+    ["Klatka piersiowa", "Wzrost"],
+    ["Brzuch", "Bez wyróżnienia"],
+    ["Ręce", "Spadek"],
+    ["Nogi", "Spadek"],
+  ];
+  for (const [region, state] of expected)
     await expect(
-      page.getByRole("heading", { name, exact: true }),
+      regionItem(page, region).locator(".activity-badge"),
+    ).toHaveText(state);
+  const description = await page
+    .getByRole("img", { name: "Mapa ciała: Smutek" })
+    .locator("desc")
+    .textContent();
+  expect(description).toContain("Nogi: spadek odczuwanej aktywności");
+  expect(description).toContain("Brzuch: bez wyróżnienia");
+});
+
+test("body areas open from the figure, the list and the keyboard", async ({
+  page,
+}) => {
+  await page.goto("./?emocja=sadness");
+  await clickFigure(page, "legs");
+  const legs = regionItem(page, "Nogi");
+  await expect(legs.getByRole("button", { name: /^Nogi/ })).toHaveAttribute(
+    "aria-expanded",
+    "true",
+  );
+  await expect(legs).toContainText("Nogi wydają się ciężkie");
+  await expect(legs).toContainText("Spadek odczuwanej aktywności kończyn");
+  await expect(page).toHaveURL(/obszar=legs/);
+  await page.reload();
+  await expect(legs.getByRole("button", { name: /^Nogi/ })).toHaveAttribute(
+    "aria-expanded",
+    "true",
+  );
+  await regionItem(page, "Głowa")
+    .getByRole("button", { name: /^Głowa/ })
+    .focus();
+  await page.keyboard.press("Enter");
+  await expect(regionItem(page, "Głowa")).toContainText(
+    "Czuję łzy pod powiekami",
+  );
+  await expect(legs.getByRole("button", { name: /^Nogi/ })).toHaveAttribute(
+    "aria-expanded",
+    "false",
+  );
+  await regionItem(page, "Brzuch").getByRole("button").first().click();
+  await expect(regionItem(page, "Brzuch")).toContainText(
+    "Ogólne słowa dla tego obszaru, bez związku z tą emocją",
+  );
+  await regionItem(page, "Brzuch").getByRole("button").first().click();
+  await expect(page).not.toHaveURL(/obszar=/);
+});
+
+test("the figure shows the heat map, not an opaque click layer", async ({
+  page,
+}) => {
+  await page.goto("./?emocja=joy&obszar=chest");
+  const hit = page.locator(".figure .hit-area path").first();
+  expect(
+    await hit.evaluate((element) => getComputedStyle(element).fillOpacity),
+  ).toBe("0");
+  // Sample the rendered chest: it must be warm, not dark.
+  const figure = page.locator(".figure svg.body-map");
+  const box = (await figure.boundingBox())!;
+  const shot = await page.screenshot({
+    clip: {
+      x: box.x + box.width / 2 - 2,
+      y: box.y + (box.height * 138) / 515 - 2,
+      width: 4,
+      height: 4,
+    },
+  });
+  const pixel = await page.evaluate(async (png) => {
+    const image = new Image();
+    image.src = `data:image/png;base64,${png}`;
+    await image.decode();
+    const canvas = document.createElement("canvas");
+    canvas.width = image.width;
+    canvas.height = image.height;
+    const context = canvas.getContext("2d")!;
+    context.drawImage(image, 0, 0);
+    return Array.from(context.getImageData(1, 1, 1, 1).data);
+  }, shot.toString("base64"));
+  expect(pixel[0], `chest pixel ${pixel}`).toBeGreaterThan(180);
+  expect(pixel[0]).toBeGreaterThan(pixel[2]);
+});
+
+test("examples cite the NHS only where an NHS page supports them", async ({
+  page,
+}) => {
+  await page.goto("./?emocja=anger&obszar=arms");
+  const arms = regionItem(page, "Ręce");
+  await expect(arms).toContainText("Zaciskam dłonie w pięści");
+  await expect(arms.locator(".examples-source a")).toHaveAttribute(
+    "href",
+    "#zrodlo-3",
+  );
+  await page.goto("./?emocja=joy&obszar=arms");
+  await expect(
+    regionItem(page, "Ręce").locator(".examples-source"),
+  ).toHaveCount(0);
+});
+
+test("all twelve emotions render a map without browser errors", async ({
+  page,
+}) => {
+  const errors: string[] = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  await page.goto("./");
+  const buttons = page.locator(".emotion-option");
+  await expect(buttons).toHaveCount(12);
+  const names = (await buttons.allTextContents()).map((n) => n.trim());
+  for (const name of names) {
+    await pickEmotion(page, name);
+    await expect(
+      page.getByRole("heading", { level: 2, name, exact: true }),
     ).toBeVisible();
     await expect(
-      page.locator(".body-map .heat-layer ellipse").first(),
+      page.locator(".figure .heat-layer ellipse").first(),
     ).toBeVisible();
   }
   expect(errors).toEqual([]);
 });
 
-test("examples follow the selected emotion and body area, including unhighlighted areas", async ({
+test("comparison works, persists in the URL and handles the same emotion", async ({
   page,
 }) => {
-  await page.goto("./?emocja=anger");
-  await page.getByText("Odczucia w obszarze ciała", { exact: true }).click();
+  await page.goto("./");
+  await page.getByRole("button", { name: "Porównanie", exact: true }).click();
+  await expect(
+    page.getByRole("img", { name: "Mapa ciała: Radość" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("img", { name: "Mapa ciała: Smutek" }),
+  ).toBeVisible();
+  const second = page.getByRole("combobox", { name: "Druga emocja" });
+  await second.selectOption("anger");
+  await expect(
+    page.getByRole("img", { name: "Mapa ciała: Złość" }),
+  ).toBeVisible();
+  await expect(page).toHaveURL(/z=anger/);
+  await page.reload();
+  await expect(second).toHaveValue("anger");
+  const table = page.getByRole("table", {
+    name: "Kierunek odczuwanej aktywności",
+  });
+  const legs = table.getByRole("row").filter({
+    has: page.getByRole("button", { name: "Nogi" }),
+  });
+  await expect(legs.getByRole("cell")).toHaveText([
+    "Wzrost",
+    "Bez wyróżnienia",
+  ]);
+  await expect(page.locator(".layout-compare .panel-hint")).toHaveText(
+    "Mapy różnią się w 2 z 6 obszarów.",
+  );
+  await legs.getByRole("button", { name: "Nogi" }).click();
+  await expect(page.locator(".compare-examples")).toContainText(
+    "Czuję sprężystość w nogach",
+  );
+  await expect(page.locator(".compare-examples")).toContainText(
+    "Ogólne słowa dla tego obszaru",
+  );
   await page
-    .locator(".region-chips")
-    .getByRole("button", { name: "Ręce", exact: true })
-    .click();
-  await expect(page.locator(".sensation-examples")).toContainText(
-    "Zaciskam dłonie w pięści",
+    .getByRole("combobox", { name: "Pierwsza emocja" })
+    .selectOption("anger");
+  await expect(page.locator(".layout-compare .panel-hint")).toHaveText(
+    "To ta sama emocja. Wybierz inną, aby zestawić dwie mapy.",
   );
-  await page.getByRole("button", { name: "Niepokój", exact: true }).click();
-  await page
-    .locator(".region-chips")
-    .getByRole("button", { name: "Brzuch", exact: true })
-    .click();
-  await expect(page.locator(".sensation-examples")).toContainText(
-    "motyle, ścisk",
-  );
-  await page
-    .locator(".region-chips")
-    .getByRole("button", { name: "Gardło", exact: true })
-    .click();
-  await expect(page.locator(".region-info")).toContainText(
-    "bez przypisania do wybranej emocji",
-  );
-  await expect(page.locator(".examples-note")).toContainText(
-    "nie wyniki pomiaru",
-  );
-  await expect(page.locator("#source-3 a")).toHaveCount(3);
+  await page.getByRole("button", { name: "Emocje", exact: true }).click();
+  await expect(page.getByRole("combobox")).toHaveCount(0);
+  await expect(page).not.toHaveURL(/z=/);
+  await expect(
+    page.getByRole("heading", { level: 2, name: "Złość", exact: true }),
+  ).toBeVisible();
 });
 
-test("new emotions support deep links and comparing concrete sensations", async ({
+test("body view groups emotions by direction and links to their maps", async ({
   page,
 }) => {
+  await page.goto("./");
+  await page
+    .getByRole("button", { name: "Obszary ciała", exact: true })
+    .click();
+  await expect(page).toHaveURL(/widok=cialo/);
+  await expect(
+    page.getByRole("heading", { level: 2, name: "Klatka piersiowa" }),
+  ).toBeVisible();
+  const areas = page.getByRole("group", { name: "Obszary ciała" });
+  await areas.getByRole("button", { name: "Brzuch" }).click();
+  await expect(page.locator(".research-note.lead")).toContainText(
+    "głównie przy wstręcie",
+  );
+  await expect(page.locator(".state-group.more .emotion-row")).toHaveCount(5);
+  await expect(page.locator(".emotion-row", { hasText: "Lęk" })).toContainText(
+    "motyle, ścisk",
+  );
+  await expect(page.locator(".state-group.none h3")).toHaveText(
+    "Bez wyróżnienia (7)",
+  );
+  await areas.getByRole("button", { name: "Ręce" }).click();
+  await expect(page.locator(".state-group.less")).toContainText("Smutek");
+  await clickFigure(page, "throat");
+  await expect(
+    page.getByRole("heading", { level: 2, name: "Gardło" }),
+  ).toBeVisible();
+  await expect(page.locator(".state-group.more .emotion-row")).toHaveCount(12);
+  await areas.getByRole("button", { name: "Ręce" }).click();
+  await page.locator(".emotion-row", { hasText: "Złość" }).click();
+  await expect(
+    page.getByRole("heading", { level: 2, name: "Złość", exact: true }),
+  ).toBeVisible();
+  await expect(regionItem(page, "Ręce")).toContainText(
+    "Zaciskam dłonie w pięści",
+  );
+  await expect(page).not.toHaveURL(/widok=/);
+  await expect(page).toHaveURL(/obszar=arms/);
+  await expect(page.locator("#emotion-title")).toBeFocused();
+  await regionItem(page, "Ręce")
+    .getByRole("button", { name: "Ten obszar we wszystkich emocjach" })
+    .click();
+  await expect(page).toHaveURL(/widok=cialo/);
+  await expect(
+    page.getByRole("heading", { level: 2, name: "Ręce" }),
+  ).toBeVisible();
+});
+
+test("visiting the body view does not leave an area chosen elsewhere", async ({
+  page,
+}) => {
+  await page.goto("./?emocja=fear");
+  await page
+    .getByRole("button", { name: "Obszary ciała", exact: true })
+    .click();
+  await expect(
+    page.getByRole("heading", { level: 2, name: "Klatka piersiowa" }),
+  ).toBeVisible();
+  await expect(page).not.toHaveURL(/obszar=/);
+  await page.getByRole("button", { name: "Emocje", exact: true }).click();
+  await expect(page.locator(".region-item.open")).toHaveCount(0);
+  await expect(page).not.toHaveURL(/obszar=/);
+});
+
+test("on phones the emotion toggle keeps focus after a choice", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 375, height: 740 });
+  await page.goto("./");
+  const toggle = page.locator(".picker-toggle");
+  await toggle.focus();
+  await page.keyboard.press("Enter");
+  await expect(toggle).toHaveAttribute("aria-expanded", "true");
+  await option(page, "Wstręt").focus();
+  await page.keyboard.press("Enter");
+  await expect(toggle).toHaveAttribute("aria-expanded", "false");
+  await expect(toggle).toBeFocused();
+  await expect(toggle).toContainText("Wstręt");
+});
+
+test("links from earlier versions still open the right view", async ({
+  page,
+}) => {
+  await page.goto("./?widok=cialo&obszar=legs");
+  await expect(
+    page.getByRole("heading", { level: 2, name: "Nogi" }),
+  ).toBeVisible();
+  await page.goto("./?widok=cialo&obszar=unknown");
+  await expect(
+    page.getByRole("heading", { level: 2, name: "Klatka piersiowa" }),
+  ).toBeVisible();
   await page.goto("./?emocja=shame&z=anxiety");
   await expect(
     page.getByRole("img", { name: "Mapa ciała: Wstyd" }),
@@ -240,199 +386,133 @@ test("new emotions support deep links and comparing concrete sensations", async 
   await expect(
     page.getByRole("combobox", { name: "Druga emocja" }),
   ).toHaveValue("anxiety");
-  await page
-    .getByText("Przykłady odczuć w tym samym obszarze", { exact: false })
-    .click();
-  await page
-    .getByRole("combobox", { name: "Obszar ciała" })
-    .selectOption("head");
-  await expect(page.locator(".comparison-examples")).toContainText(
-    "gorąco na policzkach",
-  );
-  await expect(page.locator(".comparison-examples")).toContainText(
-    "napięcie twarzy lub szczęki",
-  );
-  await page
-    .getByRole("combobox", { name: "Druga emocja" })
-    .selectOption("contempt");
-  await expect(
-    page.getByRole("img", { name: "Mapa ciała: Pogarda" }),
-  ).toBeVisible();
-  await expect(page.locator(".comparison-examples")).toContainText(
-    "napięcie kącika ust",
-  );
-  await page.getByRole("button", { name: "Zawiść", exact: true }).click();
-  await page.reload();
-  await expect(
-    page.getByRole("button", { name: "Zawiść", exact: true }),
-  ).toHaveAttribute("aria-pressed", "true");
-});
-
-test("scientific references, limitations and reflection remain accessible", async ({
-  page,
-}) => {
   await page.goto("./?emocja=invalid&z=invalid");
   await expect(
-    page.getByRole("button", { name: "Radość", exact: true }),
-  ).toHaveAttribute("aria-pressed", "true");
-  await page.getByRole("button", { name: "Zatrzymaj się na chwilę" }).click();
-  await expect(page.locator("#reflection-content")).toBeVisible();
-  await page.getByRole("button", { name: "Zwiń wskazówkę" }).click();
-  await expect(page.locator("#reflection-content")).toHaveCount(0);
-  await page
-    .getByText("Jak powstały te mapy i jakie mają ograniczenia?", {
-      exact: true,
-    })
-    .click();
+    page.getByRole("combobox", { name: "Pierwsza emocja" }),
+  ).toHaveValue("joy");
   await expect(
-    page.getByText("Sylwetki w Somie to autorskie", { exact: false }),
-  ).toBeVisible();
-  await page.getByText("Badania i źródła", { exact: true }).click();
+    page.getByRole("combobox", { name: "Druga emocja" }),
+  ).toHaveValue("sadness");
+  await page.goto("./?emocja=contempt&obszar=arms");
   await expect(
-    page.getByRole("link", { name: "Przeczytaj publikację" }),
-  ).toHaveCount(2);
-  await expect(page.locator("#source-1 a")).toHaveAttribute(
-    "href",
-    "https://doi.org/10.1073/pnas.1321664111",
-  );
+    regionItem(page, "Ręce").getByRole("button").first(),
+  ).toHaveAttribute("aria-expanded", "true");
 });
 
-test("layout stays within narrow and wide viewports in both modes", async ({
-  page,
-}) => {
-  for (const width of [320, 390, 768, 1024, 1440]) {
-    await page.setViewportSize({ width, height: 900 });
-    await page.goto("./");
-    expect(
-      await page.evaluate(
-        () => document.documentElement.scrollWidth <= window.innerWidth,
-      ),
-    ).toBe(true);
-    await page.getByRole("button", { name: "Porównaj emocje" }).click();
-    expect(
-      await page.evaluate(
-        () => document.documentElement.scrollWidth <= window.innerWidth,
-      ),
-    ).toBe(true);
-    await page.getByRole("button", { name: "Według części ciała" }).click();
-    expect(
-      await page.evaluate(
-        () => document.documentElement.scrollWidth <= window.innerWidth,
-      ),
-    ).toBe(true);
-  }
-});
-
-test("body-first view shows regional emotion examples and separates increases from decreases", async ({
+test("research context and limitations are visible and citations resolve", async ({
   page,
 }) => {
   await page.goto("./");
-  await page.getByRole("button", { name: "Według części ciała" }).click();
-  await page
-    .locator(".body-area-buttons")
-    .getByRole("button", { name: "Brzuch", exact: true })
-    .click();
-  await expect(page.locator(".body-emotion-card")).toHaveCount(6);
-  await page.locator(".body-emotion-group.more > summary").click();
-  const anxiety = page.getByRole("article", { name: "Niepokój", exact: true });
-  await anxiety.getByText("Przykładowe odczucia").click();
-  await expect(anxiety.getByText(/motyle, ścisk/)).toBeVisible();
-  await expect(
-    page.getByRole("article", { name: "Złość", exact: true }),
-  ).toHaveCount(0);
-  await page
-    .locator(".body-area-buttons")
-    .getByRole("button", { name: "Ręce", exact: true })
-    .click();
-  await expect(
-    page
-      .locator(".body-emotion-group.more")
-      .getByRole("article", { name: "Złość", exact: true }),
-  ).toContainText("Zaciskam dłonie w pięści");
-  await page.locator(".body-emotion-group.less > summary").click();
-  await expect(
-    page
-      .locator(".body-emotion-group.less")
-      .getByRole("article", { name: "Smutek", exact: true }),
-  ).toContainText("Ręce wydają się ciężkie");
-  const map = page.getByRole("group", { name: "Wybierz część ciała" });
-  await map.getByRole("button", { name: "Gardło", exact: true }).focus();
-  await page.keyboard.press("Enter");
-  await expect(page.locator(".body-emotion-card")).toHaveCount(1);
-  await expect(
-    page.getByRole("article", { name: "Wstręt", exact: true }),
-  ).toContainText("zaciskanie w gardle");
-  await page
-    .getByText("Pozostałe emocje w atlasie (11)", { exact: true })
-    .click();
-  await expect(page.locator(".body-unmarked")).toContainText("Nie oznacza to");
-});
-
-test("body region persists in shared links and carries over to the full emotion map", async ({
-  page,
-}) => {
-  await page.goto("./?widok=cialo&obszar=legs");
-  await expect(
-    page.getByRole("heading", { name: "Nogi", exact: true }),
-  ).toBeVisible();
-  await page
-    .locator(".body-area-buttons")
-    .getByRole("button", { name: "Ręce", exact: true })
-    .click();
-  await expect(page).toHaveURL(/obszar=arms/);
-  await page.reload();
-  await expect(
-    page
-      .locator(".body-area-buttons")
-      .getByRole("button", { name: "Ręce", exact: true }),
-  ).toHaveAttribute("aria-pressed", "true");
-  await page.locator(".body-emotion-group.more > summary").click();
-  await page
-    .getByRole("article", { name: "Złość", exact: true })
-    .getByRole("button", { name: "Zobacz mapę emocji" })
-    .click();
-  await expect(
-    page.getByRole("heading", { name: "Złość", exact: true }),
-  ).toBeVisible();
-  await expect(page.locator(".sensation-examples")).toContainText(
-    "Zaciskam dłonie w pięści",
+  const about = page.getByRole("region", {
+    name: "O badaniu i ograniczeniach map",
+  });
+  await expect(about.getByRole("heading", { level: 3 })).toHaveText([
+    "Skąd pochodzą mapy",
+    "Jak czytać sylwetkę",
+    "Czego mapy nie mówią",
+    "Słowa opisu i pytania",
+    "Źródła",
+  ]);
+  await expect(about).toContainText("701 osób");
+  await expect(about).toContainText("pomija stan neutralny");
+  await expect(page.locator("#zrodlo-1 a")).toHaveAttribute(
+    "href",
+    "https://doi.org/10.1073/pnas.1321664111",
   );
-  await expect(page).not.toHaveURL(/widok=/);
-  await page.goto("./?widok=cialo&obszar=unknown");
-  await expect(
-    page.getByRole("heading", { name: "Klatka piersiowa", exact: true }),
-  ).toBeVisible();
+  await expect(page.locator("#zrodlo-2 a")).toHaveAttribute(
+    "href",
+    "https://doi.org/10.1073/pnas.1807390115",
+  );
+  const url = page.url();
+  await page.locator(".stage-description .cite").click();
+  await expect(page.locator("#zrodlo-1")).toBeInViewport();
+  await expect(page.locator("#zrodlo-1")).toBeFocused();
+  expect(page.url(), "in-page links leave the shareable URL alone").toBe(url);
+  await page.getByRole("link", { name: "O badaniu", exact: true }).click();
+  await expect(about.getByRole("heading", { level: 2 })).toBeInViewport();
+  await expect(page.locator(".reflection")).toContainText(
+    "Przypomnij sobie drobną przyjemność",
+  );
 });
 
-test("map bubbles follow highlighted regions and navigate between the figure and emotions", async ({
+test("pages pass automated accessibility checks in every view", async ({
   page,
 }) => {
+  const scan = async () => {
+    const result = await new AxeBuilder({ page })
+      .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
+      .analyze();
+    expect(result.violations).toEqual([]);
+  };
+  await page.goto("./?emocja=sadness&obszar=legs");
+  await scan();
+  await page.goto("./?emocja=anger&z=joy&obszar=arms");
+  await scan();
+  await page.goto("./?widok=cialo&obszar=arms");
+  await scan();
+});
+
+test("forced-colour mode keeps the legend and shows the selected choices", async ({
+  page,
+}) => {
+  await page.emulateMedia({ forcedColors: "active" });
+  await page.goto("./?emocja=sadness&obszar=legs");
+  for (const state of ["more", "less", "none"]) {
+    const swatch = page.locator(`.legend .swatch.${state}`);
+    expect(
+      await swatch.evaluate((element) => {
+        const style = getComputedStyle(element);
+        return style.backgroundImage !== "none" || style.backgroundColor;
+      }),
+    ).toBeTruthy();
+    expect(
+      await swatch.evaluate(
+        (element) => getComputedStyle(element).forcedColorAdjust,
+      ),
+    ).toBe("none");
+  }
+  for (const selected of [
+    page.locator(".emotion-option[aria-pressed=true]"),
+    page.locator(".mode-tabs button[aria-pressed=true]"),
+    page.locator(".region-item.open > .region-toggle"),
+  ])
+    expect(
+      await selected.evaluate(
+        (element) => getComputedStyle(element).outlineStyle,
+      ),
+    ).toBe("solid");
+});
+
+test("layout has no horizontal overflow from 320 to 1440 px", async ({
+  page,
+}) => {
+  for (const width of [320, 390, 700, 768, 1024, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    for (const query of [
+      "./?emocja=surprise&obszar=throat",
+      "./?emocja=surprise&z=contempt&obszar=belly",
+      "./?widok=cialo&obszar=legs",
+    ]) {
+      await page.goto(query);
+      expect(
+        await page.evaluate(
+          () => document.documentElement.scrollWidth <= window.innerWidth,
+        ),
+        `${width}px ${query}`,
+      ).toBe(true);
+    }
+  }
+});
+
+test("on narrow screens tapping the figure reveals the chosen area", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 780 });
   await page.goto("./?emocja=anger");
-  const samples = page.locator(".sensation-bubble");
-  await expect(samples).toHaveCount(2);
-  const hands = samples.filter({ hasText: "Zaciskam dłonie w pięści." });
-  await hands.click();
-  await expect(page).toHaveURL(/obszar=arms/);
-  await expect(page.locator(".region-info")).toBeVisible();
-  const figure = page.getByRole("group", { name: "Mapa ciała: Złość" });
-  await figure.getByRole("button", { name: "Klatka piersiowa" }).press("Enter");
-  await expect(samples.filter({ hasText: "Klatka piersiowa" })).toHaveAttribute(
-    "aria-pressed",
-    "true",
-  );
-  await page.getByRole("button", { name: "Według części ciała" }).click();
-  const picker = page.locator(".body-area-buttons");
-  await picker.getByRole("button", { name: "Głowa" }).click();
-  await expect(page.locator(".emotion-bubble")).toHaveCount(12);
-  await picker.getByRole("button", { name: "Gardło" }).click();
-  await expect(page.locator(".emotion-bubble")).toHaveCount(1);
-  await page
-    .getByRole("button", { name: "Zobacz mapę: Wstręt" })
-    .press("Enter");
-  await expect(page).toHaveURL(/emocja=disgust/);
-  await expect(page).toHaveURL(/obszar=throat/);
-  await expect(samples.filter({ hasText: "Gardło" })).toHaveAttribute(
-    "aria-pressed",
-    "true",
-  );
+  await clickFigure(page, "arms");
+  await expect(
+    regionItem(page, "Ręce").locator(".region-detail"),
+  ).toBeInViewport({
+    ratio: 0.3,
+  });
 });

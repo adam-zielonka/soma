@@ -1,15 +1,40 @@
 import type { EmotionId, Region } from "./emotions";
+import type { SourceId } from "./components";
 
 type Examples = readonly [string, string];
 
-// Authored first-person vocabulary, not measurements or quotations from the study.
-// NHS sources linked in #source-3 provide additional context for anger, anxiety
-// and blushing. No example is a required or exclusive sign of an emotion.
+// Authored first-person vocabulary, not measurements or quotations from the
+// study. No example is a required or exclusive sign of an emotion.
+// Where an NHS page lists the same bodily symptom, `exampleSources` names it,
+// so the page can cite it next to the examples.
+export const exampleSources: Partial<
+  Record<EmotionId, Partial<Record<Region, SourceId>>>
+> = {
+  // NHS "Anger": faster heartbeat, tightness in your chest, clenching your
+  // fists, feeling hot, tense muscles.
+  anger: { head: 3, chest: 3, arms: 3 },
+  // NHS inform "Anxiety self-help guide": breathing faster, heart racing,
+  // chest tight, "butterflies" in your stomach, stomach churning.
+  anxiety: { chest: 4, belly: 4 },
+  // NHS "Blushing": often caused by feeling embarrassed.
+  shame: { head: 5 },
+};
+
+export const sourceNotes: Partial<Record<SourceId, string>> = {
+  3: "Podobne objawy złości wymienia NHS.",
+  4: "Podobne objawy lęku wymienia NHS inform.",
+  5: "NHS opisuje rumieniec, m.in. przy zakłopotaniu.",
+};
+
 const examples: Record<EmotionId, Partial<Record<Region, Examples>>> = {
   joy: {
     head: [
       "Czuję przyjemne ciepło na twarzy.",
       "Policzki unoszą się, kiedy się uśmiecham.",
+    ],
+    throat: [
+      "Mam ochotę się śmiać, mówić lub śpiewać.",
+      "Gardło i szyja wydają się swobodne.",
     ],
     chest: [
       "Czuję ciepło lub przestrzeń w klatce piersiowej.",
@@ -33,6 +58,10 @@ const examples: Record<EmotionId, Partial<Record<Region, Examples>>> = {
       "Czuję łzy pod powiekami.",
       "Twarz wydaje się ciężka, a jej mięśnie mniej ruchliwe.",
     ],
+    throat: [
+      "Czuję ściśnięte gardło, jak przed płaczem.",
+      "Głos staje się cichszy lub drży.",
+    ],
     chest: [
       "Czuję ciężar w klatce piersiowej.",
       "Zauważam potrzebę westchnienia.",
@@ -51,6 +80,10 @@ const examples: Record<EmotionId, Partial<Record<Region, Examples>>> = {
       "Twarz wydaje się gorąca.",
       "Zauważam napięcie szczęki lub zaciskanie zębów.",
     ],
+    throat: [
+      "Czuję napiętą szyję i kark.",
+      "Głos staje się głośniejszy lub ostrzejszy.",
+    ],
     chest: [
       "Czuję mocniejsze lub szybsze bicie serca.",
       "Zauważam napięcie w klatce piersiowej.",
@@ -61,6 +94,10 @@ const examples: Record<EmotionId, Partial<Record<Region, Examples>>> = {
     head: [
       "Czuję napięcie mięśni twarzy.",
       "Zauważam, że oczy otwierają się szerzej.",
+    ],
+    throat: [
+      "Gardło wydaje się suche lub ściśnięte.",
+      "Trudniej mi przełknąć ślinę.",
     ],
     chest: [
       "Wyraźniej czuję bicie serca.",
@@ -88,15 +125,15 @@ const examples: Record<EmotionId, Partial<Record<Region, Examples>>> = {
       "Czuję mdłości lub przewracanie w żołądku.",
       "Brzuch wydaje się ściśnięty.",
     ],
-    legs: [
-      "Nogi wydają się na chwilę mniej pewne.",
-      "Mam ochotę zatrzymać się lub odsunąć.",
-    ],
   },
   surprise: {
     head: [
       "Czuję unoszenie brwi i otwieranie ust.",
       "Mięśnie twarzy nagle się poruszają.",
+    ],
+    throat: [
+      "Gwałtownie nabieram powietrza, czasem z okrzykiem.",
+      "Na moment zasycha mi w gardle.",
     ],
     chest: [
       "Na chwilę wstrzymuję oddech albo gwałtownie go nabieram.",
@@ -111,6 +148,10 @@ const examples: Record<EmotionId, Partial<Record<Region, Examples>>> = {
     head: [
       "Twarz wydaje się ciepła.",
       "Zauważam delikatny uśmiech i rozluźnienie szczęki.",
+    ],
+    throat: [
+      "Głos staje się cieplejszy i łagodniejszy.",
+      "Czuję wzruszenie ściskające gardło.",
     ],
     chest: [
       "Czuję rozchodzące się ciepło.",
@@ -130,6 +171,10 @@ const examples: Record<EmotionId, Partial<Record<Region, Examples>>> = {
       "Zauważam uśmiech i unoszenie głowy.",
       "Twarz wydaje się cieplejsza.",
     ],
+    throat: [
+      "Mówię pewniejszym, mocniejszym głosem.",
+      "Szyja się prostuje, a głowa unosi.",
+    ],
     chest: [
       "Czuję przestrzeń w klatce piersiowej.",
       "Zauważam, że prostuję tułów i łatwiej nabieram oddechu.",
@@ -144,17 +189,14 @@ const examples: Record<EmotionId, Partial<Record<Region, Examples>>> = {
       "Zauważam napięcie twarzy lub szczęki.",
       "Czuję napięcie w okolicy czoła.",
     ],
+    throat: ["Czuję ucisk w gardle.", "Trudniej mi swobodnie przełknąć ślinę."],
     chest: [
       "Bicie serca jest szybsze lub bardziej zauważalne.",
-      "Czuję napięcie, a oddech wydaje się płytszy.",
+      "Czuję ucisk w klatce, a oddech przyspiesza.",
     ],
     belly: [
       "Czuję motyle, ścisk lub przewracanie w brzuchu.",
-      "Brzuch jest napięty albo pojawiają się mdłości.",
-    ],
-    arms: [
-      "Ręce wydają się słabsze lub mniej pewne.",
-      "Mam trudność ze swobodnym ruchem dłoni.",
+      "Brzuch wydaje się ściśnięty lub napięty.",
     ],
     legs: [
       "Nogi wydają się miękkie lub mniej pewne.",
@@ -166,13 +208,13 @@ const examples: Record<EmotionId, Partial<Record<Region, Examples>>> = {
       "Czuję gorąco na policzkach.",
       "Zauważam rumieniec i chęć spuszczenia wzroku.",
     ],
+    throat: [
+      "Głos cichnie albo trudno mi coś powiedzieć.",
+      "Czuję ściśnięte gardło.",
+    ],
     chest: [
       "Czuję napięcie w klatce piersiowej.",
       "Mam odruch skulenia tułowia.",
-    ],
-    belly: [
-      "Czuję ścisk w brzuchu.",
-      "Mięśnie brzucha napinają się, kiedy się kulę.",
     ],
     arms: [
       "Ręce wydają się ciężkie lub mniej ruchliwe.",
@@ -185,20 +227,20 @@ const examples: Record<EmotionId, Partial<Record<Region, Examples>>> = {
       "Zauważam napięcie szczęki.",
       "Czuję ciepło lub napięcie mięśni twarzy.",
     ],
+    throat: ["Czuję ścisk w gardle.", "Słowa więzną mi w gardle."],
     chest: [
       "Czuję ścisk w klatce piersiowej.",
       "Zauważam napięcie podczas nabierania oddechu.",
     ],
-    legs: ["Nogi wydają się cięższe.", "Mam mniej ochoty na swobodny ruch."],
   },
   contempt: {
     head: [
       "Zauważam napięcie kącika ust.",
       "Czuję uniesienie brody albo napinanie szczęki.",
     ],
-    legs: [
-      "Dolna część ciała wydaje się mniej ruchliwa.",
-      "Zauważam, że zastygam w miejscu.",
+    throat: [
+      "Mam ochotę prychnąć.",
+      "Czuję napiętą szyję przy uniesionej brodzie.",
     ],
   },
 };
@@ -232,9 +274,22 @@ const areaVocabulary: Record<Region, Examples> = {
   ],
 };
 
-export function getSensationExamples(
+/** Examples written for this emotion and area, if the area is highlighted. */
+export function emotionExamples(
   emotion: EmotionId,
   region: Region,
-): Examples {
-  return examples[emotion][region] ?? areaVocabulary[region];
+): Examples | undefined {
+  return examples[emotion][region];
 }
+
+/** General words for an area, deliberately not tied to any emotion. */
+export function areaExamples(region: Region): Examples {
+  return areaVocabulary[region];
+}
+
+export const allExampleStrings = [
+  ...Object.values(examples).flatMap((byRegion) =>
+    Object.values(byRegion).flat(),
+  ),
+  ...Object.values(areaVocabulary).flat(),
+];

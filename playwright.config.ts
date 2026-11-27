@@ -15,6 +15,7 @@ export default defineConfig({
   reporter: "list",
   use: {
     locale: "pl-PL",
+    reducedMotion: "reduce",
     baseURL,
     trace: "retain-on-failure",
   },

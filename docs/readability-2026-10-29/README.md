@@ -1,5 +1,7 @@
 # Czytelność kierunku odczuwanej aktywności — 2026-10-29 UTC
 
+> Dokument historyczny: dotyczy interfejsu sprzed przebudowy z 2026-11-27 (inna sylwetka i inne przypisania obszarów). Bieżące zasady odczytu ryciny opisuje główny `README.md`.
+
 Źródła aplikacji: [`7297d1de5a949d1532cad551ada582346ed15dbd`](https://github.com/adam-zielonka/soma/commit/7297d1de5a949d1532cad551ada582346ed15dbd), pakiet `1.0.0`.
 Dowody wykonania [zadania #26](https://github.com/adam-zielonka/server-knowledge/issues/26).
 

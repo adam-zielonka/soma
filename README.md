@@ -4,14 +4,13 @@ Aplikacja edukacyjna o cielesnym wymiarze emocji, dostępna po polsku i angielsk
 
 **[Otwórz aplikację](https://adam-zielonka.github.io/soma/)**
 
-- Dwanaście emocji i interaktywna sylwetka z sześcioma obszarami ciała.
-- Widok „Według części ciała”: wybór obszaru, lista powiązanych emocji z podziałem na wzrost i spadek odczuć oraz przykładowe opisy. Link zachowuje widok i obszar.
-- Przykłady odczuć dla konkretnych obszarów: np. ciepło twarzy, napięcie dłoni lub ciężkość nóg.
-- Porównanie dwóch map, tekstowe zestawienie zmian oraz przykłady dla tego samego obszaru.
-- Kolorowa sylwetka z legendą. Opisy odczuć i tekstową tabelę sześciu obszarów można rozwinąć obok mapy.
-- Linki zachowujące wybraną emocję i tryb porównania.
-- Obsługa dotyku i klawiatury, responsywny układ, ograniczone animacje.
-- Publikacje naukowe oraz widoczne wyjaśnienie ograniczeń map.
+- Dwanaście map emocji z ryciny 2 badania Nummenmaa i in. (2014), w kolejności ryciny: sześć emocji podstawowych i sześć złożonych. Miniatury map służą jako wybór emocji.
+- Pod każdą mapą krótki opis z przypisem, a obok widoczna lista sześciu obszarów ciała (tekstowy odpowiednik mapy) z kierunkiem zmiany, autorskimi słowami opisu i tym, co o danym obszarze piszą autorzy badania.
+- Porównanie dwóch map z tabelą obszar po obszarze i słowami opisu dla wybranego obszaru.
+- Widok „Obszary ciała”: dla wybranego obszaru emocje pogrupowane na wzrost, spadek i brak wyróżnienia, z miniaturami map.
+- Zawsze widoczna sekcja „O badaniu i ograniczeniach map” z numerowanymi źródłami.
+- Linki zachowują emocję, porównanie, widok i obszar (także linki z wcześniejszych wersji).
+- Obsługa dotyku i klawiatury, responsywny układ od 320 px, ograniczone animacje, wzrost i spadek rozróżnione nie tylko kolorem (kreskowanie, strzałki, tekst).
 - Bez kont, analityki, bazy danych i zapisu osobistych odczuć. Fonty są hostowane wraz z aplikacją.
 
 ## Rozwój
@@ -29,16 +28,18 @@ pnpm check    # TypeScript, build, testy Playwright
 pnpm preview # lokalny podgląd wersji produkcyjnej
 ```
 
-W CI Chromium jest instalowany z zależnościami systemowymi. Testy obejmują komputer i telefon, zmianę emocji, klikalne obszary, klawiaturę, porównania, odnośniki i szerokości 320–1440 px.
+W CI Chromium jest instalowany z zależnościami systemowymi. Testy obejmują komputer i telefon, wybór emocji i obszarów (sylwetka, lista, klawiatura), porównanie, widok obszarów, linki, cytowania, axe (WCAG 2.2 AA), szerokości 320–1440 px, kompletność tłumaczeń bez nieużywanych kluczy oraz spójność danych (przykłady tylko dla wyróżnionych obszarów).
 
 ## Podstawa naukowa
 
 1. Nummenmaa, L., Glerean, E., Hari, R., & Hietanen, J. K. (2014). _Bodily maps of emotions_. PNAS, 111(2), 646–651. [DOI](https://doi.org/10.1073/pnas.1321664111).
 2. Nummenmaa, L., Hari, R., Hietanen, J. K., & Glerean, E. (2018). _Maps of subjective feelings_. PNAS, 115(37), 9198–9203. [DOI](https://doi.org/10.1073/pnas.1807390115).
-3. [NHS — złość](https://www.nhs.uk/mental-health/feelings-symptoms-behaviours/feelings-and-symptoms/anger/), [NHS inform — niepokój](https://www.nhsinform.scot/illnesses-and-conditions/mental-health/mental-health-self-help-guides/anxiety-self-help-guide), [NHS — rumieniec](https://www.nhs.uk/symptoms/blushing/).
+3. [NHS — złość](https://www.nhs.uk/mental-health/feelings-symptoms-behaviours/feelings-and-symptoms/anger/), [NHS inform — lęk](https://www.nhsinform.scot/illnesses-and-conditions/mental-health/mental-health-self-help-guides/anxiety-self-help-guide), [NHS — rumieniec](https://www.nhs.uk/symptoms/blushing/).
 4. [Materiały zespołu badawczego](https://emotion.utu.fi/maps-of-subjective-feelings/).
 
-Mapy SVG i przypisania kategorii w `src/emotions.ts` stanowią uproszczoną interpretację jakościową ryciny 2 badania z 2014 r. Kształty poświaty, podział na sześć obszarów, pytania do autorefleksji i przykładowy słownik odczuć są autorskimi elementami aplikacji. Opisy konkretnych doznań nie są wynikami badania map; wybrane przykłady uzupełniają materiały NHS. Dla niewyróżnionych obszarów wyświetlany jest ogólny słownik, bez przypisywania go do danej emocji. Nie odtworzono oryginalnych map statystycznych. Kolory oznaczają kierunek odczuwanej zmiany, bez skali intensywności. Badania dotyczą samoopisu, nie bezpośrednich pomiarów fizjologicznych. Aplikacja nie jest narzędziem diagnostycznym ani terapeutycznym.
+Sylwetka i poświaty to autorskie ilustracje SVG. Przypisania w `src/emotions.ts` są jakościowym odczytem ryciny 2: obszar oznaczono jako wzrost lub spadek tylko wtedy, gdy ciepły lub chłodny kolor wyraźnie w nim przeważa; słabe lub częściowe zabarwienie pozostaje bez wyróżnienia. Odczyt sprawdzono 2026-11-27 dwoma niezależnymi odczytami ryciny. Soma pokazuje 12 z 14 map (bez stanu neutralnego i depresji). W oryginale jasność koloru to statystyka t (siła i zgodność zaznaczeń w grupie), nie natężenie odczucia — aplikacja pokazuje tylko kierunek zmiany.
+
+Notatki o obszarach (`src/research.ts`) streszczają dyskusję pracy z 2014 r. Przykładowe zdania (`src/sensationExamples.ts`) są autorskie; tam, gdzie strona NHS wymienia podobny objaw (złość, lęk, rumieniec), aplikacja podaje przypis. Nazwy emocji są tłumaczeniem angielskich nazw z badania (Anxiety — „Lęk”, Envy — „Zazdrość”). Badania dotyczą samoopisu, nie pomiarów fizjologicznych. Aplikacja nie jest narzędziem diagnostycznym ani terapeutycznym.
 
 ## Wdrożenie
 
@@ -53,5 +54,5 @@ The browser version supports Polish and English. On the first visit it uses the
 first supported language from the browser’s preferences, falling back to English.
 The discreet English / Polski links in the footer save an explicit choice
 in this application’s local storage.
-Switching language preserves the current map, comparison and body region. If storage is blocked, language switching
+Switching language preserves the current map, comparison and body area. If storage is blocked, language switching
 still works for the current visit.
