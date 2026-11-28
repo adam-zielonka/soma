@@ -31,12 +31,10 @@ test("English browser preferences and a saved manual choice keep the selected ma
     .locator("footer")
     .getByRole("button", { name: "English", exact: true })
     .click();
-  await page.getByRole("button", { name: "Comparison", exact: true }).click();
-  const table = page.getByRole("table", { name: "Direction of felt activity" });
-  await expect(table.getByRole("columnheader")).toHaveText([
-    "Area",
-    "Sadness",
-    "Sadness",
+  await expect(page.locator("#emotion-title")).toHaveText("Sadness");
+  await expect(page.locator(".mode-tabs button")).toHaveText([
+    "Emotions",
+    "Body areas",
   ]);
   await expect(page.locator("main")).not.toContainText(polish);
   await page.getByRole("button", { name: "Body areas", exact: true }).click();

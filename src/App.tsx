@@ -1,21 +1,14 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
-import {
-  ArrowDown,
-  Code2,
-  Layers2,
-  PersonStanding,
-  ScanFace,
-} from "lucide-react";
+import { ArrowDown, Code2, PersonStanding, ScanFace } from "lucide-react";
 import { t, language, setLanguage, subscribe } from "./i18n";
 import { findEmotion, findRegion } from "./emotions";
 import type { Emotion, Region } from "./emotions";
 import { Brand, Cite } from "./components";
 import ExploreView from "./ExploreView";
-import CompareView from "./CompareView";
 import BodyView from "./BodyView";
 import About from "./About";
 
-type Mode = "explore" | "compare" | "body";
+type Mode = "explore" | "body";
 
 function focusElement(element: HTMLElement | null) {
   if (!element) return;
@@ -26,15 +19,13 @@ function focusElement(element: HTMLElement | null) {
 const defaultBodyRegion: Region = "chest";
 
 // URL parameters stay compatible with links shared from earlier versions:
-// ?emocja=<id>&z=<id> (comparison), ?widok=cialo (body view), ?obszar=<id>.
+// ?emocja=<id>, ?widok=cialo (body view), ?obszar=<id>. Links to the removed
+// comparison (?emocja=<id>&z=<id>) open the first emotion's map.
 function readLocation() {
   const p = new URLSearchParams(window.location.search);
-  const mode: Mode =
-    p.get("widok") === "cialo" ? "body" : p.has("z") ? "compare" : "explore";
   return {
-    mode,
+    mode: (p.get("widok") === "cialo" ? "body" : "explore") as Mode,
     emotion: findEmotion(p.get("emocja")),
-    other: findEmotion(p.get("z"), findEmotion("sadness")),
     // Only an explicitly chosen area is stored; the body view falls back to
     // the chest for display without turning it into a choice elsewhere.
     region: findRegion(p.get("obszar")),
@@ -43,7 +34,6 @@ function readLocation() {
 
 const modes: { id: Mode; label: string; Icon: typeof ScanFace }[] = [
   { id: "explore", label: "Emocje", Icon: ScanFace },
-  { id: "compare", label: "Porównanie", Icon: Layers2 },
   { id: "body", label: "Obszary ciała", Icon: PersonStanding },
 ];
 
@@ -52,22 +42,20 @@ export default function App() {
   const [initial] = useState(readLocation);
   const [mode, setMode] = useState<Mode>(initial.mode);
   const [emotion, setEmotion] = useState(initial.emotion);
-  const [other, setOther] = useState(initial.other);
   const [region, setRegion] = useState<Region | null>(initial.region);
 
   useEffect(() => {
     const url = new URL(window.location.href);
     const p = url.searchParams;
     p.set("emocja", emotion.id);
-    if (mode === "compare") p.set("z", other.id);
-    else p.delete("z");
+    p.delete("z");
     if (mode === "body") p.set("widok", "cialo");
     else p.delete("widok");
     if (region) p.set("obszar", region);
     else p.delete("obszar");
     if (url.href !== window.location.href)
       window.history.replaceState(null, "", url);
-  }, [mode, emotion, other, region]);
+  }, [mode, emotion, region]);
 
   // Move focus to the heading of a view the user jumped to, so keyboard and
   // screen-reader users continue from the new content.
@@ -111,7 +99,6 @@ export default function App() {
       const state = readLocation();
       setMode(state.mode);
       setEmotion(state.emotion);
-      setOther(state.other);
       setRegion(state.region);
     }
     window.addEventListener("popstate", restore);
@@ -186,16 +173,6 @@ export default function App() {
               onEmotion={setEmotion}
               onRegion={setRegion}
               onShowRegion={openRegion}
-            />
-          )}
-          {mode === "compare" && (
-            <CompareView
-              first={emotion}
-              second={other}
-              region={region}
-              onFirst={setEmotion}
-              onSecond={setOther}
-              onRegion={setRegion}
             />
           )}
           {mode === "body" && (

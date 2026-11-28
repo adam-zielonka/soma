@@ -220,9 +220,6 @@ svg {
       340px
     );
 }
-.layout-compare {
-  grid-template-columns: minmax(0, 1fr) minmax(300px, 380px);
-}
 .layout-body {
   grid-template-columns: minmax(0, 1fr) minmax(300px, 400px);
 }
@@ -307,9 +304,6 @@ svg {
   font: 620 clamp(32px, 3.2vw, 48px)/1.05 var(--display);
   letter-spacing: -0.05em;
   overflow-wrap: anywhere;
-}
-.layout-compare .stage-head h2 {
-  font-size: clamp(22px, 2vw, 28px);
 }
 .copy-link {
   position: absolute;
@@ -638,142 +632,11 @@ svg {
   color: var(--muted);
 }
 
-/* Compare */
-.pair {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-  margin-top: 10px;
-}
-.pair-item {
-  min-width: 0;
-}
-.pair .figure .body-map {
-  height: clamp(300px, 50svh, 500px);
-}
-.emotion-select {
-  display: grid;
-  gap: 4px;
-  width: min(100%, 220px);
-  margin-inline: auto;
-  text-align: start;
-  font-size: 12.5px;
-  color: var(--stage-muted);
-}
-.select-wrap {
-  position: relative;
-  display: block;
-}
-.emotion-select select {
-  appearance: none;
-  width: 100%;
-  min-height: 46px;
-  padding: 4px 34px 4px 12px;
-  border: 1px solid #998899;
-  border-radius: 12px;
-  background: #473a4b;
-  color: var(--stage-ink);
-  font: 620 clamp(17px, 1.8vw, 23px) var(--display);
-  cursor: pointer;
-}
-.emotion-select option,
-.emotion-select optgroup {
-  color: var(--ink);
-  background: var(--surface);
-  font-family: "DM Sans Variable", sans-serif;
-  font-size: 15px;
-}
-.select-wrap svg {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  pointer-events: none;
-}
-.pair-description {
-  max-width: 34ch;
-  margin: 10px auto 0;
-  font-size: 13.5px;
-  color: var(--stage-muted);
-}
-.compare-table {
-  width: 100%;
-  margin-top: 12px;
-  border-collapse: collapse;
-  font-size: 14px;
-  table-layout: fixed;
-}
-.compare-table th,
-.compare-table td {
-  padding: 6px 6px;
-  text-align: start;
-  vertical-align: middle;
-  border-bottom: 1px solid var(--line);
-}
-.compare-table thead th {
-  font-size: 13px;
-  color: var(--muted);
-  font-weight: 650;
-  overflow-wrap: anywhere;
-}
-.compare-table thead th:first-child {
-  width: 28%;
-}
-.compare-table tbody th {
-  padding-left: 10px;
-}
-.compare-table .activity-badge {
-  gap: 2px;
-  padding-inline: 4px 7px;
-  font-size: 12px;
-}
-.compare-table tbody th button {
-  min-height: 40px;
-  width: 100%;
-  text-align: start;
-  font-weight: 620;
-  text-decoration: underline;
-  text-decoration-color: #b9acbd;
-  text-underline-offset: 0.2em;
-  overflow-wrap: anywhere;
-}
-.compare-table tr.differs th {
-  box-shadow: inset 3px 0 0 var(--plum);
-}
-.compare-table button[aria-pressed="true"] {
-  font-weight: 750;
-  text-decoration-color: var(--plum);
-  text-decoration-thickness: 2px;
-}
-.compare-table tr.selected > th,
-.compare-table tr.selected > td {
-  border-bottom: 2px solid var(--plum);
-}
-.compare-table tr.selected {
-  background: var(--wash);
-}
 .table-note {
   margin-top: 8px;
   font-size: 13px;
   color: var(--muted);
 }
-.compare-examples {
-  display: grid;
-  gap: 12px;
-  margin-top: 18px;
-}
-.compare-examples h3 {
-  font: 650 19px var(--display);
-}
-.compare-example h4 {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 6px;
-  font-size: 15px;
-}
-
 /* Body view */
 .region-picker {
   display: flex;
@@ -986,7 +849,6 @@ svg {
 /* Medium screens: stage first, picker above it */
 @media (max-width: 1100px) {
   .layout-explore,
-  .layout-compare,
   .layout-body {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -1130,19 +992,6 @@ svg {
   .figure .body-map {
     height: clamp(300px, 52svh, 440px);
   }
-  .pair {
-    gap: 6px;
-  }
-  .pair .figure .body-map {
-    height: clamp(230px, 42svh, 360px);
-  }
-  .emotion-select select {
-    padding-left: 9px;
-    padding-right: 28px;
-  }
-  .select-wrap svg {
-    right: 6px;
-  }
   .legend {
     gap: 3px 12px;
     font-size: 12px;
@@ -1155,33 +1004,6 @@ svg {
   }
   .footer-inner {
     justify-content: flex-start;
-  }
-}
-
-@media (max-width: 400px) {
-  .compare-table thead th:first-child {
-    width: 30%;
-  }
-  .compare-table th,
-  .compare-table td {
-    padding-inline: 3px;
-  }
-  .compare-table .activity-badge {
-    padding-inline: 7px;
-    white-space: normal;
-  }
-  .compare-table .activity-mark {
-    display: none;
-  }
-}
-
-@media (max-width: 359px) {
-  .emotion-select select {
-    font-size: 15px;
-    padding-inline: 8px 24px;
-  }
-  .select-wrap svg {
-    right: 5px;
   }
 }
 
@@ -1212,7 +1034,6 @@ svg {
   .mode-tabs button[aria-pressed="true"],
   .emotion-option[aria-pressed="true"],
   .region-picker button[aria-pressed="true"],
-  .compare-table button[aria-pressed="true"],
   .region-item.open > .region-toggle {
     outline: 3px solid Highlight;
     outline-offset: -3px;

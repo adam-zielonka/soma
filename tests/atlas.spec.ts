@@ -233,59 +233,6 @@ test("all twelve emotions render a map without browser errors", async ({
   expect(errors).toEqual([]);
 });
 
-test("comparison works, persists in the URL and handles the same emotion", async ({
-  page,
-}) => {
-  await page.goto("./");
-  await page.getByRole("button", { name: "Porównanie", exact: true }).click();
-  await expect(
-    page.getByRole("img", { name: "Mapa ciała: Radość" }),
-  ).toBeVisible();
-  await expect(
-    page.getByRole("img", { name: "Mapa ciała: Smutek" }),
-  ).toBeVisible();
-  const second = page.getByRole("combobox", { name: "Druga emocja" });
-  await second.selectOption("anger");
-  await expect(
-    page.getByRole("img", { name: "Mapa ciała: Złość" }),
-  ).toBeVisible();
-  await expect(page).toHaveURL(/z=anger/);
-  await page.reload();
-  await expect(second).toHaveValue("anger");
-  const table = page.getByRole("table", {
-    name: "Kierunek odczuwanej aktywności",
-  });
-  const legs = table.getByRole("row").filter({
-    has: page.getByRole("button", { name: "Nogi" }),
-  });
-  await expect(legs.getByRole("cell")).toHaveText([
-    "Wzrost",
-    "Bez wyróżnienia",
-  ]);
-  await expect(page.locator(".layout-compare .panel-hint")).toHaveText(
-    "Mapy różnią się w 2 z 6 obszarów.",
-  );
-  await legs.getByRole("button", { name: "Nogi" }).click();
-  await expect(page.locator(".compare-examples")).toContainText(
-    "Czuję sprężystość w nogach",
-  );
-  await expect(page.locator(".compare-examples")).toContainText(
-    "Ogólne słowa dla tego obszaru",
-  );
-  await page
-    .getByRole("combobox", { name: "Pierwsza emocja" })
-    .selectOption("anger");
-  await expect(page.locator(".layout-compare .panel-hint")).toHaveText(
-    "To ta sama emocja. Wybierz inną, aby zestawić dwie mapy.",
-  );
-  await page.getByRole("button", { name: "Emocje", exact: true }).click();
-  await expect(page.getByRole("combobox")).toHaveCount(0);
-  await expect(page).not.toHaveURL(/z=/);
-  await expect(
-    page.getByRole("heading", { level: 2, name: "Złość", exact: true }),
-  ).toBeVisible();
-});
-
 test("body view groups emotions by direction and links to their maps", async ({
   page,
 }) => {
@@ -379,20 +326,24 @@ test("links from earlier versions still open the right view", async ({
   await expect(
     page.getByRole("heading", { level: 2, name: "Klatka piersiowa" }),
   ).toBeVisible();
-  await page.goto("./?emocja=shame&z=anxiety");
+  // The comparison view was removed: its links open the first emotion's map.
+  await page.goto("./?emocja=shame&z=anxiety&obszar=arms");
   await expect(
-    page.getByRole("img", { name: "Mapa ciała: Wstyd" }),
+    page.getByRole("heading", { level: 2, name: "Wstyd", exact: true }),
   ).toBeVisible();
+  await expect(page.getByRole("img", { name: /^Mapa ciała:/ })).toHaveCount(1);
   await expect(
-    page.getByRole("combobox", { name: "Druga emocja" }),
-  ).toHaveValue("anxiety");
+    page.getByRole("button", { name: "Emocje", exact: true }),
+  ).toHaveAttribute("aria-pressed", "true");
+  await expect(
+    regionItem(page, "Ręce").getByRole("button").first(),
+  ).toHaveAttribute("aria-expanded", "true");
+  await expect(page).not.toHaveURL(/[?&]z=/);
   await page.goto("./?emocja=invalid&z=invalid");
   await expect(
-    page.getByRole("combobox", { name: "Pierwsza emocja" }),
-  ).toHaveValue("joy");
-  await expect(
-    page.getByRole("combobox", { name: "Druga emocja" }),
-  ).toHaveValue("sadness");
+    page.getByRole("heading", { level: 2, name: "Radość", exact: true }),
+  ).toBeVisible();
+  await expect(page).not.toHaveURL(/[?&]z=/);
   await page.goto("./?emocja=contempt&obszar=arms");
   await expect(
     regionItem(page, "Ręce").getByRole("button").first(),
@@ -446,7 +397,7 @@ test("pages pass automated accessibility checks in every view", async ({
   };
   await page.goto("./?emocja=sadness&obszar=legs");
   await scan();
-  await page.goto("./?emocja=anger&z=joy&obszar=arms");
+  await page.goto("./?emocja=envy&obszar=arms");
   await scan();
   await page.goto("./?widok=cialo&obszar=arms");
   await scan();
@@ -490,7 +441,7 @@ test("layout has no horizontal overflow from 320 to 1440 px", async ({
     await page.setViewportSize({ width, height: 900 });
     for (const query of [
       "./?emocja=surprise&obszar=throat",
-      "./?emocja=surprise&z=contempt&obszar=belly",
+      "./?emocja=love&obszar=belly",
       "./?widok=cialo&obszar=legs",
     ]) {
       await page.goto(query);

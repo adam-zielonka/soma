@@ -20,8 +20,6 @@ export const translations: Record<string, string> = {
     "Increased felt activity in the head and neck and in one spot in the centre of the chest.",
   "Wzrost odczuwanej aktywności najwyraźniejszy w głowie i klatce piersiowej, mniej wyraźny w rękach.":
     "Increased felt activity, most pronounced in the head and chest and less pronounced in the arms.",
-  "W uproszczonych mapach tych emocji wyróżniono te same obszary; w oryginale różnią się rozkładem i jasnością koloru.":
-    "The simplified maps of these emotions highlight the same areas; in the original they differ in distribution and colour brightness.",
   "Jeśli silne lub niepokojące odczucia z ciała — na przykład ból w klatce piersiowej albo duszność — utrzymują się lub wracają, skonsultuj je z lekarzem.":
     "If strong or worrying bodily sensations — such as chest pain or breathlessness — persist or keep coming back, talk to a doctor.",
   "Zaciskam dłonie w pięści.": "I clench my hands into fists.",
@@ -121,7 +119,6 @@ export const translations: Record<string, string> = {
     "Does your body feel heavier or lighter today, or do you notice no difference?",
   "Czy możesz znaleźć dla siebie odrobinę wygodniejszą pozycję, bez zmuszania się do czegokolwiek?":
     "Can you find a slightly more comfortable position without forcing yourself to do anything?",
-  "Druga emocja": "Second emotion",
   Duma: "Pride",
   "Dłonie są ciepłe, chłodne, napięte lub rozluźnione.":
     "My hands are warm, cool, tense or relaxed.",
@@ -139,8 +136,8 @@ export const translations: Record<string, string> = {
   "Gdzie teraz czujesz podparcie? Zauważ kontakt stóp z podłożem.":
     "Where do you feel supported right now? Notice your feet touching the ground.",
   "Gdzie w ciele czujemy emocje?": "Where do we feel emotions in the body?",
-  "Gdzie w ciele czujemy emocje? Interaktywny atlas map odczuć na podstawie badań, z porównaniem emocji i widokiem części ciała.":
-    "Where do we feel emotions in the body? An interactive atlas of research-based sensation maps, with emotion comparison and a body-area view.",
+  "Gdzie w ciele czujemy emocje? Interaktywny atlas map odczuć na podstawie badań: dwanaście emocji i widok obszarów ciała.":
+    "Where do we feel emotions in the body? An interactive atlas of research-based sensation maps: twelve emotions and a body-area view.",
   "Gwałtownie nabieram powietrza, czasem z okrzykiem.":
     "I take a sudden breath, sometimes with a gasp.",
   "Głos cichnie albo trudno mi coś powiedzieć.":
@@ -155,12 +152,10 @@ export const translations: Record<string, string> = {
   "Jak można to opisać": "Words you could use",
   "Jasne pole pokazuje wybrany obszar, nie odczucia.":
     "The light area shows the selected region, not sensations.",
-  "Kierunek odczuwanej aktywności": "Direction of felt activity",
   "Klatka piersiowa": "Chest",
   "Kod źródłowy": "Source code",
   "Kopiuj link": "Copy link",
   "Kopiuj link do tego obszaru": "Copy a link to this area",
-  "Kopiuj link do tego porównania": "Copy a link to this comparison",
   "Kopiuj link do tej mapy": "Copy a link to this map",
   "Legenda mapy": "Map legend",
   "Link skopiowany": "Link copied",
@@ -182,8 +177,6 @@ export const translations: Record<string, string> = {
     "I instinctively step back or move away.",
   "Mam odruch skulenia tułowia.": "I instinctively curl my torso inward.",
   "Mapa ciała: {emotion}": "Body map: {emotion}",
-  "Mapy różnią się w {count} z 6 obszarów.":
-    "The maps differ in {count} of 6 areas.",
   "Marszczę nos lub napinam okolice ust.":
     "I wrinkle my nose or tense the area around my mouth.",
   "Materiały zespołu badawczego z Uniwersytetu w Turku":
@@ -207,7 +200,6 @@ export const translations: Record<string, string> = {
   "O badaniu": "About the study",
   "O badaniu i ograniczeniach map":
     "About the study and the limits of the maps",
-  Obszar: "Area",
   "Obszar po obszarze": "Area by area",
   "Obszary ciała": "Body areas",
   "Odczucia w głowie pojawiały się przy wszystkich emocjach. Autorzy łączą je prawdopodobnie ze zmianami w obrębie twarzy (praca mięśni, temperatura skóry, łzy) oraz z odczuwaną zmianą myśli.":
@@ -217,7 +209,6 @@ export const translations: Record<string, string> = {
     "My breathing seems faster or shallower.",
   "Ogólne słowa dla tego obszaru, bez związku z tą emocją":
     "General words for this area, not linked to this emotion",
-  "Pierwsza emocja": "First emotion",
   Pogarda: "Contempt",
   "Poglądowe mapy odczuć na podstawie badania, w którym uczestnicy zaznaczali na sylwetkach, gdzie emocja wzmaga lub osłabia doznania z ciała.":
     "Illustrative maps based on a study in which participants marked on body outlines where an emotion increases or decreases bodily sensations.",
@@ -226,8 +217,6 @@ export const translations: Record<string, string> = {
   "Policzki unoszą się, kiedy się uśmiecham.": "My cheeks rise when I smile.",
   "Pomyśl o kimś bliskim lub o miejscu, w którym czujesz się dobrze. Co zauważasz?":
     "Think of someone close to you, or a place where you feel good. What do you notice?",
-  Porównanie: "Comparison",
-  "Porównanie map": "Comparing maps",
   "Przejdź do atlasu": "Skip to the atlas",
   "Przypomnij sobie coś, co Ci się udało. Jak układa się teraz Twoje ciało?":
     "Recall something that went well for you. How is your body positioned now?",
@@ -271,8 +260,6 @@ export const translations: Record<string, string> = {
     "My neck straightens and my head lifts.",
   "Słowa opisu i pytania": "Descriptions and prompts",
   "Ten obszar we wszystkich emocjach": "This area across all emotions",
-  "To ta sama emocja. Wybierz inną, aby zestawić dwie mapy.":
-    "This is the same emotion. Choose another one to compare two maps.",
   "To uśrednione samoopisy, a nie pomiary temperatury, pracy narządów ani aktywności mózgu. Pojedyncza osoba może czuć daną emocję inaczej albo nie czuć nic wyraźnego.":
     "These are averaged self-reports, not measurements of temperature, organ function or brain activity. One person may feel an emotion differently, or feel nothing in particular.",
   "Trudniej mi przełknąć ślinę.": "It is harder to swallow.",
@@ -301,8 +288,6 @@ export const translations: Record<string, string> = {
   Wstyd: "Shame",
   "Wybierz obszar na liście lub na sylwetce.":
     "Choose an area in the list or on the figure.",
-  "Wybierz obszar w tabeli lub na sylwetce, aby zobaczyć słowa opisu.":
-    "Choose an area in the table or on a figure to see words for describing it.",
   "Wyraźniej czuję bicie serca.": "I feel my heartbeat more clearly.",
   "Wyraźny spadek odczuwanej aktywności rąk i nóg; mniej wyraźny wzrost w środku klatki piersiowej, szyi i twarzy.":
     "Clearly decreased felt activity in the arms and legs; a less pronounced increase in the centre of the chest, the neck and the face.",
@@ -382,7 +367,7 @@ export const translations: Record<string, string> = {
 };
 export const PAGE_TITLE = "Soma — atlas emocji w ciele";
 export const PAGE_DESCRIPTION =
-  "Gdzie w ciele czujemy emocje? Interaktywny atlas map odczuć na podstawie badań, z porównaniem emocji i widokiem części ciała.";
+  "Gdzie w ciele czujemy emocje? Interaktywny atlas map odczuć na podstawie badań: dwanaście emocji i widok obszarów ciała.";
 export type Language = "pl" | "en";
 const storageKey = "soma-language";
 export function detectLanguage(

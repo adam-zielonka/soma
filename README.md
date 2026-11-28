@@ -6,10 +6,9 @@ Aplikacja edukacyjna o cielesnym wymiarze emocji, dostępna po polsku i angielsk
 
 - Dwanaście map emocji z ryciny 2 badania Nummenmaa i in. (2014), w kolejności ryciny: sześć emocji podstawowych i sześć złożonych. Miniatury map służą jako wybór emocji.
 - Pod każdą mapą krótki opis z przypisem, a obok widoczna lista sześciu obszarów ciała (tekstowy odpowiednik mapy) z kierunkiem zmiany, autorskimi słowami opisu i tym, co o danym obszarze piszą autorzy badania.
-- Porównanie dwóch map z tabelą obszar po obszarze i słowami opisu dla wybranego obszaru.
 - Widok „Obszary ciała”: dla wybranego obszaru emocje pogrupowane na wzrost, spadek i brak wyróżnienia, z miniaturami map.
 - Zawsze widoczna sekcja „O badaniu i ograniczeniach map” z numerowanymi źródłami.
-- Linki zachowują emocję, porównanie, widok i obszar (także linki z wcześniejszych wersji).
+- Linki zachowują emocję, widok i obszar; linki z wcześniejszych wersji, także do usuniętego porównania, nadal się otwierają.
 - Obsługa dotyku i klawiatury, responsywny układ od 320 px, ograniczone animacje, wzrost i spadek rozróżnione nie tylko kolorem (kreskowanie, strzałki, tekst).
 - Bez kont, analityki, bazy danych i zapisu osobistych odczuć. Fonty są hostowane wraz z aplikacją.
 
@@ -28,7 +27,7 @@ pnpm check    # TypeScript, build, testy Playwright
 pnpm preview # lokalny podgląd wersji produkcyjnej
 ```
 
-W CI Chromium jest instalowany z zależnościami systemowymi. Testy obejmują komputer i telefon, wybór emocji i obszarów (sylwetka, lista, klawiatura), porównanie, widok obszarów, linki, cytowania, axe (WCAG 2.2 AA), szerokości 320–1440 px, kompletność tłumaczeń bez nieużywanych kluczy oraz spójność danych (przykłady tylko dla wyróżnionych obszarów).
+W CI Chromium jest instalowany z zależnościami systemowymi. Testy obejmują komputer i telefon, wybór emocji i obszarów (sylwetka, lista, klawiatura), widok obszarów, linki, cytowania, axe (WCAG 2.2 AA), szerokości 320–1440 px, kompletność tłumaczeń bez nieużywanych kluczy oraz spójność danych (przykłady tylko dla wyróżnionych obszarów).
 
 ## Podstawa naukowa
 
@@ -54,5 +53,5 @@ The browser version supports Polish and English. On the first visit it uses the
 first supported language from the browser’s preferences, falling back to English.
 The discreet English / Polski links in the footer save an explicit choice
 in this application’s local storage.
-Switching language preserves the current map, comparison and body area. If storage is blocked, language switching
+Switching language preserves the current map, view and body area. If storage is blocked, language switching
 still works for the current visit.
