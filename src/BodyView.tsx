@@ -92,32 +92,34 @@ export default function BodyView({
             },
           )}
         </p>
-        {(["more", "less"] as const).map((state) => {
-          const list = byState(state);
-          if (!list.length) return null;
-          return (
-            <section
-              key={state}
-              className={`state-group ${state}`}
-              aria-labelledby={`state-${state}`}
-            >
-              <h3 id={`state-${state}`}>
-                <ActivityMark state={state} />
-                {t(activityLabels[state])} ({list.length})
-              </h3>
-              <ul className="emotion-rows">
-                {list.map((e) => (
-                  <EmotionRow
-                    key={e.id}
-                    emotion={e}
-                    region={region}
-                    onEmotion={onEmotion}
-                  />
-                ))}
-              </ul>
-            </section>
-          );
-        })}
+        <div className="state-columns">
+          {(["more", "less"] as const).map((state) => {
+            const list = byState(state);
+            if (!list.length) return null;
+            return (
+              <section
+                key={state}
+                className={`state-group ${state}`}
+                aria-labelledby={`state-${state}`}
+              >
+                <h3 id={`state-${state}`}>
+                  <ActivityMark state={state} />
+                  {t(activityLabels[state])} ({list.length})
+                </h3>
+                <ul className="emotion-rows">
+                  {list.map((e) => (
+                    <EmotionRow
+                      key={e.id}
+                      emotion={e}
+                      region={region}
+                      onEmotion={onEmotion}
+                    />
+                  ))}
+                </ul>
+              </section>
+            );
+          })}
+        </div>
         {unmarked.length > 0 && (
           <section className="state-group none" aria-labelledby="state-none">
             <h3 id="state-none">

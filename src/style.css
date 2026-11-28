@@ -220,8 +220,11 @@ svg {
       340px
     );
 }
+/* The body view's figure only picks an area, so the emotion lists get the
+   wider column: increase and decrease sit side by side, and a single
+   direction spreads its emotions across columns. */
 .layout-body {
-  grid-template-columns: minmax(0, 1fr) minmax(300px, 400px);
+  grid-template-columns: minmax(330px, 410px) minmax(0, 1fr);
 }
 
 /* Emotion picker */
@@ -662,8 +665,14 @@ svg {
   border-color: #f6eef8;
   font-weight: 650;
 }
+.state-columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  column-gap: 28px;
+}
 .state-group {
   margin-top: 18px;
+  min-width: 0;
 }
 .state-group h3 {
   display: flex;
@@ -682,6 +691,11 @@ svg {
 }
 .state-group.none h3 {
   color: var(--none-ink);
+}
+.emotion-rows {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
+  column-gap: 24px;
 }
 .emotion-rows li {
   border-bottom: 1px solid var(--line);
@@ -844,6 +858,17 @@ svg {
 }
 .footer-link:hover {
   text-decoration: underline;
+}
+
+/* Wide screens: the body view's figure is only an area picker, so it stays
+   no taller than the lists beside it. */
+@media (min-width: 1101px) {
+  .layout-body .stage-head h2 {
+    font-size: clamp(28px, 2.3vw, 34px);
+  }
+  .layout-body .figure .body-map {
+    height: clamp(320px, 52svh, 520px);
+  }
 }
 
 /* Medium screens: stage first, picker above it */

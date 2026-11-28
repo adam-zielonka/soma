@@ -233,6 +233,25 @@ test("all twelve emotions render a map without browser errors", async ({
   expect(errors).toEqual([]);
 });
 
+test("on wide screens the body view shows its lists without scrolling", async ({
+  page,
+  isMobile,
+}) => {
+  test.skip(isMobile, "wide-screen layout");
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("./?widok=cialo&obszar=arms");
+  const more = await page.locator(".state-group.more").boundingBox();
+  const less = await page.locator(".state-group.less").boundingBox();
+  expect(less!.y, "increase and decrease sit side by side").toBe(more!.y);
+  expect(less!.x).toBeGreaterThan(more!.x + more!.width);
+  for (const region of ["head", "throat", "chest", "belly", "arms", "legs"]) {
+    await page.goto(`./?widok=cialo&obszar=${region}`);
+    await expect(page.locator(".emotion-row").last()).toBeInViewport({
+      ratio: 1,
+    });
+  }
+});
+
 test("body view groups emotions by direction and links to their maps", async ({
   page,
 }) => {
