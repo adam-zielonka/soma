@@ -1,6 +1,137 @@
 // English translations keyed by the Polish source text (whitespace-normalised).
 // tests/i18n.spec.ts checks that every key used by the app is present here.
 export const translations: Record<string, string> = {
+  "Na rycinie z 2018 roku kolor oznacza wielkość efektu, a każdy kolor — istotne statystycznie odczucia, więc na wielu mapach zabarwiona jest duża część ciała. Złotą poświatą Soma oznacza tylko obszary, w których wyraźnie przeważa jasny, żółto-pomarańczowy kolor (mniej więcej górna połowa skali). To próg przyjęty w Somie, a nie natężenie odczucia u pojedynczej osoby.":
+    "In the 2018 figure, colour shows effect size and any colour means statistically significant sensations, so on many maps much of the body is coloured. Soma marks with a golden glow only areas where bright yellow-orange colour clearly dominates (roughly the upper half of the scale). This is a threshold chosen by Soma, not how strongly one person feels something.",
+  "Mapy „z nowszych badań” powstały tą samą metodą dwóch sylwetek: nadzieja w badaniu 992 dorosłych z USA, a rozbawienie, zainteresowanie i współczucie w badaniu amerykańskich studentów z trzech grup kulturowych. Z tego drugiego badania Soma pokazuje tylko emocje, których mapy wskazały ten sam obszar we wszystkich trzech grupach. Autorzy raportują dużą zgodność map między grupami dla wszystkich badanych emocji, ale w odczycie Somy zachwyt, triumf i pożądanie nie miały obszaru wyraźnego we wszystkich trzech — najsłabsze były mapy najmniejszej, latynoskiej grupy. Zadowolenie i ulga dały niemal puste mapy. Radość, miłość i dumę Soma pokazuje z badania z 2014 roku.":
+    "The maps “from later studies” were made with the same two-silhouette method: hope in a study of 992 US adults, and amusement, interest and compassion in a study of US students from three cultural groups. From the latter, Soma shows only emotions whose maps pointed to the same area in all three groups. The authors report high agreement between the groups’ maps for all the emotions studied, but in Soma’s reading awe, triumph and desire had no area that was clear in all three — the maps of the smallest, Latino/a group were the faintest. Contentment and relief gave almost blank maps. Soma shows happiness, love and pride from the 2014 study.",
+  "Mapy „innych uczuć” pochodzą z badania z 2018 roku, w którym uczestnicy zaznaczali na jednej sylwetce tylko miejsca, gdzie czują dany stan. Nie pytano o spadek, więc te mapy mają inną, złotą poświatę i nie należy ich wprost porównywać z pozostałymi. W odczycie Somy kilka uczuć związanych z innymi ludźmi — m.in. wdzięczność, tęsknota, bliskość i poczucie wspólnoty — ma najjaśniejsze miejsce w środku klatki piersiowej. Mapy m.in. poczucia winy i samotności nie przekroczyły przyjętego w Somie progu, więc ich nie pokazano.":
+    "The maps of “other feelings” come from a 2018 study in which participants marked on a single silhouette only where they feel a given state. Decreases were not asked about, so these maps have a different, golden glow and should not be compared directly with the others. In Soma’s reading, several feelings about other people — including gratefulness, longing, closeness and togetherness — are brightest in the centre of the chest. The maps of guilt and loneliness, among others, did not reach the threshold Soma uses, so they are not shown.",
+  "Ciepła poświata oznacza wzrost odczuwanej aktywności, a chłodna i kreskowana — spadek. Złota poświata na mapach innych uczuć oznacza miejsce wyraźnych odczuć, bez kierunku zmiany. Kolory nie oznaczają temperatury. Obszar bez poświaty nie został wyróżniony: na mapach wzrostu i spadku jest w oryginale w większości czarny (bez istotnej statystycznie zmiany) albo zabarwiony tylko słabo lub w części. Nie znaczy to, że nic się tam nie czuje.":
+    "A warm glow means increased felt activity, and a cool hatched glow means decreased felt activity. A golden glow on the maps of other feelings marks where a feeling is clearly felt, without a direction of change. The colours do not show temperature. An area without a glow is not highlighted: on the increase and decrease maps it is mostly black in the original (no statistically significant change) or only faintly or partly coloured. This does not mean nothing is felt there.",
+  "Rycina 2 z 2014 roku zawiera 14 map. Soma pokazuje z niej 12: pomija stan neutralny, który nie jest emocją, oraz depresję, która jest stanem klinicznym.":
+    "Figure 2 of the 2014 study contains 14 maps. Soma shows 12 of them: it leaves out the neutral state, which is not an emotion, and depression, which is a clinical condition.",
+  "W pierwszym eksperymencie badania z 2014 roku uczestniczyli głównie młodzi dorośli, w większości kobiety. Wąskie są też próby dwóch innych badań: w 2018 roku głównie młode kobiety mówiące po fińsku, w badaniu emocji pozytywnych amerykańscy studenci. Najbardziej zróżnicowana była próba badania nadziei: dorośli z USA, w połowie kobiety, o medianie wieku 46 lat.":
+    "The first experiment of the 2014 study involved mainly young adults, most of them women. The samples of two other studies are narrow too: in 2018 mainly young Finnish-speaking women, in the study of positive emotions US students. The most varied sample was in the study of hope: US adults, half of them women, with a median age of 46.",
+  "Soma służy edukacji i autorefleksji, nie diagnozie ani terapii.":
+    "Soma is for education and self-reflection, not diagnosis or therapy.",
+  "Pytania „Zatrzymaj się na chwilę” to proste ćwiczenia uwagi, a nie terapia. Polskie nazwy emocji są tłumaczeniem angielskich nazw z badań; w badaniach fińskich (2014 i 2018) te nazwy przetłumaczono z kolei z fińskiego.":
+    "The “Pause for a moment” questions are simple attention exercises, not therapy. The Polish emotion names translate the English names used in the studies; in the Finnish studies (2014 and 2018) those names were in turn translated from Finnish.",
+  "Czy mapy się powtarzają? W dużym badaniu międzynarodowym (3954 osoby ze 101 krajów) mapy 13 emocji były zgodne między kulturami i płciami.":
+    "Do the maps replicate? In a large international study (3,954 people from 101 countries), the maps of 13 emotions agreed across cultures and sexes.",
+  "Wśród 548 osób mieszkających w Polsce, które wykonywały zadanie po polsku, mapy emocji okazały się bardzo podobne do wcześniejszych wyników.":
+    "Among 548 people living in Poland who did the task in Polish, the emotion maps were very similar to earlier results.",
+  "Poglądowe mapy odczuć na podstawie badań, w których uczestnicy zaznaczali na sylwetkach, gdzie emocja wzmaga lub osłabia doznania z ciała, a w jednym z nich — tylko to, gdzie dane uczucie jest odczuwane.":
+    "Illustrative maps based on studies in which participants marked on body outlines where an emotion increases or decreases bodily sensations — and, in one of them, only where a feeling is felt.",
+  "mapa z badania z {year} r.": "map from a {year} study",
+  "Inne uczucia odczuwane w tym obszarze": "Other feelings felt in this area",
+  "Żadnego z nich nie odczuwano tu wyraźnie.":
+    "None of them is clearly felt here.",
+  "Mapy innych uczuć pokazują tylko, gdzie uczucie jest wyraźnie odczuwane — bez podziału na wzrost i spadek.":
+    "Maps of other feelings show only where a feeling is clearly felt, not split into increase and decrease.",
+  "Autorski schemat na podstawie ryciny 1A z badania z 2026 roku: 992 dorosłych z USA, nadzieja bez kontekstu politycznego. Pokazuje kierunek zmiany, bez natężenia.":
+    "Original illustration based on Figure 1A of a 2026 study: 992 US adults, hope outside a political context. It shows the direction of change, not its strength.",
+  "Podobny układ, z dodatkowym wzrostem w rękach, dała mapa nadziei związanej z nauką u chińskich licealistów.":
+    "A similar pattern, with an additional increase in the arms, appeared in a map of learning-related hope among Chinese high-school students.",
+  "Autorski schemat na podstawie ryciny 2 z badania z 2025 roku: studenci z USA w trzech grupach (Amerykanie pochodzenia chińskiego, europejskiego i latynoamerykańskiego, po 57–79 osób w grupie). Obszar oznaczono, gdy zmiana była wyraźna w co najmniej dwóch grupach.":
+    "Original illustration based on Figure 2 of a 2025 study: US students in three groups (Chinese, European and Latino/a Americans, 57–79 people per group). An area is marked when the change was clear in at least two groups.",
+  "Autorski schemat na podstawie ryciny 3 z badania z 2018 roku. Uczestnicy zaznaczali tylko, gdzie czują dany stan, więc mapa nie pokazuje wzrostu ani spadku — jedynie miejsca wyraźnych odczuć.":
+    "Original illustration based on Figure 3 of the 2018 study. Participants marked only where they feel a given state, so the map shows no increase or decrease — only where the feeling is clearly felt.",
+  "Co piszą autorzy badania z 2014 roku":
+    "What the authors of the 2014 study write",
+  "Co widać na rycinie z 2014 roku (odczyt Somy)":
+    "What the 2014 figure shows (Soma’s reading)",
+  Nadzieja: "Hope",
+  "Wzrost odczuwanej aktywności w głowie, szyi i klatce piersiowej, najwyraźniejszy w środku klatki piersiowej i w głowie.":
+    "Increased felt activity in the head, neck and chest, clearest in the centre of the chest and in the head.",
+  "Pomyśl o czymś, na co czekasz z nadzieją. Czy zauważasz to gdzieś w ciele?":
+    "Think of something you are hoping for. Do you notice it anywhere in your body?",
+  Rozbawienie: "Amusement",
+  "Wzrost odczuwanej aktywności niemal wyłącznie w głowie, najwyraźniejszy w twarzy; reszta ciała w większości bez wyróżnienia.":
+    "Increased felt activity almost only in the head, clearest in the face; the rest of the body is mostly not highlighted.",
+  "Autorzy wiążą ze śmiechem pracę mięśni wokół ust oraz układu oddechowego i krążenia.":
+    "The authors link activity of the muscles around the mouth and of the respiratory and vascular system to laughter.",
+  "Przypomnij sobie coś, co Cię ostatnio rozbawiło. Co dzieje się z Twoją twarzą?":
+    "Recall something that amused you recently. What do you notice in your face?",
+  Zainteresowanie: "Interest",
+  "Wzrost odczuwanej aktywności niemal wyłącznie w głowie, najwyraźniejszy w okolicy czoła i na czubku głowy; reszta ciała w większości bez wyróżnienia.":
+    "Increased felt activity almost only in the head, clearest around the forehead and the top of the head; the rest of the body is mostly not highlighted.",
+  "Przyjrzyj się uważnie jednej rzeczy obok siebie. Co zauważasz w oczach i w głowie?":
+    "Look closely at one thing near you. What do you notice in your eyes and head?",
+  Współczucie: "Compassion",
+  "Wzrost odczuwanej aktywności w środku klatki piersiowej; reszta ciała w większości bez wyróżnienia.":
+    "Increased felt activity in the centre of the chest; the rest of the body is mostly not highlighted.",
+  "Pomyśl życzliwie o kimś, komu jest teraz trudno. Czy czujesz tę życzliwość gdzieś w ciele?":
+    "Think kindly of someone who is having a hard time. Do you feel that kindness anywhere in your body?",
+  Wdzięczność: "Gratitude",
+  "Wyraźne odczucia w środku klatki piersiowej; reszta ciała bez wyróżnienia.":
+    "Clearly felt in the centre of the chest; the rest of the body is not highlighted.",
+  "Przypomnij sobie coś, za co czujesz wdzięczność. Co dzieje się wtedy z Twoim oddechem?":
+    "Recall something you feel grateful for. What happens to your breathing?",
+  Tęsknota: "Longing",
+  "Wyraźne odczucia w górnej i środkowej części klatki piersiowej; reszta ciała bez wyróżnienia.":
+    "Clearly felt in the upper and middle chest; the rest of the body is not highlighted.",
+  "Pomyśl przez chwilę o kimś lub o miejscu, za którym tęsknisz. Co zauważasz w klatce piersiowej?":
+    "Think for a moment of someone or somewhere you miss. What do you notice in your chest?",
+  Rozpacz: "Despair",
+  "Jeśli jest Ci teraz bardzo ciężko, nie musisz robić tego ćwiczenia. Porozmawiaj z kimś bliskim, z lekarzem albo z telefonem zaufania; w nagłym zagrożeniu zadzwoń pod 112. Jeśli chcesz, rozejrzyj się wokół i zauważ kilka spokojnych oddechów.":
+    "If things are very hard for you right now, you do not have to do this exercise. Talk to someone close to you, a doctor or a helpline; in an emergency, call your local emergency number. If you like, look around you and notice a few calm breaths.",
+  Podenerwowanie: "Nervousness",
+  "Wyraźne odczucia w brzuchu, najwyraźniejsze w okolicy żołądka; reszta ciała bez wyróżnienia.":
+    "Clearly felt in the belly, most clearly around the stomach; the rest of the body is not highlighted.",
+  "Zauważ, czy coś napina się w okolicy żołądka. Możesz zrobić kilka dłuższych wydechów, ale nie musisz niczego zmieniać.":
+    "Notice whether anything tightens around your stomach. You can take a few longer breaths out, but you do not have to change anything.",
+  Wrogość: "Hostility",
+  "Wyraźne odczucia w całej głowie; reszta ciała bez wyróżnienia.":
+    "Clearly felt throughout the head; the rest of the body is not highlighted.",
+  "Zauważ szczękę i czoło. Czy możesz je odrobinę rozluźnić, nie zmieniając niczego innego?":
+    "Notice your jaw and forehead. Can you relax them a little without changing anything else?",
+  "Z nowszych badań": "From later studies",
+  "Inne uczucia": "Other feelings",
+  "Mapy bez podziału na wzrost i spadek":
+    "Maps not split into increase and decrease",
+  "Szyja jest ciepła na wszystkich 12 mapach z ryciny 2; przy wstręcie należy do najjaśniejszych miejsc mapy.":
+    "The neck is warm in all 12 maps from Figure 2; in disgust it is among the brightest parts of the map.",
+  "Wyraźnie odczuwane": "Clearly felt",
+  Odczuwane: "Felt",
+  "Myśli wydają się jaśniejsze i bardziej otwarte.":
+    "My thoughts feel clearer and more open.",
+  "Twarz łagodnieje, czasem pojawia się uśmiech.":
+    "My face softens, sometimes into a smile.",
+  "Oddech swobodniej przepływa przez gardło.":
+    "My breath flows more freely through my throat.",
+  "Mam ochotę powiedzieć komuś, na co liczę.":
+    "I want to tell someone what I am counting on.",
+  "Czuję ciepło lub rozszerzenie w klatce piersiowej.":
+    "I feel warmth or expansion in my chest.",
+  "Oddycham głębiej i pełniej.": "I breathe more deeply and fully.",
+  "Kąciki ust same się unoszą.": "The corners of my mouth lift on their own.",
+  "Twarz rozluźnia się w uśmiechu albo śmiechu.":
+    "My face relaxes into a smile or laughter.",
+  "Unoszę brwi i przyglądam się uważniej.":
+    "I raise my eyebrows and look more closely.",
+  "Czuję ożywienie w głowie, myśli przyspieszają.":
+    "My head feels livelier and my thoughts speed up.",
+  "Czuję ciepło lub miękkość w środku klatki piersiowej.":
+    "I feel warmth or softness in the centre of my chest.",
+  "Coś ściska mnie w piersi, kiedy myślę o czyimś cierpieniu.":
+    "Something tightens in my chest when I think of someone’s suffering.",
+  "Czuję ciepło rozlewające się w klatce piersiowej.":
+    "I feel warmth spreading through my chest.",
+  "Oddech staje się spokojniejszy i pełniejszy.":
+    "My breathing becomes calmer and fuller.",
+  "Czuję ciężar albo pustkę w klatce piersiowej.":
+    "I feel heaviness or emptiness in my chest.",
+  "Coś w piersi ciągnie mnie ku komuś lub czemuś.":
+    "Something in my chest pulls me towards someone or something.",
+  "Klatka piersiowa wydaje się ściśnięta albo ciężka.":
+    "My chest feels tight or heavy.",
+  "Trudno mi wziąć pełny oddech.": "It is hard to take a full breath.",
+  "Czuję „motyle” albo ścisk w żołądku.":
+    "I feel “butterflies” or a knot in my stomach.",
+  "Brzuch napina się w oczekiwaniu.": "My belly tightens in anticipation.",
+  "Czuję napięcie szczęki i czoła.": "I feel tension in my jaw and forehead.",
+  "Gorąco uderza mi do głowy.": "Heat rushes to my head.",
   "Zmień ({count})": "Change ({count})",
   Emocja: "Emotion",
   "Spadek odczuwanej aktywności kończyn był cechą wyróżniającą smutek. Radość jako jedyna emocja wiązała się ze wzmożonymi odczuciami w całym ciele.":
@@ -11,11 +142,8 @@ export const translations: Record<string, string> = {
     "An increase in the belly also appears with happiness, fear, anxiety and love — usually as an extension of sensations in the chest.",
   "Według autorów odczucia w układzie pokarmowym i wokół gardła występowały głównie przy wstręcie.":
     "According to the authors, sensations in the digestive system and around the throat were found mainly in disgust.",
-  "Szyja jest ciepła na wszystkich 12 mapach pokazanych w Somie; przy wstręcie należy do najjaśniejszych miejsc mapy.":
-    "The neck is warm in all 12 maps shown in Soma; in disgust it is among the brightest parts of the map.",
   "Według autorów odczucia wokół gardła — razem z odczuciami w układzie pokarmowym — występowały głównie przy wstręcie.":
     "According to the authors, sensations around the throat — together with those in the digestive system — were found mainly in disgust.",
-  "Co widać na rycinie (odczyt Somy)": "What the figure shows (Soma’s reading)",
   "Wzrost odczuwanej aktywności w głowie i szyi oraz w jednym miejscu w środku klatki piersiowej.":
     "Increased felt activity in the head and neck and in one spot in the centre of the chest.",
   "Wzrost odczuwanej aktywności najwyraźniejszy w głowie i klatce piersiowej, mniej wyraźny w rękach.":
@@ -40,8 +168,8 @@ export const translations: Record<string, string> = {
     "The NHS describes blushing, for example when embarrassed.",
   "Atlas emocji": "Emotion atlas",
   "Atlas emocji w ciele": "Emotions in the body",
-  "Autorski schemat na podstawie ryciny 2 z badania. Pokazuje kierunek zmiany, bez natężenia.":
-    "Original illustration based on Figure 2 of the study. It shows the direction of change, not its strength.",
+  "Autorski schemat na podstawie ryciny 2 z badania z 2014 roku. Pokazuje kierunek zmiany, bez natężenia.":
+    "Original illustration based on Figure 2 of the 2014 study. It shows the direction of change, not its strength.",
   "Bez kont, analityki i zapisywania Twoich odczuć.":
     "No accounts, no analytics and nothing about your feelings is stored.",
   "Bez wyróżnienia": "Not highlighted",
@@ -56,11 +184,8 @@ export const translations: Record<string, string> = {
     "My belly is soft, tense or feels no clear change.",
   "Brzuch wydaje się ściśnięty lub napięty.": "My belly feels tight or tense.",
   "Brzuch wydaje się ściśnięty.": "My belly feels tight.",
-  "Ciepła poświata oznacza wzrost odczuwanej aktywności, chłodna i kreskowana — spadek. Kolory nie oznaczają temperatury. Obszar bez poświaty nie został wyróżniony: w oryginale jest w większości czarny (bez istotnej statystycznie zmiany) albo zabarwiony tylko słabo lub w części. Nie znaczy to, że nic się tam nie czuje.":
-    "A warm glow means increased felt activity; a cool, hatched glow means decreased felt activity. The colours do not show temperature. An area without a glow is not highlighted: in the original it is mostly black (no statistically significant change) or only faintly or partly coloured. This does not mean nothing is felt there.",
   "Co jest dla Ciebie ważne w tej sytuacji? Możesz zauważyć tę potrzebę bez oceniania siebie.":
     "What matters to you in this situation? You can notice that need without judging yourself.",
-  "Co piszą autorzy badania": "What the study’s authors write",
   "Czego mapy nie mówią": "What the maps do not tell you",
   "Czuję ciepło lub napięcie mięśni twarzy.":
     "I feel warmth or tension in my facial muscles.",
@@ -136,8 +261,8 @@ export const translations: Record<string, string> = {
   "Gdzie teraz czujesz podparcie? Zauważ kontakt stóp z podłożem.":
     "Where do you feel supported right now? Notice your feet touching the ground.",
   "Gdzie w ciele czujemy emocje?": "Where do we feel emotions in the body?",
-  "Gdzie w ciele czujemy emocje? Interaktywny atlas map odczuć na podstawie badań: dwanaście emocji i widok obszarów ciała.":
-    "Where do we feel emotions in the body? An interactive atlas of research-based sensation maps: twelve emotions and a body-area view.",
+  "Gdzie w ciele czujemy emocje? Interaktywny atlas map odczuć na podstawie badań: 21 emocji i uczuć oraz widok obszarów ciała.":
+    "Where do we feel emotions in the body? An interactive atlas of research-based sensation maps: 21 emotions and feelings, plus a body-area view.",
   "Gwałtownie nabieram powietrza, czasem z okrzykiem.":
     "I take a sudden breath, sometimes with a gasp.",
   "Głos cichnie albo trudno mi coś powiedzieć.":
@@ -210,8 +335,6 @@ export const translations: Record<string, string> = {
   "Ogólne słowa dla tego obszaru, bez związku z tą emocją":
     "General words for this area, not linked to this emotion",
   Pogarda: "Contempt",
-  "Poglądowe mapy odczuć na podstawie badania, w którym uczestnicy zaznaczali na sylwetkach, gdzie emocja wzmaga lub osłabia doznania z ciała.":
-    "Illustrative maps based on a study in which participants marked on body outlines where an emotion increases or decreases bodily sensations.",
   "Pojawia się odruch krztuszenia lub potrzeba przełknięcia śliny.":
     "I feel a gagging reflex or a need to swallow.",
   "Policzki unoszą się, kiedy się uśmiecham.": "My cheeks rise when I smile.",
@@ -224,15 +347,11 @@ export const translations: Record<string, string> = {
     "Recall a small pleasure. Where is its trace easiest to notice?",
   "Przypomnij sobie ostatnie zaskoczenie. Co jako pierwsze zwróciło Twoją uwagę?":
     "Recall the last time you were surprised. What first caught your attention?",
-  "Pytania „Zatrzymaj się na chwilę” to proste ćwiczenia uwagi, a nie terapia. Polskie nazwy emocji są tłumaczeniem angielskich nazw z badania, które z kolei przetłumaczono z fińskiego.":
-    "The “Pause for a moment” prompts are simple attention exercises, not therapy. The emotion names in the study were translated into English from Finnish.",
   Radość: "Happiness",
   "Ramiona układają się swobodniej, a dłonie otwierają.":
     "My arms settle more freely and my hands open.",
   "Rozległy wzrost odczuwanej aktywności od głowy po biodra, także w rękach.":
     "Widespread increase in felt activity from the head to the hips, and in the arms.",
-  "Rycina zawiera 14 map. Soma pokazuje 12: pomija stan neutralny, który nie jest emocją, oraz depresję, która jest stanem klinicznym.":
-    "The figure contains 14 maps. Soma shows 12: it leaves out the neutral state, which is not an emotion, and depression, which is a clinical condition.",
   Ręce: "Arms",
   "Ręce wydają się ciężkie lub bezwładne.": "My arms feel heavy or limp.",
   "Ręce wydają się ciężkie lub mniej ruchliwe.":
@@ -244,8 +363,8 @@ export const translations: Record<string, string> = {
     "Copy the address from your browser’s address bar.",
   "Skąd pochodzą mapy": "Where the maps come from",
   Smutek: "Sadness",
-  "Soma opiera się na rycinie 2, czyli na pierwszym eksperymencie: fińskojęzyczni uczestnicy oceniali, gdzie zwykle odczuwają emocję podaną słowem — emocji nie wywoływano. Zbliżone mapy emocji podstawowych uzyskano w grupach mówiących po szwedzku i tajwańsku oraz wtedy, gdy emocje wywoływały opowiadania i filmy. Emocje złożone badano tylko na podstawie nazw.":
-    "Soma is based on Figure 2, from the first experiment: Finnish-speaking participants rated where they typically feel an emotion named by a word — no emotion was induced. Similar maps of basic emotions were found in Swedish- and Taiwanese-speaking groups, and when emotions were induced with stories and films. Complex emotions were studied only through their names.",
+  "Mapy emocji podstawowych i złożonych pochodzą z ryciny 2, czyli z pierwszego eksperymentu: fińskojęzyczni uczestnicy oceniali, gdzie zwykle odczuwają emocję podaną słowem — emocji nie wywoływano. Zbliżone mapy emocji podstawowych uzyskano w grupach mówiących po szwedzku i tajwańsku oraz wtedy, gdy emocje wywoływały opowiadania i filmy. Emocje złożone badano tylko na podstawie nazw.":
+    "The maps of basic and complex emotions come from Figure 2, from the first experiment: Finnish-speaking participants rated where they typically feel an emotion named by a word — no emotion was induced. Similar maps of basic emotions were found in Swedish- and Taiwanese-speaking groups, and when emotions were induced with stories and films. Complex emotions were studied only through their names.",
   "Soma przekłada wyniki badań na prosty, poglądowy język. Oto, na czym się opiera i czego nie mówi.":
     "Soma turns research findings into simple, illustrative language. Here is what it relies on and what it does not claim.",
   "Soma — atlas emocji w ciele": "Soma — an atlas of emotions in the body",
@@ -275,10 +394,8 @@ export const translations: Record<string, string> = {
   "W badaniu z 2014 roku uczestnicy widzieli dwie puste sylwetki i kolorowali miejsca, w których czują wzrost lub spadek aktywności przy danej emocji. W czterech eksperymentach wzięło w nich udział 701 osób; w piątym inna grupa próbowała rozpoznawać emocje na podstawie uśrednionych map.":
     "In the 2014 study, participants saw two blank body outlines and coloured the places where they felt activity increase or decrease with a given emotion. 701 people took part in four of the experiments; in a fifth, a different group tried to recognise emotions from the averaged maps.",
   "W brzuchu czuję lekkie łaskotanie.": "I feel a light tickle in my belly.",
-  "W oryginale jasność koloru to statystyka t: rośnie, gdy grupa zaznaczała dane miejsce mocniej i zgodniej. Nie jest to skala natężenia odczucia u pojedynczej osoby. Soma upraszcza rycinę do kierunku zmiany w sześciu obszarach: obszar oznaczono, gdy ciepły lub chłodny kolor wyraźnie w nim przeważa. Sylwetki w badaniu nie miały podziału na obszary — to warstwa dodana w Somie.":
-    "In the original, colour brightness is a t statistic: it rises when the group marked a place more strongly and more consistently. It is not a scale of how strongly one person feels something. Soma simplifies the figure to the direction of change in six areas: an area is marked when warm or cool colours clearly dominate it. The study’s body outlines had no areas — that layer was added by Soma.",
-  "W pierwszym eksperymencie uczestniczyli głównie młodzi dorośli, w większości kobiety. Soma służy edukacji i autorefleksji, nie diagnozie ani terapii.":
-    "The first experiment involved mainly young adults, most of them women. Soma is for learning and self-reflection, not for diagnosis or therapy.",
+  "Na rycinie z 2014 roku jasność koloru to statystyka t: rośnie, gdy grupa zaznaczała dane miejsce mocniej i zgodniej. Nie jest to skala natężenia odczucia u pojedynczej osoby. Soma upraszcza rycinę do kierunku zmiany w sześciu obszarach: obszar oznaczono, gdy ciepły lub chłodny kolor wyraźnie w nim przeważa. Sylwetki w badaniu nie miały podziału na obszary — to warstwa dodana w Somie.":
+    "In the 2014 figure, colour brightness is a t statistic: it rises when the group marked a place more strongly and more consistently. It is not a scale of how strongly one person feels something. Soma simplifies the figure to the direction of change in six areas: an area is marked when warm or cool colours clearly dominate it. The study’s body outlines had no areas — that layer was added by Soma.",
   "W uproszczonych mapach Somy ten obszar wyróżniono przy {count} z {total} emocji.":
     "In Soma’s simplified maps, this area is highlighted for {count} of {total} emotions.",
   "Widok atlasu": "Atlas view",
@@ -367,7 +484,7 @@ export const translations: Record<string, string> = {
 };
 export const PAGE_TITLE = "Soma — atlas emocji w ciele";
 export const PAGE_DESCRIPTION =
-  "Gdzie w ciele czujemy emocje? Interaktywny atlas map odczuć na podstawie badań: dwanaście emocji i widok obszarów ciała.";
+  "Gdzie w ciele czujemy emocje? Interaktywny atlas map odczuć na podstawie badań: 21 emocji i uczuć oraz widok obszarów ciała.";
 export type Language = "pl" | "en";
 const storageKey = "soma-language";
 export function detectLanguage(

@@ -1,5 +1,5 @@
 import type { EmotionId, Region } from "./emotions";
-import type { SourceId } from "./components";
+import type { SourceId } from "./sources";
 
 type Examples = readonly [string, string];
 
@@ -242,6 +242,65 @@ const examples: Record<EmotionId, Partial<Record<Region, Examples>>> = {
       "Mam ochotę prychnąć.",
       "Czuję napiętą szyję przy uniesionej brodzie.",
     ],
+  },
+  hope: {
+    head: [
+      "Myśli wydają się jaśniejsze i bardziej otwarte.",
+      "Twarz łagodnieje, czasem pojawia się uśmiech.",
+    ],
+    throat: [
+      "Oddech swobodniej przepływa przez gardło.",
+      "Mam ochotę powiedzieć komuś, na co liczę.",
+    ],
+    chest: [
+      "Czuję ciepło lub rozszerzenie w klatce piersiowej.",
+      "Oddycham głębiej i pełniej.",
+    ],
+  },
+  amusement: {
+    head: [
+      "Kąciki ust same się unoszą.",
+      "Twarz rozluźnia się w uśmiechu albo śmiechu.",
+    ],
+  },
+  interest: {
+    head: [
+      "Unoszę brwi i przyglądam się uważniej.",
+      "Czuję ożywienie w głowie, myśli przyspieszają.",
+    ],
+  },
+  compassion: {
+    chest: [
+      "Czuję ciepło lub miękkość w środku klatki piersiowej.",
+      "Coś ściska mnie w piersi, kiedy myślę o czyimś cierpieniu.",
+    ],
+  },
+  gratitude: {
+    chest: [
+      "Czuję ciepło rozlewające się w klatce piersiowej.",
+      "Oddech staje się spokojniejszy i pełniejszy.",
+    ],
+  },
+  longing: {
+    chest: [
+      "Czuję ciężar albo pustkę w klatce piersiowej.",
+      "Coś w piersi ciągnie mnie ku komuś lub czemuś.",
+    ],
+  },
+  despair: {
+    chest: [
+      "Klatka piersiowa wydaje się ściśnięta albo ciężka.",
+      "Trudno mi wziąć pełny oddech.",
+    ],
+  },
+  nervousness: {
+    belly: [
+      "Czuję „motyle” albo ścisk w żołądku.",
+      "Brzuch napina się w oczekiwaniu.",
+    ],
+  },
+  hostility: {
+    head: ["Czuję napięcie szczęki i czoła.", "Gorąco uderza mi do głowy."],
   },
 };
 

@@ -24,7 +24,7 @@ export const regionNotes: Record<Region, { authors: string; figure?: string }> =
       authors:
         "Według autorów odczucia wokół gardła — razem z odczuciami w układzie pokarmowym — występowały głównie przy wstręcie.",
       figure:
-        "Szyja jest ciepła na wszystkich 12 mapach pokazanych w Somie; przy wstręcie należy do najjaśniejszych miejsc mapy.",
+        "Szyja jest ciepła na wszystkich 12 mapach z ryciny 2; przy wstręcie należy do najjaśniejszych miejsc mapy.",
     },
     chest: {
       authors:

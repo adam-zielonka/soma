@@ -1,11 +1,18 @@
 import { ArrowRight } from "lucide-react";
 import BodyMap from "./BodyMap";
-import { activityOf, emotions, regionName, regions } from "./emotions";
+import {
+  activityOf,
+  emotions,
+  isFeltMap,
+  regionName,
+  regions,
+} from "./emotions";
 import type { Activity, Emotion, Region } from "./emotions";
-import { ActivityMark, CopyLink } from "./components";
+import { ActivityMark, Cite, CopyLink } from "./components";
 import { activityLabels } from "./activity";
 import { ResearchNote } from "./ExploreView";
 import { emotionExamples } from "./sensationExamples";
+import { referenceYear } from "./sources";
 import { t } from "./i18n";
 
 function EmotionRow({
@@ -29,6 +36,13 @@ function EmotionRow({
         <span className="emotion-row-text">
           <strong>{t(emotion.name)}</strong>
           {example && <span>{t(example)}</span>}
+          {emotion.source !== 1 && (
+            <span className="row-source">
+              {t("mapa z badania z {year} r.", {
+                year: referenceYear(emotion.source)!,
+              })}
+            </span>
+          )}
         </span>
         <ArrowRight size={16} aria-hidden="true" />
       </button>
@@ -45,9 +59,15 @@ export default function BodyView({
   onRegion: (region: Region) => void;
   onEmotion: (emotion: Emotion) => void;
 }) {
+  // Two-silhouette maps (increase and decrease) are compared directly; maps of
+  // other feelings recorded no decrease, so they are listed apart.
+  const twoWay = emotions.filter((e) => !isFeltMap(e));
   const byState = (state: Activity) =>
-    emotions.filter((e) => activityOf(e, region) === state);
+    twoWay.filter((e) => activityOf(e, region) === state);
   const unmarked = byState("none");
+  const felt = emotions.filter(
+    (e) => isFeltMap(e) && activityOf(e, region) === "felt",
+  );
   return (
     <div className="layout layout-body">
       <div className="stage">
@@ -87,8 +107,8 @@ export default function BodyView({
           {t(
             "W uproszczonych mapach Somy ten obszar wyróżniono przy {count} z {total} emocji.",
             {
-              count: emotions.length - unmarked.length,
-              total: emotions.length,
+              count: twoWay.length - unmarked.length,
+              total: twoWay.length,
             },
           )}
         </p>
@@ -120,33 +140,63 @@ export default function BodyView({
             );
           })}
         </div>
-        {unmarked.length > 0 && (
-          <section className="state-group none" aria-labelledby="state-none">
-            <h3 id="state-none">
-              <ActivityMark state="none" />
-              {t(activityLabels.none)} ({unmarked.length})
+        <div className="state-columns">
+          {unmarked.length > 0 && (
+            <section className="state-group none" aria-labelledby="state-none">
+              <h3 id="state-none">
+                <ActivityMark state="none" />
+                {t(activityLabels.none)} ({unmarked.length})
+              </h3>
+              <p className="unmarked-list">
+                {unmarked.map((e, i) => (
+                  <span key={e.id}>
+                    <button
+                      type="button"
+                      className="text-button inline"
+                      onClick={() => onEmotion(e)}
+                    >
+                      {t(e.name)}
+                    </button>
+                    {i < unmarked.length - 1 ? ", " : ""}
+                  </span>
+                ))}
+              </p>
+              <p className="table-note">
+                {t(
+                  "Brak wyróżnienia oznacza, że w uproszczonej mapie nie zaznaczono wyraźnej zmiany — nie to, że nic się tam nie dzieje.",
+                )}
+              </p>
+            </section>
+          )}
+          <section className="state-group felt" aria-labelledby="state-felt">
+            <h3 id="state-felt">
+              <ActivityMark state="felt" />
+              {t("Inne uczucia odczuwane w tym obszarze")} ({felt.length})
             </h3>
             <p className="unmarked-list">
-              {unmarked.map((e, i) => (
-                <span key={e.id}>
-                  <button
-                    type="button"
-                    className="text-button inline"
-                    onClick={() => onEmotion(e)}
-                  >
-                    {t(e.name)}
-                  </button>
-                  {i < unmarked.length - 1 ? ", " : ""}
-                </span>
-              ))}
+              {felt.length
+                ? felt.map((e, i) => (
+                    <span key={e.id}>
+                      <button
+                        type="button"
+                        className="text-button inline"
+                        onClick={() => onEmotion(e)}
+                      >
+                        {t(e.name)}
+                      </button>
+                      {i < felt.length - 1 ? ", " : ""}
+                    </span>
+                  ))
+                : t("Żadnego z nich nie odczuwano tu wyraźnie.")}
             </p>
             <p className="table-note">
               {t(
-                "Brak wyróżnienia oznacza, że w uproszczonej mapie nie zaznaczono wyraźnej zmiany — nie to, że nic się tam nie dzieje.",
-              )}
+                "Mapy innych uczuć pokazują tylko, gdzie uczucie jest wyraźnie odczuwane — bez podziału na wzrost i spadek.",
+              )}{" "}
+              <Cite n={2} />
             </p>
           </section>
-        )}
+        </div>
       </aside>
     </div>
   );

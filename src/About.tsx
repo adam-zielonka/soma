@@ -1,49 +1,7 @@
 import { ArrowUpRight } from "lucide-react";
 import { Cite } from "./components";
 import { t } from "./i18n";
-
-const references = [
-  {
-    id: 1,
-    authors: "Nummenmaa, L., Glerean, E., Hari, R., & Hietanen, J. K. (2014).",
-    title: "Bodily maps of emotions.",
-    venue: "PNAS, 111(2), 646–651.",
-    href: "https://doi.org/10.1073/pnas.1321664111",
-    link: "doi:10.1073/pnas.1321664111",
-  },
-  {
-    id: 2,
-    authors: "Nummenmaa, L., Hari, R., Hietanen, J. K., & Glerean, E. (2018).",
-    title: "Maps of subjective feelings.",
-    venue: "PNAS, 115(37), 9198–9203.",
-    href: "https://doi.org/10.1073/pnas.1807390115",
-    link: "doi:10.1073/pnas.1807390115",
-  },
-  {
-    id: 3,
-    authors: "NHS.",
-    title: "Anger.",
-    venue: "",
-    href: "https://www.nhs.uk/mental-health/feelings-symptoms-behaviours/feelings-and-symptoms/anger/",
-    link: "nhs.uk",
-  },
-  {
-    id: 4,
-    authors: "NHS inform.",
-    title: "Anxiety self-help guide.",
-    venue: "",
-    href: "https://www.nhsinform.scot/illnesses-and-conditions/mental-health/mental-health-self-help-guides/anxiety-self-help-guide",
-    link: "nhsinform.scot",
-  },
-  {
-    id: 5,
-    authors: "NHS.",
-    title: "Blushing.",
-    venue: "",
-    href: "https://www.nhs.uk/symptoms/blushing/",
-    link: "nhs.uk",
-  },
-];
+import { references } from "./sources";
 
 export default function About() {
   return (
@@ -67,27 +25,45 @@ export default function About() {
           </p>
           <p>
             {t(
-              "Soma opiera się na rycinie 2, czyli na pierwszym eksperymencie: fińskojęzyczni uczestnicy oceniali, gdzie zwykle odczuwają emocję podaną słowem — emocji nie wywoływano. Zbliżone mapy emocji podstawowych uzyskano w grupach mówiących po szwedzku i tajwańsku oraz wtedy, gdy emocje wywoływały opowiadania i filmy. Emocje złożone badano tylko na podstawie nazw.",
+              "Mapy emocji podstawowych i złożonych pochodzą z ryciny 2, czyli z pierwszego eksperymentu: fińskojęzyczni uczestnicy oceniali, gdzie zwykle odczuwają emocję podaną słowem — emocji nie wywoływano. Zbliżone mapy emocji podstawowych uzyskano w grupach mówiących po szwedzku i tajwańsku oraz wtedy, gdy emocje wywoływały opowiadania i filmy. Emocje złożone badano tylko na podstawie nazw.",
             )}{" "}
             <Cite n={1} />
+          </p>
+          <p>
+            {t(
+              "Mapy „z nowszych badań” powstały tą samą metodą dwóch sylwetek: nadzieja w badaniu 992 dorosłych z USA, a rozbawienie, zainteresowanie i współczucie w badaniu amerykańskich studentów z trzech grup kulturowych. Z tego drugiego badania Soma pokazuje tylko emocje, których mapy wskazały ten sam obszar we wszystkich trzech grupach. Autorzy raportują dużą zgodność map między grupami dla wszystkich badanych emocji, ale w odczycie Somy zachwyt, triumf i pożądanie nie miały obszaru wyraźnego we wszystkich trzech — najsłabsze były mapy najmniejszej, latynoskiej grupy. Zadowolenie i ulga dały niemal puste mapy. Radość, miłość i dumę Soma pokazuje z badania z 2014 roku.",
+            )}{" "}
+            <Cite n={6} /> <Cite n={7} />
+          </p>
+          <p>
+            {t(
+              "Mapy „innych uczuć” pochodzą z badania z 2018 roku, w którym uczestnicy zaznaczali na jednej sylwetce tylko miejsca, gdzie czują dany stan. Nie pytano o spadek, więc te mapy mają inną, złotą poświatę i nie należy ich wprost porównywać z pozostałymi. W odczycie Somy kilka uczuć związanych z innymi ludźmi — m.in. wdzięczność, tęsknota, bliskość i poczucie wspólnoty — ma najjaśniejsze miejsce w środku klatki piersiowej. Mapy m.in. poczucia winy i samotności nie przekroczyły przyjętego w Somie progu, więc ich nie pokazano.",
+            )}{" "}
+            <Cite n={2} />
           </p>
         </article>
         <article>
           <h3>{t("Jak czytać sylwetkę")}</h3>
           <p>
             {t(
-              "Ciepła poświata oznacza wzrost odczuwanej aktywności, chłodna i kreskowana — spadek. Kolory nie oznaczają temperatury. Obszar bez poświaty nie został wyróżniony: w oryginale jest w większości czarny (bez istotnej statystycznie zmiany) albo zabarwiony tylko słabo lub w części. Nie znaczy to, że nic się tam nie czuje.",
+              "Ciepła poświata oznacza wzrost odczuwanej aktywności, a chłodna i kreskowana — spadek. Złota poświata na mapach innych uczuć oznacza miejsce wyraźnych odczuć, bez kierunku zmiany. Kolory nie oznaczają temperatury. Obszar bez poświaty nie został wyróżniony: na mapach wzrostu i spadku jest w oryginale w większości czarny (bez istotnej statystycznie zmiany) albo zabarwiony tylko słabo lub w części. Nie znaczy to, że nic się tam nie czuje.",
             )}{" "}
-            <Cite n={1} />
+            <Cite n={1} /> <Cite n={2} />
           </p>
           <p>
             {t(
-              "W oryginale jasność koloru to statystyka t: rośnie, gdy grupa zaznaczała dane miejsce mocniej i zgodniej. Nie jest to skala natężenia odczucia u pojedynczej osoby. Soma upraszcza rycinę do kierunku zmiany w sześciu obszarach: obszar oznaczono, gdy ciepły lub chłodny kolor wyraźnie w nim przeważa. Sylwetki w badaniu nie miały podziału na obszary — to warstwa dodana w Somie.",
+              "Na rycinie z 2014 roku jasność koloru to statystyka t: rośnie, gdy grupa zaznaczała dane miejsce mocniej i zgodniej. Nie jest to skala natężenia odczucia u pojedynczej osoby. Soma upraszcza rycinę do kierunku zmiany w sześciu obszarach: obszar oznaczono, gdy ciepły lub chłodny kolor wyraźnie w nim przeważa. Sylwetki w badaniu nie miały podziału na obszary — to warstwa dodana w Somie.",
             )}
           </p>
           <p>
             {t(
-              "Rycina zawiera 14 map. Soma pokazuje 12: pomija stan neutralny, który nie jest emocją, oraz depresję, która jest stanem klinicznym.",
+              "Na rycinie z 2018 roku kolor oznacza wielkość efektu, a każdy kolor — istotne statystycznie odczucia, więc na wielu mapach zabarwiona jest duża część ciała. Złotą poświatą Soma oznacza tylko obszary, w których wyraźnie przeważa jasny, żółto-pomarańczowy kolor (mniej więcej górna połowa skali). To próg przyjęty w Somie, a nie natężenie odczucia u pojedynczej osoby.",
+            )}{" "}
+            <Cite n={2} />
+          </p>
+          <p>
+            {t(
+              "Rycina 2 z 2014 roku zawiera 14 map. Soma pokazuje z niej 12: pomija stan neutralny, który nie jest emocją, oraz depresję, która jest stanem klinicznym.",
             )}
           </p>
         </article>
@@ -106,9 +82,14 @@ export default function About() {
           </p>
           <p>
             {t(
-              "W pierwszym eksperymencie uczestniczyli głównie młodzi dorośli, w większości kobiety. Soma służy edukacji i autorefleksji, nie diagnozie ani terapii.",
+              "W pierwszym eksperymencie badania z 2014 roku uczestniczyli głównie młodzi dorośli, w większości kobiety. Wąskie są też próby dwóch innych badań: w 2018 roku głównie młode kobiety mówiące po fińsku, w badaniu emocji pozytywnych amerykańscy studenci. Najbardziej zróżnicowana była próba badania nadziei: dorośli z USA, w połowie kobiety, o medianie wieku 46 lat.",
             )}{" "}
-            <Cite n={1} />
+            <Cite n={1} /> <Cite n={2} /> <Cite n={7} /> <Cite n={6} />
+          </p>
+          <p>
+            {t(
+              "Soma służy edukacji i autorefleksji, nie diagnozie ani terapii.",
+            )}
           </p>
           <p>
             {t(
@@ -126,11 +107,21 @@ export default function About() {
           </p>
           <p>
             {t(
-              "Pytania „Zatrzymaj się na chwilę” to proste ćwiczenia uwagi, a nie terapia. Polskie nazwy emocji są tłumaczeniem angielskich nazw z badania, które z kolei przetłumaczono z fińskiego.",
+              "Pytania „Zatrzymaj się na chwilę” to proste ćwiczenia uwagi, a nie terapia. Polskie nazwy emocji są tłumaczeniem angielskich nazw z badań; w badaniach fińskich (2014 i 2018) te nazwy przetłumaczono z kolei z fińskiego.",
             )}
           </p>
         </article>
       </div>
+      <p className="wider-context">
+        {t(
+          "Czy mapy się powtarzają? W dużym badaniu międzynarodowym (3954 osoby ze 101 krajów) mapy 13 emocji były zgodne między kulturami i płciami.",
+        )}{" "}
+        <Cite n={8} />{" "}
+        {t(
+          "Wśród 548 osób mieszkających w Polsce, które wykonywały zadanie po polsku, mapy emocji okazały się bardzo podobne do wcześniejszych wyników.",
+        )}{" "}
+        <Cite n={9} />
+      </p>
       <p className="wider-context">
         {t(
           "Szerszy kontekst: w pracy z 2018 roku ten sam zespół zbadał 100 różnych stanów — od emocji po stany somatyczne i choroby — z udziałem 1026 osób. Odczucia w ciele okazały się, obok przyjemności lub przykrości i doświadczenia psychicznego, jednym z wymiarów porządkujących to, jak przeżywamy uczucia.",

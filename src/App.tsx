@@ -156,9 +156,9 @@ export default function App() {
           <h1>{t("Gdzie w ciele czujemy emocje?")}</h1>
           <p>
             {t(
-              "Poglądowe mapy odczuć na podstawie badania, w którym uczestnicy zaznaczali na sylwetkach, gdzie emocja wzmaga lub osłabia doznania z ciała.",
+              "Poglądowe mapy odczuć na podstawie badań, w których uczestnicy zaznaczali na sylwetkach, gdzie emocja wzmaga lub osłabia doznania z ciała, a w jednym z nich — tylko to, gdzie dane uczucie jest odczuwane.",
             )}{" "}
-            <Cite n={1} />
+            <Cite n={1} /> <Cite n={6} /> <Cite n={7} /> <Cite n={2} />
           </p>
         </div>
         <section

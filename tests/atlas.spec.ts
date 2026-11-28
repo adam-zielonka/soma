@@ -1,9 +1,14 @@
 import { expect, test, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
+import { emotions } from "../src/emotions";
 
 const picker = (page: Page) => page.locator(".picker-groups");
+// The folded phone picker hides its buttons, so look them up by name even
+// when hidden; picker labels may contain soft hyphens, names never do.
 const option = (page: Page, name: string) =>
-  page.locator(".emotion-option").filter({ hasText: new RegExp(`^${name}$`) });
+  page
+    .locator(".emotion-option")
+    .and(page.getByRole("button", { name, exact: true, includeHidden: true }));
 // On phones the emotion grid is folded behind a toggle.
 async function openPicker(page: Page) {
   const toggle = page.locator(".picker-toggle");
@@ -212,15 +217,15 @@ test("examples cite the NHS only where an NHS page supports them", async ({
   ).toHaveCount(0);
 });
 
-test("all twelve emotions render a map without browser errors", async ({
-  page,
-}) => {
+test("every emotion renders a map without browser errors", async ({ page }) => {
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
   await page.goto("./");
   const buttons = page.locator(".emotion-option");
-  await expect(buttons).toHaveCount(12);
-  const names = (await buttons.allTextContents()).map((n) => n.trim());
+  await expect(buttons).toHaveCount(emotions.length);
+  const names = await buttons.evaluateAll((items) =>
+    items.map((item) => item.getAttribute("aria-label")!),
+  );
   for (const name of names) {
     await pickEmotion(page, name);
     await expect(
@@ -231,6 +236,36 @@ test("all twelve emotions render a map without browser errors", async ({
     ).toBeVisible();
   }
   expect(errors).toEqual([]);
+});
+
+test("maps from other studies name their source and their kind of map", async ({
+  page,
+}) => {
+  await page.goto("./?emocja=hope");
+  await expect(page.locator(".stage-description .cite")).toHaveText("[6]");
+  await expect(page.locator(".stage .map-note")).toContainText("ryciny 1A");
+  await expect(page.locator(".legend li")).toHaveCount(3);
+  await page.goto("./?emocja=gratitude&obszar=chest");
+  await expect(
+    page.getByRole("heading", { level: 2, name: "Wdzięczność", exact: true }),
+  ).toBeVisible();
+  await expect(page.locator(".stage-description .cite")).toHaveText("[2]");
+  await expect(page.locator(".legend li")).toHaveText([
+    "Wyraźnie odczuwane",
+    "Bez wyróżnienia",
+  ]);
+  await expect(page.locator(".stage .map-note")).toContainText(
+    "nie pokazuje wzrostu ani spadku",
+  );
+  await expect(
+    regionItem(page, "Klatka piersiowa").locator(".activity-badge"),
+  ).toHaveText("Odczuwane");
+  await expect(page.locator(".research-note").first()).toContainText(
+    "Co piszą autorzy badania z 2014 roku",
+  );
+  await page.goto("./?emocja=amusement");
+  await expect(page.locator(".stage-authors")).toContainText("ze śmiechem");
+  await expect(page.locator(".stage-authors .cite")).toHaveText("[7]");
 });
 
 test("on wide screens the body view shows its lists without scrolling", async ({
@@ -249,6 +284,8 @@ test("on wide screens the body view shows its lists without scrolling", async ({
     await expect(page.locator(".emotion-row").last()).toBeInViewport({
       ratio: 1,
     });
+    for (const list of await page.locator(".unmarked-list").all())
+      await expect(list, region).toBeInViewport({ ratio: 1 });
   }
 });
 
@@ -273,7 +310,10 @@ test("body view groups emotions by direction and links to their maps", async ({
     "motyle, ścisk",
   );
   await expect(page.locator(".state-group.none h3")).toHaveText(
-    "Bez wyróżnienia (7)",
+    "Bez wyróżnienia (11)",
+  );
+  await expect(page.locator(".state-group.felt")).toContainText(
+    "Podenerwowanie",
   );
   await areas.getByRole("button", { name: "Ręce" }).click();
   await expect(page.locator(".state-group.less")).toContainText("Smutek");
@@ -281,7 +321,10 @@ test("body view groups emotions by direction and links to their maps", async ({
   await expect(
     page.getByRole("heading", { level: 2, name: "Gardło" }),
   ).toBeVisible();
-  await expect(page.locator(".state-group.more .emotion-row")).toHaveCount(12);
+  await expect(page.locator(".state-group.more .emotion-row")).toHaveCount(13);
+  await expect(
+    page.locator(".emotion-row", { hasText: "Nadzieja" }),
+  ).toContainText("mapa z badania z 2026 r.");
   await areas.getByRole("button", { name: "Ręce" }).click();
   await page.locator(".emotion-row", { hasText: "Złość" }).click();
   await expect(

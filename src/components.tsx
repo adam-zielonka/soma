@@ -3,22 +3,8 @@ import { Check, Link2 } from "lucide-react";
 import type { Activity } from "./emotions";
 import { activityLabels, activityShort } from "./activity";
 import { t } from "./i18n";
+import type { SourceId } from "./sources";
 import somaMark from "./assets/soma.svg";
-
-export const sources = {
-  1: {
-    short: "Nummenmaa i in., 2014",
-    title: "Bodily maps of emotions",
-  },
-  2: {
-    short: "Nummenmaa i in., 2018",
-    title: "Maps of subjective feelings",
-  },
-  3: { short: "NHS", title: "Anger" },
-  4: { short: "NHS inform", title: "Anxiety self-help guide" },
-  5: { short: "NHS", title: "Blushing" },
-} as const;
-export type SourceId = keyof typeof sources;
 
 export function Cite({ n }: { n: SourceId }) {
   return (
@@ -56,6 +42,8 @@ export function ActivityMark({ state }: { state: Activity }) {
           <path d="M8 12V4M4.5 7.5 8 4l3.5 3.5" />
         ) : state === "less" ? (
           <path d="M8 4v8M4.5 8.5 8 12l3.5-3.5" />
+        ) : state === "felt" ? (
+          <circle cx="8" cy="8" r="3.2" />
         ) : (
           <path d="M4.5 8h7" />
         )}
@@ -79,10 +67,13 @@ export function ActivityBadge({
   );
 }
 
-export function Legend() {
+// Maps of "other feelings" record only where a feeling is felt, so their
+// legend has no increase or decrease.
+export function Legend({ felt = false }: { felt?: boolean }) {
+  const states: Activity[] = felt ? ["felt", "none"] : ["more", "less", "none"];
   return (
     <ul className="legend" aria-label={t("Legenda mapy")}>
-      {(["more", "less", "none"] as const).map((state) => (
+      {states.map((state) => (
         <li key={state}>
           <span className={`swatch ${state}`} aria-hidden="true" />
           {t(activityLabels[state])}

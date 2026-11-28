@@ -5,6 +5,14 @@ import { emotions, groups } from "./emotions";
 import type { Emotion } from "./emotions";
 import { t } from "./i18n";
 
+// Long names would break mid-syllable in the narrow buttons; soft hyphens
+// mark the Polish syllable boundaries where they may wrap instead.
+const syllables: Record<string, string> = {
+  Zainteresowanie: "Zain\u00ADte\u00ADre\u00ADso\u00ADwa\u00ADnie",
+  Podenerwowanie: "Po\u00ADde\u00ADner\u00ADwo\u00ADwa\u00ADnie",
+};
+const breakable = (name: string) => syllables[name] ?? name;
+
 // On phones the grid folds behind a single toggle, so the map stays on the
 // first screen; on wider screens the toggle is hidden and the grid is shown.
 export default function EmotionPicker({
@@ -40,6 +48,7 @@ export default function EmotionPicker({
             <h2 id={`group-${group.id}`} className="picker-heading">
               {t(group.name)}
             </h2>
+            {group.note && <p className="picker-note">{t(group.note)}</p>}
             <ul className="emotion-list">
               {emotions
                 .filter((e) => e.group === group.id)
@@ -48,6 +57,7 @@ export default function EmotionPicker({
                     <button
                       type="button"
                       className="emotion-option"
+                      aria-label={t(e.name)}
                       aria-pressed={selected.id === e.id}
                       onClick={() => {
                         setOpen(false);
@@ -59,7 +69,7 @@ export default function EmotionPicker({
                       }}
                     >
                       <BodyMap emotion={e} mini />
-                      <span>{t(e.name)}</span>
+                      <span>{breakable(t(e.name))}</span>
                     </button>
                   </li>
                 ))}

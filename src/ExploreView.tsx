@@ -2,7 +2,7 @@ import { useEffect, useLayoutEffect, useRef } from "react";
 import { ArrowRight } from "lucide-react";
 import BodyMap from "./BodyMap";
 import EmotionPicker from "./EmotionPicker";
-import { activityOf, regions } from "./emotions";
+import { activityOf, isFeltMap, regions } from "./emotions";
 import type { Emotion, Region } from "./emotions";
 import { ActivityBadge, Cite, CopyLink, Legend } from "./components";
 import { regionNotes } from "./research";
@@ -14,13 +14,46 @@ import {
 } from "./sensationExamples";
 import { t } from "./i18n";
 
-export function MapNote({ complex = false }: { complex?: boolean }) {
+// How each map was redrawn, so a map from another study never passes for
+// part of Figure 2 of the 2014 study.
+function MapNote({ emotion }: { emotion: Emotion }) {
+  if (emotion.source === 6)
+    return (
+      <p className="map-note">
+        {t(
+          "Autorski schemat na podstawie ryciny 1A z badania z 2026 roku: 992 dorosłych z USA, nadzieja bez kontekstu politycznego. Pokazuje kierunek zmiany, bez natężenia.",
+        )}{" "}
+        <Cite n={6} />{" "}
+        {t(
+          "Podobny układ, z dodatkowym wzrostem w rękach, dała mapa nadziei związanej z nauką u chińskich licealistów.",
+        )}{" "}
+        <Cite n={10} />
+      </p>
+    );
+  if (emotion.source === 7)
+    return (
+      <p className="map-note">
+        {t(
+          "Autorski schemat na podstawie ryciny 2 z badania z 2025 roku: studenci z USA w trzech grupach (Amerykanie pochodzenia chińskiego, europejskiego i latynoamerykańskiego, po 57–79 osób w grupie). Obszar oznaczono, gdy zmiana była wyraźna w co najmniej dwóch grupach.",
+        )}{" "}
+        <Cite n={7} />
+      </p>
+    );
+  if (isFeltMap(emotion))
+    return (
+      <p className="map-note">
+        {t(
+          "Autorski schemat na podstawie ryciny 3 z badania z 2018 roku. Uczestnicy zaznaczali tylko, gdzie czują dany stan, więc mapa nie pokazuje wzrostu ani spadku — jedynie miejsca wyraźnych odczuć.",
+        )}{" "}
+        <Cite n={2} />
+      </p>
+    );
   return (
     <p className="map-note">
       {t(
-        "Autorski schemat na podstawie ryciny 2 z badania. Pokazuje kierunek zmiany, bez natężenia.",
+        "Autorski schemat na podstawie ryciny 2 z badania z 2014 roku. Pokazuje kierunek zmiany, bez natężenia.",
       )}{" "}
-      {complex &&
+      {emotion.group === "complex" &&
         t(
           "Emocje złożone badano tylko na podstawie ich nazw; ich mapy były słabsze i mniej odrębne niż mapy emocji podstawowych.",
         )}{" "}
@@ -39,14 +72,16 @@ export function ResearchNote({
   const note = regionNotes[region];
   return (
     <div className={`research-note${lead ? " lead" : ""}`}>
-      <p className="research-label">{t("Co piszą autorzy badania")}</p>
+      <p className="research-label">
+        {t("Co piszą autorzy badania z 2014 roku")}
+      </p>
       <p>
         {t(note.authors)} <Cite n={1} />
       </p>
       {note.figure && (
         <>
           <p className="research-label">
-            {t("Co widać na rycinie (odczyt Somy)")}
+            {t("Co widać na rycinie z 2014 roku (odczyt Somy)")}
           </p>
           <p>
             {t(note.figure)} <Cite n={1} />
@@ -159,11 +194,13 @@ function Reflection({ emotion }: { emotion: Emotion }) {
     <section className="reflection" aria-labelledby="reflection-title">
       <h3 id="reflection-title">{t("Zatrzymaj się na chwilę")}</h3>
       <p className="reflection-prompt">{t(emotion.prompt)}</p>
-      <p className="reflection-help">
-        {t(
-          "Wystarczy pół minuty, z otwartymi oczami. Zauważ jedno odczucie albo jego brak — nie musi pasować do mapy. Jeśli to nieprzyjemne, przerwij i rozejrzyj się wokół.",
-        )}
-      </p>
+      {emotion.reflectionHelp !== false && (
+        <p className="reflection-help">
+          {t(
+            "Wystarczy pół minuty, z otwartymi oczami. Zauważ jedno odczucie albo jego brak — nie musi pasować do mapy. Jeśli to nieprzyjemne, przerwij i rozejrzyj się wokół.",
+          )}
+        </p>
+      )}
     </section>
   );
 }
@@ -225,8 +262,13 @@ export default function ExploreView({
           <CopyLink label={t("Kopiuj link do tej mapy")} />
         </div>
         <p className="stage-description">
-          {t(emotion.description)} <Cite n={1} />
+          {t(emotion.description)} <Cite n={emotion.source} />
         </p>
+        {emotion.authorsNote && (
+          <p className="stage-authors">
+            {t(emotion.authorsNote)} <Cite n={emotion.source} />
+          </p>
+        )}
         <div className="figure">
           <BodyMap
             emotion={emotion}
@@ -234,8 +276,8 @@ export default function ExploreView({
             onRegion={selectFromFigure}
           />
         </div>
-        <Legend />
-        <MapNote complex={emotion.group === "complex"} />
+        <Legend felt={isFeltMap(emotion)} />
+        <MapNote emotion={emotion} />
       </div>
       <aside className="panel" ref={panelRef} aria-labelledby="regions-title">
         <h2 id="regions-title" className="panel-title">

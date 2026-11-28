@@ -1,7 +1,8 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { expect, test } from "@playwright/test";
 import { PAGE_DESCRIPTION, PAGE_TITLE, translations } from "../src/i18n";
-import { emotions, groups, regions } from "../src/emotions";
+import { emotions, groups, isFeltMap, regions } from "../src/emotions";
+import { references } from "../src/sources";
 import { regionNotes } from "../src/research";
 import { activityLabels, activityShort } from "../src/activity";
 import {
@@ -30,9 +31,14 @@ test("every user-visible Polish string has exactly one English translation", () 
       ].map((match) => match[1]),
     );
   const data = [
-    ...emotions.flatMap((e) => [e.name, e.description, e.prompt]),
+    ...emotions.flatMap((e) => [
+      e.name,
+      e.description,
+      e.prompt,
+      ...(e.authorsNote ? [e.authorsNote] : []),
+    ]),
     ...regions.map((r) => r.name),
-    ...groups.map((g) => g.name),
+    ...groups.flatMap((g) => (g.note ? [g.name, g.note] : [g.name])),
     ...Object.values(regionNotes).flatMap((note) =>
       note.figure ? [note.authors, note.figure] : [note.authors],
     ),
@@ -82,4 +88,19 @@ test("descriptions mention every highlighted limb area and no unmarked one", () 
       if (emotion.id === "joy") continue; // "w całym ciele" covers the limbs
       expect(mentioned, `${emotion.id} ${region}`).toBe(marked);
     }
+});
+
+test("every map names a dated study and uses one kind of reading", () => {
+  for (const emotion of emotions) {
+    const reference = references.find((ref) => ref.id === emotion.source);
+    expect(reference?.year, emotion.id).toBeTruthy();
+    const states = Object.values(emotion.regions);
+    expect(states.length, emotion.id).toBeGreaterThan(0);
+    if (isFeltMap(emotion)) {
+      expect(emotion.source, emotion.id).toBe(2);
+      expect(new Set(states), emotion.id).toEqual(new Set(["felt"]));
+    } else {
+      expect(states, emotion.id).not.toContain("felt");
+    }
+  }
 });

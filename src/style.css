@@ -18,6 +18,9 @@
   --more-bg: #fbe8d4;
   --less-ink: #1c5578;
   --less-bg: #dbeff7;
+  --felt: #f3cf62;
+  --felt-ink: #5f4900;
+  --felt-bg: #f6edc6;
   --none-ink: #574f5d;
   --none-bg: #ece7ec;
   --display: "Bricolage Grotesque Variable", ui-sans-serif, sans-serif;
@@ -200,7 +203,7 @@ svg {
   letter-spacing: -0.035em;
 }
 .intro p {
-  max-width: 68ch;
+  max-width: 92ch;
   font-size: 14.5px;
   color: var(--muted);
 }
@@ -234,6 +237,11 @@ svg {
 }
 .picker-toggle {
   display: none;
+}
+.picker-note {
+  margin: -4px 0 8px;
+  font-size: 12.5px;
+  color: var(--muted);
 }
 .picker-heading {
   margin-bottom: 8px;
@@ -349,6 +357,14 @@ svg {
   color: var(--stage-muted);
   text-wrap: balance;
 }
+.stage-authors {
+  max-width: 50ch;
+  margin: 6px auto 0;
+  font-size: 13.5px;
+  font-style: italic;
+  color: var(--stage-muted);
+  text-wrap: balance;
+}
 .figure {
   position: relative;
   display: flex;
@@ -430,6 +446,9 @@ svg {
   background:
     repeating-linear-gradient(45deg, #163f6366 0 1.5px, transparent 1.5px 4px),
     radial-gradient(circle, #d2f5fb 0, var(--less) 60%, #4b8fc0 100%);
+}
+.swatch.felt {
+  background: radial-gradient(circle, #fff8d6 0, var(--felt) 55%, #cf9d36 100%);
 }
 .swatch.none {
   background: var(--none);
@@ -527,6 +546,10 @@ svg {
 .activity-badge.less {
   color: var(--less-ink);
   background: var(--less-bg);
+}
+.activity-badge.felt {
+  color: var(--felt-ink);
+  background: var(--felt-bg);
 }
 .activity-badge.none {
   color: var(--none-ink);
@@ -671,7 +694,7 @@ svg {
   column-gap: 28px;
 }
 .state-group {
-  margin-top: 18px;
+  margin-top: 14px;
   min-width: 0;
 }
 .state-group h3 {
@@ -692,6 +715,13 @@ svg {
 .state-group.none h3 {
   color: var(--none-ink);
 }
+.state-group.felt h3 {
+  color: var(--felt-ink);
+}
+.emotion-row-text .row-source {
+  font-size: 12px;
+  color: var(--muted);
+}
 .emotion-rows {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
@@ -706,8 +736,8 @@ svg {
   align-items: center;
   gap: 12px;
   width: 100%;
-  min-height: 56px;
-  padding: 8px 4px;
+  min-height: 52px;
+  padding: 6px 4px;
   text-align: start;
 }
 .emotion-row:hover {
@@ -790,7 +820,7 @@ svg {
 }
 .references li {
   display: grid;
-  grid-template-columns: 32px 1fr;
+  grid-template-columns: 32px minmax(0, 1fr);
   font-size: 14px;
   color: var(--muted);
   border-radius: 6px;
@@ -808,6 +838,9 @@ svg {
   align-items: center;
   gap: 3px;
   color: var(--ink);
+}
+.references a {
+  overflow-wrap: anywhere;
 }
 .ref-number {
   font-weight: 650;

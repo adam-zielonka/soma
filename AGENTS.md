@@ -12,7 +12,9 @@ Workspace: `/root/projekty/soma`. Public repository: `adam-zielonka/soma`.
 ## Scientific content
 
 - Primary source: Nummenmaa et al. (2014), DOI `10.1073/pnas.1321664111`, especially Figure 2.
-- Supporting context: Nummenmaa et al. (2018), DOI `10.1073/pnas.1807390115`.
+- Supporting context and the "other feelings" maps: Nummenmaa et al. (2018), DOI `10.1073/pnas.1807390115`, Figure 3. These maps recorded only where a feeling is felt; show them as "felt", never as increase or decrease.
+- Maps "from later studies" (same increase/decrease method): Vik et al. (2026), DOI `10.1073/pnas.2534895123`, Figure 1A (hope); Zhang, Zerwas & Keltner (2025), DOI `10.1080/02699931.2024.2430400`, Figure 2 (amusement, interest, compassion; an area counts when clear in at least two of three groups). Replications cited on the page: Volynets et al. (2020), Herman et al. (2022).
+- Every map names its source study (`source` in `src/emotions.ts`) and is cited next to its description.
 - Maps are qualitative editorial interpretations, not digitized empirical data. Keep this distinction visible. Do not invent intensity scores or physiological measurements.
 - Self-report patterns cannot diagnose emotions, illnesses or organ function. Avoid deterministic claims about where an emotion must appear.
 - Any new factual interpretation needs verification against a primary source and an on-page citation.

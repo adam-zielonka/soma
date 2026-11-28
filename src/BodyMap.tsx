@@ -49,6 +49,8 @@ const areas: Record<Region, { mask: string[]; glow: Glow[] }> = {
   },
 };
 
+const underlay = { more: "#e08a63", less: "#3f7fb3", felt: "#d4a84a" };
+
 export function describeMap(emotion: Emotion) {
   return regions
     .map(
@@ -60,8 +62,9 @@ export function describeMap(emotion: Emotion) {
 
 /**
  * Original illustration of a qualitative body map. Warm glow = increased felt
- * activity, cool hatched glow = decreased felt activity. Without an emotion it
- * renders a neutral figure for choosing a body area.
+ * activity, cool hatched glow = decreased felt activity, golden glow = where a
+ * feeling is felt (maps without decreases). Without an emotion it renders a
+ * neutral figure for choosing a body area.
  */
 export default function BodyMap({
   emotion,
@@ -138,6 +141,12 @@ export default function BodyMap({
           <stop offset=".75" stopColor="#ef7656" stopOpacity=".8" />
           <stop offset="1" stopColor="#d9604f" stopOpacity="0" />
         </radialGradient>
+        <radialGradient id={`${id}-felt`}>
+          <stop offset="0" stopColor="#fff8d6" />
+          <stop offset=".4" stopColor="#f5d572" />
+          <stop offset=".75" stopColor="#d9a93f" stopOpacity=".8" />
+          <stop offset="1" stopColor="#c7922f" stopOpacity="0" />
+        </radialGradient>
         <radialGradient id={`${id}-less`}>
           <stop offset="0" stopColor="#bfe8f5" />
           <stop offset=".45" stopColor="#58acd6" />
@@ -179,7 +188,7 @@ export default function BodyMap({
                   <rect
                     width="240"
                     height="515"
-                    fill={state === "more" ? "#e08a63" : "#3f7fb3"}
+                    fill={underlay[state]}
                     opacity=".4"
                   />
                   <g filter={url("blur")}>

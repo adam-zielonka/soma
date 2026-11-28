@@ -45,11 +45,13 @@ test("English browser preferences and a saved manual choice keep the selected ma
 test("every emotion and body area is translated in the explore and body views", async ({
   page,
 }) => {
-  test.setTimeout(120_000);
+  test.setTimeout(240_000);
   await page.goto("./");
   const emotions = page.locator(".emotion-option");
   const toggle = page.locator(".picker-toggle");
-  for (let i = 0; i < 12; i++) {
+  const count = await emotions.count();
+  expect(count).toBeGreaterThan(12);
+  for (let i = 0; i < count; i++) {
     if (await toggle.isVisible()) await toggle.click();
     await emotions.nth(i).click();
     const toggles = page.locator(".region-toggle");
